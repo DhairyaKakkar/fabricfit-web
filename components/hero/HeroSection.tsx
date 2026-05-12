@@ -59,14 +59,14 @@ export default function HeroSection() {
       const targetGender: Gender = over.id === 'male-model' ? 'male' : 'female';
       if (garment.gender !== targetGender) return; // wrong gender — dnd-kit snaps back
 
-      // Valid drop
+      // Valid drop — update garment immediately, shimmer plays over the new image
       if (targetGender === 'male') {
+        setMaleGarment(garment.id);
         setMaleShimmering(true);
-        setTimeout(() => setMaleGarment(garment.id), 200);
         setTimeout(() => setMaleShimmering(false), 400);
       } else {
+        setFemaleGarment(garment.id);
         setFemaleShimmering(true);
-        setTimeout(() => setFemaleGarment(garment.id), 200);
         setTimeout(() => setFemaleShimmering(false), 400);
       }
 
@@ -104,27 +104,31 @@ export default function HeroSection() {
 
         {/* Male model — left */}
         <div
-          className="absolute bottom-0 flex items-end"
-          style={{ left: '4%', zIndex: 10, paddingBottom: 0 }}
+          className="absolute flex items-end"
+          style={{ left: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
         >
           <ModelFigure
             gender="male"
             garmentId={maleGarment}
             isShimmering={maleShimmering}
             isOver={maleOver}
+            width={547}
+            height={791}
           />
         </div>
 
         {/* Female model — right */}
         <div
-          className="absolute bottom-0 flex items-end"
-          style={{ right: '4%', zIndex: 10, paddingBottom: 0 }}
+          className="absolute flex items-end"
+          style={{ right: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
         >
           <ModelFigure
             gender="female"
             garmentId={femaleGarment}
             isShimmering={femaleShimmering}
             isOver={femaleOver}
+            width={538}
+            height={742}
           />
         </div>
 

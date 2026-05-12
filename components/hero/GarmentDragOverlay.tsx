@@ -13,8 +13,8 @@ export default function GarmentDragOverlay({ activeGarment }: Props) {
       {activeGarment ? (
         <div
           style={{
-            width: 100,
-            height: 133,
+            width: 140,
+            height: 187,
             filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.25))',
             transform: `rotate(${activeGarment.id === 'shirt' ? -3 : 3}deg) scale(1.08)`,
             cursor: 'grabbing',
@@ -24,14 +24,12 @@ export default function GarmentDragOverlay({ activeGarment }: Props) {
           <img
             src={activeGarment.floatSrc}
             alt={activeGarment.label}
-            width={100}
-            height={133}
+            width={140}
+            height={187}
             style={{
               width: '100%',
               height: '100%',
               objectFit: 'contain',
-              borderRadius: 8,
-              backgroundColor: activeGarment.placeholderColor,
             }}
           />
         </div>

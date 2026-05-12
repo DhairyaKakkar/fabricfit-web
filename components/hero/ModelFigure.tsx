@@ -11,23 +11,17 @@ interface Props {
   garmentId: GarmentId | null;
   isShimmering: boolean;
   isOver: boolean;
+  width?: number;
+  height?: number;
 }
 
-export default function ModelFigure({ gender, garmentId, isShimmering, isOver }: Props) {
+export default function ModelFigure({ gender, garmentId, isShimmering, isOver, width = 320, height = 640 }: Props) {
   const dropId = `${gender}-model`;
   const { setNodeRef } = useDroppable({ id: dropId });
 
   const [showBadge, setShowBadge] = useState(false);
-  const [displayedGarmentId, setDisplayedGarmentId] = useState<GarmentId | null>(null);
 
-  // Swap image at the shimmer midpoint (200ms into the 400ms shimmer)
-  useEffect(() => {
-    if (!isShimmering) return;
-    const timer = setTimeout(() => setDisplayedGarmentId(garmentId), 200);
-    return () => clearTimeout(timer);
-  }, [isShimmering, garmentId]);
-
-  // Show success badge when a new garment is successfully applied
+  // Show badge whenever a new garment is applied
   useEffect(() => {
     if (!garmentId) return;
     setShowBadge(true);
@@ -35,12 +29,8 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver }:
     return () => clearTimeout(timer);
   }, [garmentId]);
 
-  const garment = displayedGarmentId
-    ? GARMENTS.find((g) => g.id === displayedGarmentId)
-    : null;
-
+  const garment = garmentId ? GARMENTS.find((g) => g.id === garmentId) : null;
   const imageSrc = garment ? garment.compositeSrc : BASE_MODELS[gender];
-  const placeholderColor = garment ? garment.placeholderColor : gender === 'male' ? '#fef9f0' : '#fff1f2';
 
   return (
     <div className="relative flex flex-col items-center">
@@ -59,15 +49,15 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver }:
       {/* Drop zone wrapper */}
       <div
         ref={setNodeRef}
-        className={`relative transition-all duration-200 rounded-lg ${
-          isOver ? 'ring-2 ring-amber-400 ring-dashed ring-offset-2' : ''
+        className={`relative transition-all duration-200 ${
+          isOver ? 'ring-2 ring-amber-400 ring-dashed ring-offset-2 rounded-lg' : ''
         }`}
-        style={{ width: 320, zIndex: 1 }}
+        style={{ width, zIndex: 1, pointerEvents: 'none' }}
       >
         {/* Model image */}
         <motion.div
-          className="relative overflow-hidden rounded-lg"
-          style={{ width: 320, height: 640 }}
+          className="relative"
+          style={{ width, height }}
           animate={{ scale: isOver ? 1.02 : 1 }}
           transition={{ duration: 0.2 }}
         >
@@ -78,9 +68,7 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver }:
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
-              borderRadius: 8,
-              backgroundColor: placeholderColor,
+              objectFit: 'cover',
               transition: 'opacity 0.3s ease',
               userSelect: 'none',
               pointerEvents: 'none',
@@ -97,7 +85,7 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver }:
           style={{
             width: 160,
             height: 20,
-            background: 'radial-gradient(ellipse, rgba(0,0,0,0.18), transparent 70%)',
+            background: 'radial-gradient(ellipse, rgba(0,0,0,0.12), transparent 70%)',
             borderRadius: '50%',
           }}
         />

@@ -29,58 +29,53 @@ export default function FloatingGarment({ garment, activeDragId }: Props) {
         position: 'absolute',
         left: `${layout.x}%`,
         top: `${layout.y}%`,
-        zIndex: isDragging ? 20 : 5,
+        zIndex: isDragging ? 50 : 5,
         ...dndStyle,
       }}
       {...listeners}
       {...attributes}
     >
+      {/* Opacity/scale wrapper — never loops, just fades out when dragging */}
       <motion.div
-        animate={
-          isDragging
-            ? { opacity: 0, scale: 0.9 }
-            : {
-                y: [0, -12, 0, 12, 0],
-                rotate: [
-                  layout.rotation,
-                  layout.rotation + 3,
-                  layout.rotation,
-                  layout.rotation - 3,
-                  layout.rotation,
-                ],
-                opacity: 0.92,
-                scale: 1,
-              }
-        }
-        transition={
-          isDragging
-            ? { duration: 0.15 }
-            : {
-                duration: layout.floatDuration,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }
-        }
-        whileHover={isDragging ? {} : { opacity: 1, scale: 1.06, transition: { duration: 0.15 } }}
-        style={{ cursor: isDragging ? 'grabbing' : 'grab', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))' }}
+        animate={{ opacity: isDragging ? 0 : 1, scale: isDragging ? 0.9 : 1 }}
+        transition={{ duration: 0.15 }}
+        whileHover={{ scale: 1.06, transition: { duration: 0.15 } }}
+        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={garment.floatSrc}
-          alt={garment.label}
-          width={100}
-          height={133}
-          draggable={false}
-          style={{
-            width: 100,
-            height: 133,
-            objectFit: 'contain',
-            borderRadius: 8,
-            backgroundColor: garment.placeholderColor,
-            userSelect: 'none',
-            pointerEvents: 'none',
+        {/* Float animation wrapper — only y and rotate loop */}
+        <motion.div
+          animate={isDragging ? {} : {
+            y: [0, -12, 0, 12, 0],
+            rotate: [
+              layout.rotation,
+              layout.rotation + 3,
+              layout.rotation,
+              layout.rotation - 3,
+              layout.rotation,
+            ],
           }}
-        />
+          transition={isDragging ? {} : {
+            duration: layout.floatDuration,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={garment.floatSrc}
+            alt={garment.label}
+            width={140}
+            height={187}
+            draggable={false}
+            style={{
+              width: 140,
+              height: 187,
+              objectFit: 'contain',
+              userSelect: 'none',
+              pointerEvents: 'none',
+            }}
+          />
+        </motion.div>
       </motion.div>
     </div>
   );

@@ -43,6 +43,13 @@ export default function Navbar() {
         >
           Features
         </a>
+        <a
+          href="/pricing"
+          className="text-sm text-gray-400 hover:text-amber-800 transition-colors"
+          style={{ fontFamily: 'var(--font-inter)' }}
+        >
+          Pricing
+        </a>
       </nav>
 
       {/* CTA */}

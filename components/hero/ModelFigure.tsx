@@ -39,9 +39,7 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver, w
       {/* Drop zone wrapper */}
       <div
         ref={setNodeRef}
-        className={`relative transition-all duration-200 ${
-          isOver ? 'ring-2 ring-amber-400 ring-dashed ring-offset-2 rounded-lg' : ''
-        }`}
+        className="relative"
         style={{ width, zIndex: 1, pointerEvents: 'none' }}
       >
         {/* Model image */}

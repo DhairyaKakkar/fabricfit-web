@@ -34,6 +34,7 @@ export default function FloatingGarment({ garment, activeDragId }: Props) {
       }}
       {...listeners}
       {...attributes}
+      suppressHydrationWarning
     >
       {/* Opacity/scale wrapper — never loops, just fades out when dragging */}
       <motion.div

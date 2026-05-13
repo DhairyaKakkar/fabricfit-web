@@ -22,8 +22,8 @@ import HeroCta from './HeroCta';
 const FABRIC_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 10 L10 0 M-2 2 L2-2 M18 22 L22 18' stroke='%2392400e' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M10 20 L20 10 M-2 18 L2 22 M18-2 L22 2' stroke='%2392400e' stroke-width='0.5' opacity='0.5'/%3E%3C/svg%3E")`;
 
 export default function HeroSection() {
-  const [maleGarment, setMaleGarment] = useState<GarmentId | null>(null);
-  const [femaleGarment, setFemaleGarment] = useState<GarmentId | null>(null);
+  const [maleGarment, setMaleGarment] = useState<GarmentId | null>('kurta');
+  const [femaleGarment, setFemaleGarment] = useState<GarmentId | null>('anarkali');
   const [hasInteracted, setHasInteracted] = useState(false);
   const [activeDragId, setActiveDragId] = useState<GarmentId | null>(null);
   const [maleShimmering, setMaleShimmering] = useState(false);

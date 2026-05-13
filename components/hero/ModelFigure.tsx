@@ -2,7 +2,6 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import { GarmentId, Gender, GARMENTS, BASE_MODELS } from '@/lib/garments';
 import ShimmerEffect from './ShimmerEffect';
 
@@ -19,15 +18,6 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver, w
   const dropId = `${gender}-model`;
   const { setNodeRef } = useDroppable({ id: dropId });
 
-  const [showBadge, setShowBadge] = useState(false);
-
-  // Show badge whenever a new garment is applied
-  useEffect(() => {
-    if (!garmentId) return;
-    setShowBadge(true);
-    const timer = setTimeout(() => setShowBadge(false), 2500);
-    return () => clearTimeout(timer);
-  }, [garmentId]);
 
   const garment = garmentId ? GARMENTS.find((g) => g.id === garmentId) : null;
   const imageSrc = garment ? garment.compositeSrc : BASE_MODELS[gender];
@@ -57,24 +47,34 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver, w
         {/* Model image */}
         <motion.div
           className="relative"
-          style={{ width, height }}
+          style={{ width, height, overflow: 'hidden' }}
           animate={{ scale: isOver ? 1.02 : 1 }}
           transition={{ duration: 0.2 }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageSrc}
-            alt={`${gender} model`}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              transition: 'opacity 0.3s ease',
-              userSelect: 'none',
-              pointerEvents: 'none',
-            }}
-            draggable={false}
-          />
+          <AnimatePresence mode="crossfade">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <motion.img
+              key={imageSrc}
+              src={imageSrc}
+              alt={`${gender} model`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'top center',
+                userSelect: 'none',
+                pointerEvents: 'none',
+              }}
+              draggable={false}
+            />
+          </AnimatePresence>
 
           <ShimmerEffect isShimmering={isShimmering} />
         </motion.div>
@@ -91,28 +91,6 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver, w
         />
       </div>
 
-      {/* Success badge */}
-      <AnimatePresence>
-        {showBadge && (
-          <motion.div
-            key="badge"
-            initial={{ opacity: 0, y: -8, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.9 }}
-            transition={{ duration: 0.25 }}
-            className="absolute top-12 px-3 py-1.5 rounded-full text-white text-xs font-semibold shadow-lg"
-            style={{
-              backgroundColor: '#f59e0b',
-              fontFamily: 'var(--font-inter)',
-              zIndex: 20,
-              right: gender === 'male' ? -20 : 'auto',
-              left: gender === 'female' ? -20 : 'auto',
-            }}
-          >
-            Try-on complete ✓
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   DndContext,
   DragStartEvent,
@@ -31,6 +31,46 @@ export default function HeroSection() {
   const [maleOver, setMaleOver] = useState(false);
   const [femaleOver, setFemaleOver] = useState(false);
 
+  // Refs to avoid stale closures in interval
+  const maleGarmentRef = useRef<GarmentId | null>(null);
+  const femaleGarmentRef = useRef<GarmentId | null>(null);
+  const isDraggingRef = useRef(false);
+
+  useEffect(() => { maleGarmentRef.current = maleGarment; }, [maleGarment]);
+  useEffect(() => { femaleGarmentRef.current = femaleGarment; }, [femaleGarment]);
+
+  const applyRandomMale = useCallback(() => {
+    const opts = GARMENTS.filter(g => g.gender === 'male' && g.id !== maleGarmentRef.current);
+    const pick = opts[Math.floor(Math.random() * opts.length)];
+    setMaleGarment(pick.id);
+    setMaleShimmering(true);
+    setTimeout(() => setMaleShimmering(false), 400);
+  }, []);
+
+  const applyRandomFemale = useCallback(() => {
+    const opts = GARMENTS.filter(g => g.gender === 'female' && g.id !== femaleGarmentRef.current);
+    const pick = opts[Math.floor(Math.random() * opts.length)];
+    setFemaleGarment(pick.id);
+    setFemaleShimmering(true);
+    setTimeout(() => setFemaleShimmering(false), 400);
+  }, []);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    const cycle = () => {
+      if (!isDraggingRef.current) {
+        applyRandomMale();
+        applyRandomFemale();
+      }
+      timer = setTimeout(cycle, 5000);
+    };
+
+    // First cycle after 3s
+    timer = setTimeout(cycle, 3000);
+    return () => clearTimeout(timer);
+  }, [applyRandomMale, applyRandomFemale]);
+
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } })
@@ -38,6 +78,7 @@ export default function HeroSection() {
 
   const handleDragStart = useCallback(({ active }: DragStartEvent) => {
     setActiveDragId(active.id as GarmentId);
+    isDraggingRef.current = true;
   }, []);
 
   const handleDragOver = useCallback(({ over }: DragOverEvent) => {
@@ -50,6 +91,7 @@ export default function HeroSection() {
       setActiveDragId(null);
       setMaleOver(false);
       setFemaleOver(false);
+      isDraggingRef.current = false;
 
       if (!over) return;
 
@@ -127,34 +169,41 @@ export default function HeroSection() {
             garmentId={femaleGarment}
             isShimmering={femaleShimmering}
             isOver={femaleOver}
-            width={538}
-            height={742}
+            width={553}
+            height={763}
           />
         </div>
 
-        {/* Center tagline */}
+        {/* Center tagline — behind models */}
         <div
           className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 select-none pointer-events-none"
-          style={{ top: '30%', zIndex: 15 }}
+          style={{ top: 'calc(10% - 20px)', zIndex: 3, marginLeft: '10px' }}
         >
           <h1
-            className="text-[28px] font-extrabold text-amber-900 tracking-wide"
-            style={{ fontFamily: 'var(--font-playfair)' }}
+            className="font-bold text-amber-900 text-center"
+            style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(32px, 3.6vw, 52px)', lineHeight: 1.15 }}
           >
-            FabricFit
+            Style seen.<br />Before it&apos;s sewn.
           </h1>
+        </div>
+
+        {/* Bottom subtitle + drag hint */}
+        <div
+          className="absolute left-1/2 flex flex-col items-center gap-3 select-none pointer-events-none"
+          style={{ top: 'calc(55% - 100px)', transform: 'translate(-50%, -50%)', zIndex: 3, marginLeft: '10px' }}
+        >
           <div className="w-16 h-px bg-gradient-to-r from-amber-600 to-amber-400" />
           <p
-            className="text-sm font-medium tracking-widest text-amber-700 uppercase text-center"
-            style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.12em' }}
+            className="font-medium tracking-widest text-amber-700 uppercase text-center"
+            style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em', fontSize: 'clamp(12px, 1.2vw, 16px)' }}
           >
             Virtual Try-On
             <br />
             for Fabric Outlets
           </p>
           <motion.p
-            className="mt-3 text-xs text-gray-400 bounce-hint"
-            style={{ fontFamily: 'var(--font-inter)' }}
+            className="text-gray-400"
+            style={{ fontFamily: 'var(--font-inter)', fontSize: '11px' }}
             animate={{ y: [0, 4, 0] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
           >

@@ -24,7 +24,7 @@ export default function Navbar() {
         className="text-xl font-bold text-amber-900 tracking-wide select-none"
         style={{ fontFamily: 'var(--font-playfair)' }}
       >
-        FabricFit
+        TrialRoomStudio
       </span>
 
       {/* Nav links */}

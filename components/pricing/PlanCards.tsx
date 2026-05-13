@@ -32,10 +32,10 @@ const PLANS: Plan[] = [
     monthly: null,
     annual: null,
     effectiveMonthly: null,
-    packStartsAt: '₹500',
+    packStartsAt: 'S$8',
     credits: 'Packs · credits never expire',
     tryOns: 'Pack-based',
-    rate: '₹25 / try-on',
+    rate: 'S$0.40 / try-on',
     features: [
       { label: 'Branches', value: '1' },
       { label: 'Catalogue exports', value: 'None' },
@@ -50,19 +50,19 @@ const PLANS: Plan[] = [
     id: 'starter',
     name: 'Starter',
     tagline: 'For small showrooms getting started with virtual try-on.',
-    monthly: 2500,
-    annual: 25000,
-    effectiveMonthly: 2083,
+    monthly: 40,
+    annual: 400,
+    effectiveMonthly: 34,
     packStartsAt: null,
     credits: '200 credits / month',
     tryOns: '60–80 fast try-ons',
-    rate: '₹25 / try-on',
+    rate: 'S$0.40 / try-on',
     features: [
       { label: 'Branches', value: '1' },
       { label: 'Catalogue exports', value: '10 / month' },
       { label: 'Storage', value: '200 items' },
       { label: 'Try-on history', value: '30 days' },
-      { label: 'Watermark', value: 'Removable (+₹499/mo)' },
+      { label: 'Watermark', value: 'Removable (+S$8/mo)' },
       { label: 'Support', value: 'Email' },
     ],
   },
@@ -70,13 +70,13 @@ const PLANS: Plan[] = [
     id: 'pro',
     name: 'Pro',
     tagline: 'For growing showrooms managing multiple branches.',
-    monthly: 4500,
-    annual: 45000,
-    effectiveMonthly: 3750,
+    monthly: 72,
+    annual: 720,
+    effectiveMonthly: 60,
     packStartsAt: null,
     credits: '400 credits / month',
     tryOns: '120–160 fast try-ons',
-    rate: '₹22.50 / try-on',
+    rate: 'S$0.36 / try-on',
     features: [
       { label: 'Branches', value: 'Up to 3' },
       { label: 'Catalogue exports', value: '50 / month' },
@@ -91,13 +91,13 @@ const PLANS: Plan[] = [
     id: 'business',
     name: 'Business',
     tagline: 'For enterprise retailers with unlimited scale and analytics.',
-    monthly: 10000,
-    annual: 100000,
-    effectiveMonthly: 8333,
+    monthly: 160,
+    annual: 1600,
+    effectiveMonthly: 134,
     packStartsAt: null,
     credits: '1,000 credits / month',
     tryOns: '300–400 fast try-ons',
-    rate: '₹20 / try-on',
+    rate: 'S$0.32 / try-on',
     features: [
       { label: 'Branches', value: 'Unlimited' },
       { label: 'Catalogue exports', value: '100 / month' },
@@ -110,7 +110,7 @@ const PLANS: Plan[] = [
 ];
 
 function fmt(n: number) {
-  return '₹' + n.toLocaleString('en-IN');
+  return 'S$' + n.toLocaleString('en-US');
 }
 
 interface CardProps {

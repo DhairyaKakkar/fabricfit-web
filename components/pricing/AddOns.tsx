@@ -8,7 +8,7 @@ const ADDONS = [
     name: 'Remove Watermark',
     description:
       'Strip the FabricFit watermark from all future try-on results. Does not apply retroactively to saved results. Cancelling re-applies the watermark from the next try-on.',
-    price: '₹499 / month',
+    price: 'S$8 / month',
     badge: 'Starter plan only',
   },
   {
@@ -16,7 +16,7 @@ const ADDONS = [
     name: 'Credit Top-Up',
     description:
       'Buy extra credits at the standard PAYG rate when you run out mid-month. Top-up credits never expire — even if you cancel your subscription.',
-    price: 'From ₹500',
+    price: 'From S$8',
     badge: 'All plans + PAYG',
   },
 ];

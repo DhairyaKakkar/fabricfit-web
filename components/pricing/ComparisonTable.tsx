@@ -22,7 +22,7 @@ const GROUPS: Group[] = [
     rows: [
       { label: 'Credits', values: ['Packs (no expiry)', '200 / month', '400 / month', '1,000 / month'] },
       { label: 'Fast try-ons (approx)', values: ['Pack-based', '60–80', '120–160', '300–400'] },
-      { label: 'Effective rate / try-on', values: ['₹25', '₹25', '₹22.50', '₹20'] },
+      { label: 'Effective rate / try-on', values: ['S$0.40', 'S$0.40', 'S$0.36', 'S$0.32'] },
     ],
   },
   {
@@ -43,7 +43,7 @@ const GROUPS: Group[] = [
   {
     heading: 'Appearance',
     rows: [
-      { label: 'FabricFit watermark', values: ['Always on', 'Removable (+₹499/mo)', 'Removed', 'Removed'] },
+      { label: 'FabricFit watermark', values: ['Always on', 'Removable (+S$8/mo)', 'Removed', 'Removed'] },
     ],
   },
   {
@@ -91,8 +91,8 @@ function Cell({ value, isPro }: { value: CellValue; isPro: boolean }) {
 export default function ComparisonTable({ billing }: { billing: BillingCycle }) {
   const prices =
     billing === 'annual'
-      ? ['From ₹500', '₹2,083 / mo', '₹3,750 / mo', '₹8,333 / mo']
-      : ['From ₹500', '₹2,500 / mo', '₹4,500 / mo', '₹10,000 / mo'];
+      ? ['From S$8', 'S$34 / mo', 'S$60 / mo', 'S$134 / mo']
+      : ['From S$8', 'S$40 / mo', 'S$72 / mo', 'S$160 / mo'];
 
   return (
     <section className="w-full py-16 px-4" style={{ backgroundColor: '#fdf3e3' }}>

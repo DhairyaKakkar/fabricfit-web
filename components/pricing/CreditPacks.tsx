@@ -3,9 +3,9 @@
 import { motion } from 'framer-motion';
 
 const PACKS = [
-  { name: 'Small', credits: 40, price: 500, tryOns: '~20 fast try-ons' },
-  { name: 'Standard', credits: 100, price: 1250, tryOns: '~50 fast try-ons' },
-  { name: 'Large', credits: 250, price: 3125, tryOns: '~125 fast try-ons' },
+  { name: 'Small', credits: 40, price: 8, tryOns: '~20 fast try-ons' },
+  { name: 'Standard', credits: 100, price: 20, tryOns: '~50 fast try-ons' },
+  { name: 'Large', credits: 250, price: 50, tryOns: '~125 fast try-ons' },
 ];
 
 const LIMITATIONS = [
@@ -64,7 +64,7 @@ export default function CreditPacks() {
                 className="text-3xl font-extrabold text-amber-900 mb-1 tabular-nums"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
-                ₹{pack.price.toLocaleString('en-IN')}
+                S${pack.price.toLocaleString('en-US')}
               </p>
               <p
                 className="text-xs text-gray-400 mb-1"

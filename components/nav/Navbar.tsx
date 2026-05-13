@@ -20,12 +20,13 @@ export default function Navbar() {
       }`}
     >
       {/* Logo */}
-      <span
-        className="text-xl font-bold text-amber-900 tracking-wide select-none"
+      <a
+        href="/"
+        className="text-xl font-bold text-amber-900 tracking-wide select-none hover:opacity-80 transition-opacity"
         style={{ fontFamily: 'var(--font-playfair)' }}
       >
         TrialRoomStudio
-      </span>
+      </a>
 
       {/* Nav links */}
       <nav className="flex-1 flex justify-center gap-8">

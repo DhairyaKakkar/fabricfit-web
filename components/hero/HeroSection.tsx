@@ -63,11 +63,11 @@ export default function HeroSection() {
         applyRandomMale();
         applyRandomFemale();
       }
-      timer = setTimeout(cycle, 5000);
+      timer = setTimeout(cycle, 10000);
     };
 
     // First cycle after 3s
-    timer = setTimeout(cycle, 3000);
+    timer = setTimeout(cycle, 10000);
     return () => clearTimeout(timer);
   }, [applyRandomMale, applyRandomFemale]);
 
@@ -183,7 +183,7 @@ export default function HeroSection() {
             className="font-bold text-amber-900 text-center"
             style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(32px, 3.6vw, 52px)', lineHeight: 1.15 }}
           >
-            Style seen.<br />Before it&apos;s sewn.
+            From fabric to look,<br />in seconds.
           </h1>
         </div>
 
@@ -224,7 +224,7 @@ export default function HeroSection() {
         <GarmentDragOverlay activeGarment={activeGarment} />
 
         {/* Post-interaction CTA */}
-        <HeroCta visible={hasInteracted} />
+        <HeroCta visible={true} />
       </section>
     </DndContext>
   );

@@ -20,12 +20,6 @@ export default function HeroCta({ visible }: Props) {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-30"
         >
-          <p
-            className="text-sm text-center text-gray-500 max-w-sm"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            This is what FabricFit does — on your customer, with your fabric. In 30 seconds.
-          </p>
           <div className="flex gap-3">
             <a
               href={`https://wa.me/${waNumber}`}

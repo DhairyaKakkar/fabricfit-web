@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, Fragment } from 'react';
 import { motion, useInView } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
 import { PRICING, Currency, countryToCurrency, fmtPrice } from '@/lib/pricing';
@@ -486,8 +486,8 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
             </thead>
             <tbody>
               {tableGroups.map((group) => (
-                <>
-                  <tr key={group.heading} style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                <Fragment key={group.heading}>
+                  <tr style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                     <td colSpan={5} style={{ padding: '8px 20px', fontFamily: 'var(--font-inter)', fontSize: 10, color: '#57534e', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600 }}>{group.heading}</td>
                   </tr>
                   {group.rows.map((row, ri) => (
@@ -498,7 +498,7 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
                       ))}
                     </tr>
                   ))}
-                </>
+                </Fragment>
               ))}
               <tr style={{ borderTop: '2px solid rgba(245,158,11,0.2)', background: '#1a1a1a' }}>
                 <td style={{ padding: '14px 20px', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#d97706', fontWeight: 600 }}>Price</td>

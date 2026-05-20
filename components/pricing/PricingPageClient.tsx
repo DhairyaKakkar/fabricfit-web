@@ -561,9 +561,9 @@ export default function PricingPageClient() {
   const [currency, setCurrency] = useState<Currency>('SGD');
 
   useEffect(() => {
-    const cached = localStorage.getItem('ff_currency') as Currency | null;
-    if (cached && PRICING[cached]) {
-      setCurrency(cached);
+    const raw = localStorage.getItem('ff_currency');
+    if (raw && raw in PRICING) {
+      setCurrency(raw as Currency);
       return;
     }
     const controller = new AbortController();
@@ -577,6 +577,10 @@ export default function PricingPageClient() {
       })
       .catch(() => {})
       .finally(() => clearTimeout(timer));
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleCurrencyChange = (c: Currency) => {

@@ -383,14 +383,15 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
 }
 
 /* ─── Add-Ons ────────────────────────────────────────────────────────────── */
-const ADDONS = [
-  { icon: '✦', name: 'Remove Watermark', desc: 'Strip the FabricFit watermark from all future try-on results. Starter plan only.', price: 'S$8 / month', badge: 'Starter only' },
-  { icon: '⚡', name: 'Credit Top-Up', desc: 'Buy extra credits at PAYG rate mid-month. Top-up credits never expire.', price: 'From S$8', badge: 'All plans' },
-];
-
-function AddOnsSection() {
+function AddOnsSection({ currency }: { currency: Currency }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
+  const c = PRICING[currency];
+  const addons = [
+    { icon: '✦', name: 'Remove Watermark', desc: 'Strip the FabricFit watermark from all future try-on results. Starter plan only.', price: c.addons.watermark, badge: 'Starter only' },
+    { icon: '⚡', name: 'Credit Top-Up', desc: 'Buy extra credits at PAYG rate mid-month. Top-up credits never expire.', price: c.addons.topupFrom, badge: 'All plans' },
+  ];
+
   return (
     <div ref={ref} style={{ background: '#0d0d0d', padding: '80px 24px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
       <div style={{ maxWidth: 700, margin: '0 auto' }}>
@@ -400,7 +401,7 @@ function AddOnsSection() {
           <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto', borderRadius: 2 }} />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
-          {ADDONS.map((addon, i) => (
+          {addons.map((addon, i) => (
             <motion.div key={addon.name}
               initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
               animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
@@ -649,7 +650,7 @@ export default function PricingPageClient() {
 
       <CreditPacksSection currency={currency} />
       <AddOnsSection currency={currency} />
-      <ComparisonSection yearly={yearly} currency={currency} />
+      <ComparisonSection yearly={yearly} />
       <FooterSection />
     </div>
   );

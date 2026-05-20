@@ -428,35 +428,38 @@ function AddOnsSection({ currency }: { currency: Currency }) {
 }
 
 /* ─── Comparison Table ───────────────────────────────────────────────────── */
-const TABLE_GROUPS = [
-  { heading: 'Credits & Try-Ons', rows: [
-    { label: 'Credits', values: ['Packs (no expiry)', '200 / month', '400 / month', '1,000 / month'] },
-    { label: 'Fast try-ons (approx)', values: ['Pack-based', '60–80', '120–160', '300–400'] },
-    { label: 'Effective rate / try-on', values: ['S$0.40', 'S$0.40', 'S$0.36', 'S$0.32'] },
-  ]},
-  { heading: 'Branches & Access', rows: [
-    { label: 'Branches', values: ['1', '1', 'Up to 3', 'Unlimited'] },
-    { label: 'Branch credit allocation', values: ['—', '—', '✓', '✓'] },
-  ]},
-  { heading: 'Exports & Storage', rows: [
-    { label: 'Catalogue exports / month', values: ['None', '10', '50', '100'] },
-    { label: 'Storage', values: ['Session only', '200 items', '500 items', 'Unlimited'] },
-    { label: 'Try-on history', values: ['15 days', '30 days', '90 days', '1 year'] },
-  ]},
-  { heading: 'Appearance', rows: [
-    { label: 'Watermark', values: ['Always on', 'Removable', 'Removed', 'Removed'] },
-  ]},
-  { heading: 'Support', rows: [
-    { label: 'Support tier', values: ['None', 'Email', 'Priority email', 'Dedicated manager'] },
-  ]},
-];
-
-function ComparisonSection({ yearly }: { yearly: boolean }) {
+function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Currency }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
+  const c = PRICING[currency];
+
+  const tableGroups = [
+    { heading: 'Credits & Try-Ons', rows: [
+      { label: 'Credits', values: ['Packs (no expiry)', '200 / month', '400 / month', '1,000 / month'] },
+      { label: 'Fast try-ons (approx)', values: ['Pack-based', '60–80', '120–160', '300–400'] },
+      { label: 'Effective rate / try-on', values: [c.rates.paygStarter, c.rates.paygStarter, c.rates.pro, c.rates.business] },
+    ]},
+    { heading: 'Branches & Access', rows: [
+      { label: 'Branches', values: ['1', '1', 'Up to 3', 'Unlimited'] },
+      { label: 'Branch credit allocation', values: ['—', '—', '✓', '✓'] },
+    ]},
+    { heading: 'Exports & Storage', rows: [
+      { label: 'Catalogue exports / month', values: ['None', '10', '50', '100'] },
+      { label: 'Storage', values: ['Session only', '200 items', '500 items', 'Unlimited'] },
+      { label: 'Try-on history', values: ['15 days', '30 days', '90 days', '1 year'] },
+    ]},
+    { heading: 'Appearance', rows: [
+      { label: 'Watermark', values: ['Always on', 'Removable', 'Removed', 'Removed'] },
+    ]},
+    { heading: 'Support', rows: [
+      { label: 'Support tier', values: ['None', 'Email', 'Priority email', 'Dedicated manager'] },
+    ]},
+  ];
+
+  const fmt = (n: number) => fmtPrice(n, currency);
   const prices = yearly
-    ? ['From S$8', 'S$34/mo', 'S$60/mo', 'S$134/mo']
-    : ['From S$8', 'S$40/mo', 'S$72/mo', 'S$160/mo'];
+    ? [c.addons.topupFrom, `${fmt(c.plans.starter.effectiveMonthly)}/mo`, `${fmt(c.plans.pro.effectiveMonthly)}/mo`, `${fmt(c.plans.business.effectiveMonthly)}/mo`]
+    : [c.addons.topupFrom, `${fmt(c.plans.starter.monthly)}/mo`, `${fmt(c.plans.pro.monthly)}/mo`, `${fmt(c.plans.business.monthly)}/mo`];
 
   return (
     <div ref={ref} style={{ background: '#111', padding: '80px 24px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
@@ -482,7 +485,7 @@ function ComparisonSection({ yearly }: { yearly: boolean }) {
               </tr>
             </thead>
             <tbody>
-              {TABLE_GROUPS.map((group) => (
+              {tableGroups.map((group) => (
                 <>
                   <tr key={group.heading} style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                     <td colSpan={5} style={{ padding: '8px 20px', fontFamily: 'var(--font-inter)', fontSize: 10, color: '#57534e', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600 }}>{group.heading}</td>

@@ -7,12 +7,23 @@
 
 * {
   box-sizing: border-box;
+  cursor: none !important;
 }
 
-html,
+html {
+  margin: 0;
+  padding: 0;
+  scroll-snap-type: y mandatory;
+}
+
 body {
   margin: 0;
   padding: 0;
+}
+
+.snap-start {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 /* Keyframes for the amber glow pulse on model hover */

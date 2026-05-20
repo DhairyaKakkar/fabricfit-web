@@ -3,99 +3,165 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import FeatureSlide from './FeatureSlide';
-import WorkflowCard from './WorkflowCard';
+import FabricWheel from './FabricWheel';
 
-const HEADLINE_WORDS = ['Walk in', 'a customer.', 'Walk out', 'a sale.'];
-
-const WORKFLOW_STEPS = [
-  { icon: '📸', label: 'Upload customer photo', delay: 0.6 },
-  { icon: '🧵', label: 'Match fabric & outfit',  delay: 0.75 },
-  { icon: '👀', label: 'Preview in seconds',      delay: 0.9 },
-  { icon: '✓',  label: 'Customer approves',       delay: 1.05 },
-];
-
-// Warm boutique lighting: deep amber-brown gradient
-const BG = 'radial-gradient(ellipse at 30% 60%, #3d1a00 0%, #1a0d00 50%, #0a0a0a 100%)';
-
-const ORBS = [
-  { size: 400, x: '5%',  y: '20%', opacity: 0.12, duration: 10 },
-  { size: 280, x: '70%', y: '60%', opacity: 0.09, duration: 13, color: '#92400e' },
-  { size: 180, x: '45%', y: '10%', opacity: 0.07, duration: 8  },
+const STEPS = [
+  { emoji: '📸', label: 'Upload customer photo' },
+  { emoji: '🧵', label: 'Select fabric & outfit' },
+  { emoji: '⚡', label: 'AI generates look in seconds' },
+  { emoji: '✅', label: 'Customer approves instantly' },
 ];
 
 export default function InStoreSlide() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-100px' });
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <FeatureSlide chapterLabel="01 / In-Store" background={BG} orbs={ORBS} id="in-store">
-      <div ref={ref} className="max-w-6xl mx-auto px-8 md:px-16 py-24 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+    <FeatureSlide id="in-store" background="#fafaf7">
+      {/* Ghost number */}
+      <div
+        className="absolute select-none pointer-events-none"
+        style={{
+          fontFamily: 'var(--font-playfair)',
+          fontSize: 'clamp(200px, 30vw, 380px)',
+          fontWeight: 700,
+          color: 'rgba(146,64,14,0.04)',
+          bottom: '-6%',
+          left: '-1%',
+          lineHeight: 1,
+          zIndex: 0,
+        }}
+      >
+        01
+      </div>
 
-        {/* Left: headline + copy */}
+      <div
+        ref={ref}
+        className="max-w-6xl mx-auto px-8 md:px-16 w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
+        style={{ zIndex: 1, position: 'relative' }}
+      >
+        {/* Left */}
         <div>
+          <motion.div
+            className="flex items-center gap-3 mb-6"
+            initial={{ opacity: 0, x: -20 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.45 }}
+          >
+            <div style={{ width: 24, height: 2, background: '#92400e', borderRadius: 2 }} />
+            <span
+              className="text-xs font-semibold tracking-widest uppercase"
+              style={{ fontFamily: 'var(--font-inter)', color: '#92400e', letterSpacing: '0.2em' }}
+            >
+              In-Store Experience
+            </span>
+          </motion.div>
+
           <h2
-            className="leading-tight mb-6"
             style={{
               fontFamily: 'var(--font-playfair)',
-              fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-              color: '#fef9f0',
+              fontSize: 'clamp(2.2rem, 4vw, 3.8rem)',
               fontWeight: 700,
+              color: '#1c1917',
+              lineHeight: 1.1,
+              marginBottom: '1.5rem',
             }}
           >
-            {HEADLINE_WORDS.map((word, i) => (
+            {['Walk in a customer.', 'Walk out a sale.'].map((line, i) => (
               <motion.span
                 key={i}
                 className="block"
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 28 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.55, delay: i * 0.12, ease: 'easeOut' }}
+                transition={{ duration: 0.6, delay: 0.1 + i * 0.14, type: 'spring', stiffness: 90 }}
               >
-                {word}
+                {i === 1
+                  ? <span style={{ color: '#92400e', fontStyle: 'italic' }}>{line}</span>
+                  : line
+                }
               </motion.span>
             ))}
           </h2>
 
           <motion.p
-            className="text-sm leading-relaxed max-w-sm"
-            style={{ fontFamily: 'var(--font-inter)', color: '#d6c4a0' }}
-            initial={{ opacity: 0, y: 16 }}
+            className="text-sm leading-relaxed mb-8"
+            style={{ fontFamily: 'var(--font-inter)', color: '#78716c', maxWidth: 320 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.55, ease: 'easeOut' }}
+            transition={{ duration: 0.5, delay: 0.4 }}
           >
-            Your staff uploads a photo of the customer. FabricFit overlays your store&apos;s outfits — Indian or western, men&apos;s or women&apos;s — in seconds. The customer sees themselves in the look before you stitch a single seam.
+            Staff uploads a customer photo. FabricFit overlays outfits in seconds. The customer sees themselves in the look before you stitch a single seam.
           </motion.p>
 
-          {/* Amber divider */}
-          <motion.div
-            className="mt-8 h-px w-16"
-            style={{ background: 'linear-gradient(to right, #d97706, transparent)' }}
-            initial={{ scaleX: 0, originX: 0 }}
-            animate={inView ? { scaleX: 1 } : {}}
-            transition={{ duration: 0.7, delay: 0.7 }}
-          />
+          {/* Steps */}
+          <div className="relative flex flex-col gap-3">
+            <motion.div
+              style={{
+                position: 'absolute',
+                left: 20,
+                top: 24,
+                width: 1,
+                background: 'linear-gradient(to bottom, #f59e0b 0%, transparent 100%)',
+              }}
+              initial={{ height: 0 }}
+              animate={inView ? { height: '80%' } : {}}
+              transition={{ duration: 0.9, delay: 0.5 }}
+            />
+            {STEPS.map((step, i) => (
+              <motion.div
+                key={step.label}
+                className="flex items-center gap-4"
+                initial={{ opacity: 0, x: -24 }}
+                animate={inView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.45, delay: 0.5 + i * 0.1, type: 'spring', stiffness: 140 }}
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    background: '#fff7ed',
+                    border: '1.5px solid #f59e0b',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 16,
+                    flexShrink: 0,
+                    zIndex: 1,
+                  }}
+                >
+                  {step.emoji}
+                </div>
+                <div
+                  style={{
+                    flex: 1,
+                    padding: '10px 16px',
+                    borderRadius: 12,
+                    background: '#fff',
+                    border: '1px solid #e7e5e4',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                    fontFamily: 'var(--font-inter)',
+                    fontSize: 13,
+                    color: '#1c1917',
+                    fontWeight: 500,
+                  }}
+                >
+                  {step.label}
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
-        {/* Right: workflow cards */}
-        <div className="flex flex-col gap-3 items-start md:items-end">
-          {WORKFLOW_STEPS.map((step) => (
-            <WorkflowCard key={step.label} {...step} inView={inView} />
-          ))}
-
-          {/* Ambient glow behind cards */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              width: 300,
-              height: 300,
-              right: '5%',
-              bottom: '10%',
-              background: 'radial-gradient(circle, #d97706 0%, transparent 70%)',
-              opacity: 0.06,
-              filter: 'blur(60px)',
-              zIndex: 0,
-            }}
-          />
-        </div>
+        {/* Right: Fabric Wheel */}
+        <motion.div
+          className="flex justify-center items-center"
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={inView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.7, delay: 0.3, type: 'spring', stiffness: 80 }}
+        >
+          <FabricWheel />
+        </motion.div>
       </div>
     </FeatureSlide>
   );

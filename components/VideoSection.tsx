@@ -2,7 +2,7 @@
 
 export default function VideoSection() {
   return (
-    <section className="w-full relative" style={{ backgroundColor: '#1a0a00' }}>
+    <section className="snap-start w-full relative" style={{ height: '100vh', backgroundColor: '#1a0a00' }}>
       <video
         src="/videos/hero-video.mp4"
         autoPlay
@@ -11,8 +11,8 @@ export default function VideoSection() {
         playsInline
         style={{
           width: '100%',
+          height: '100%',
           display: 'block',
-          maxHeight: '100vh',
           objectFit: 'cover',
         }}
       />

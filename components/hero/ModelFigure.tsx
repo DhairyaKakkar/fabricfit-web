@@ -49,7 +49,7 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver, w
           animate={{ scale: isOver ? 1.02 : 1 }}
           transition={{ duration: 0.2 }}
         >
-          <AnimatePresence mode="crossfade">
+          <AnimatePresence mode="sync">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <motion.img
               key={imageSrc}

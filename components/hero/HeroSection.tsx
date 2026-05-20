@@ -17,15 +17,13 @@ import { GARMENTS, GarmentId, Gender } from '@/lib/garments';
 import FloatingGarment from './FloatingGarment';
 import ModelFigure from './ModelFigure';
 import GarmentDragOverlay from './GarmentDragOverlay';
-import HeroCta from './HeroCta';
 
 const FABRIC_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 10 L10 0 M-2 2 L2-2 M18 22 L22 18' stroke='%2392400e' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M10 20 L20 10 M-2 18 L2 22 M18-2 L22 2' stroke='%2392400e' stroke-width='0.5' opacity='0.5'/%3E%3C/svg%3E")`;
 
 export default function HeroSection() {
   const [maleGarment, setMaleGarment] = useState<GarmentId | null>('kurta');
   const [femaleGarment, setFemaleGarment] = useState<GarmentId | null>('anarkali');
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const [activeDragId, setActiveDragId] = useState<GarmentId | null>(null);
+const [activeDragId, setActiveDragId] = useState<GarmentId | null>(null);
   const [maleShimmering, setMaleShimmering] = useState(false);
   const [femaleShimmering, setFemaleShimmering] = useState(false);
   const [maleOver, setMaleOver] = useState(false);
@@ -112,7 +110,6 @@ export default function HeroSection() {
         setTimeout(() => setFemaleShimmering(false), 400);
       }
 
-      setHasInteracted(true);
     },
     []
   );
@@ -174,32 +171,23 @@ export default function HeroSection() {
           />
         </div>
 
-        {/* Center tagline — behind models */}
+        {/* Center tagline */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 select-none pointer-events-none"
+          className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 select-none pointer-events-none"
           style={{ top: 'calc(10% - 20px)', zIndex: 3, marginLeft: '10px' }}
-        >
-          <h1
-            className="font-bold text-amber-900 text-center"
-            style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(32px, 3.6vw, 52px)', lineHeight: 1.15 }}
-          >
-            From fabric to look,<br />in seconds.
-          </h1>
-        </div>
-
-        {/* Bottom subtitle + drag hint */}
-        <div
-          className="absolute left-1/2 flex flex-col items-center gap-3 select-none pointer-events-none"
-          style={{ top: 'calc(55% - 100px)', transform: 'translate(-50%, -50%)', zIndex: 3, marginLeft: '10px' }}
         >
           <div className="w-16 h-px bg-gradient-to-r from-amber-600 to-amber-400" />
           <p
-            className="font-medium tracking-widest text-amber-700 uppercase text-center"
-            style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em', fontSize: 'clamp(12px, 1.2vw, 16px)' }}
+            className="font-medium text-amber-800 text-center"
+            style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(13px, 1.3vw, 17px)', maxWidth: 340, lineHeight: 1.5 }}
           >
-            Virtual Try-On
-            <br />
-            for Fabric Outlets
+            Virtual try-on for fashion retailers,<br />in-store and online.
+          </p>
+          <p
+            className="text-amber-700/70 text-center"
+            style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(11px, 1vw, 14px)', maxWidth: 300, lineHeight: 1.5 }}
+          >
+            Let customers preview outfits and fabrics before they buy.
           </p>
           <motion.p
             className="text-gray-400"
@@ -223,8 +211,6 @@ export default function HeroSection() {
         {/* Drag preview overlay */}
         <GarmentDragOverlay activeGarment={activeGarment} />
 
-        {/* Post-interaction CTA */}
-        <HeroCta visible={true} />
       </section>
     </DndContext>
   );

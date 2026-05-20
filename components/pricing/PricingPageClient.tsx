@@ -3,22 +3,18 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
-import { PRICING, Currency, countryToCurrency } from '@/lib/pricing';
+import { PRICING, Currency, countryToCurrency, fmtPrice } from '@/lib/pricing';
 
 export type BillingCycle = 'monthly' | 'annual';
 
 /* ─── Data ──────────────────────────────────────────────────────────────── */
-const PLANS = [
+const PLAN_META = [
   {
-    id: 'payg',
+    id: 'payg' as const,
     name: 'Pay As You Go',
     description: 'No commitment. Buy credits when you need them — they never expire.',
-    monthly: null as number | null,
-    yearly: null as number | null,
-    packFrom: 8,
     credits: 'Pack-based credits',
     tryOns: 'Pack-based',
-    rate: 'S$0.40 / try-on',
     popular: false,
     features: [
       'Branches: 1',
@@ -30,15 +26,11 @@ const PLANS = [
     ],
   },
   {
-    id: 'starter',
+    id: 'starter' as const,
     name: 'Starter',
     description: 'For small showrooms getting started with virtual try-on.',
-    monthly: 40,
-    yearly: 34,
-    packFrom: null,
     credits: '200 credits / month',
     tryOns: '60–80 try-ons',
-    rate: 'S$0.40 / try-on',
     popular: false,
     features: [
       'Branches: 1',
@@ -50,15 +42,11 @@ const PLANS = [
     ],
   },
   {
-    id: 'pro',
+    id: 'pro' as const,
     name: 'Pro',
     description: 'For growing showrooms managing multiple branches.',
-    monthly: 72,
-    yearly: 60,
-    packFrom: null,
     credits: '400 credits / month',
     tryOns: '120–160 try-ons',
-    rate: 'S$0.36 / try-on',
     popular: true,
     features: [
       'Branches: up to 3',
@@ -70,15 +58,11 @@ const PLANS = [
     ],
   },
   {
-    id: 'business',
+    id: 'business' as const,
     name: 'Business',
     description: 'For enterprise retailers with unlimited scale and analytics.',
-    monthly: 160,
-    yearly: 134,
-    packFrom: null,
     credits: '1,000 credits / month',
     tryOns: '300–400 try-ons',
-    rate: 'S$0.32 / try-on',
     popular: false,
     features: [
       'Branches: unlimited',
@@ -90,6 +74,8 @@ const PLANS = [
     ],
   },
 ];
+
+type PlanId = typeof PLAN_META[number]['id'];
 
 /* ─── Sparkles ───────────────────────────────────────────────────────────── */
 function Sparkles() {
@@ -226,11 +212,16 @@ function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: bo
 }
 
 /* ─── Plan card ──────────────────────────────────────────────────────────── */
-function PlanCard({ plan, yearly, index }: { plan: typeof PLANS[0]; yearly: boolean; index: number }) {
+function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]; yearly: boolean; currency: Currency; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
 
-  const price = yearly ? plan.yearly : plan.monthly;
+  const c = PRICING[currency];
+  const isPayg = plan.id === 'payg';
+  const planPricing = !isPayg ? c.plans[plan.id as Exclude<PlanId, 'payg'>] : null;
+  const price = planPricing ? (yearly ? planPricing.effectiveMonthly : planPricing.monthly) : null;
+  const packFrom = isPayg ? c.packs.small : null;
+  const rate = plan.id === 'pro' ? c.rates.pro : plan.id === 'business' ? c.rates.business : c.rates.paygStarter;
 
   return (
     <motion.div
@@ -268,12 +259,12 @@ function PlanCard({ plan, yearly, index }: { plan: typeof PLANS[0]; yearly: bool
 
       {/* Price */}
       <div style={{ marginBottom: 20 }}>
-        {plan.packFrom !== null ? (
+        {isPayg ? (
           <>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#78716c', marginRight: 2 }}>from S$</span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#78716c', marginRight: 2 }}>from {c.symbol}</span>
               <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2.2rem', fontWeight: 700, color: '#f59e0b', lineHeight: 1 }}>
-                <NumberFlow value={plan.packFrom} />
+                <NumberFlow key={currency} value={packFrom!} />
               </span>
             </div>
             <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#57534e', marginTop: 4 }}>per credit pack · never expire</p>
@@ -281,15 +272,15 @@ function PlanCard({ plan, yearly, index }: { plan: typeof PLANS[0]; yearly: bool
         ) : (
           <>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#78716c', marginRight: 2 }}>S$</span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#78716c', marginRight: 2 }}>{c.symbol}</span>
               <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2.2rem', fontWeight: 700, color: '#f59e0b', lineHeight: 1 }}>
-                <NumberFlow value={price!} />
+                <NumberFlow key={currency} value={price!} />
               </span>
               <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e', marginLeft: 4 }}>/{yearly ? 'mo' : 'month'}</span>
             </div>
-            {yearly && (
+            {yearly && planPricing && (
               <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#57534e', marginTop: 4 }}>
-                billed S${plan.yearly! * 12} annually
+                billed {fmtPrice(planPricing.annual, currency)} annually
               </p>
             )}
           </>
@@ -299,7 +290,7 @@ function PlanCard({ plan, yearly, index }: { plan: typeof PLANS[0]; yearly: bool
       {/* Credits chip */}
       <div style={{ background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: 10, padding: '10px 14px', marginBottom: 20 }}>
         <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: '#f59e0b' }}>{plan.credits}</p>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', marginTop: 2 }}>{plan.tryOns} · {plan.rate}</p>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', marginTop: 2 }}>{plan.tryOns} · {rate} / try-on</p>
       </div>
 
       <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', marginBottom: 16 }} />
@@ -327,9 +318,7 @@ function PlanCard({ plan, yearly, index }: { plan: typeof PLANS[0]; yearly: bool
           fontSize: 14,
           fontWeight: 600,
           textDecoration: 'none',
-          background: plan.popular
-            ? 'linear-gradient(to top, #92400e, #d97706)'
-            : 'transparent',
+          background: plan.popular ? 'linear-gradient(to top, #92400e, #d97706)' : 'transparent',
           color: plan.popular ? '#fff' : '#d97706',
           border: plan.popular ? 'none' : '1px solid rgba(217,119,6,0.4)',
           boxShadow: plan.popular ? '0 4px 20px rgba(217,119,6,0.3)' : 'none',
@@ -644,8 +633,8 @@ export default function PricingPageClient() {
 
       {/* Cards */}
       <div style={{ position: 'relative', zIndex: 10, maxWidth: 1100, margin: '0 auto', padding: '0 24px 80px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
-        {PLANS.map((plan, i) => (
-          <PlanCard key={plan.id} plan={plan} yearly={yearly} index={i} />
+        {PLAN_META.map((plan, i) => (
+          <PlanCard key={plan.id} plan={plan} yearly={yearly} currency={currency} index={i} />
         ))}
       </div>
 

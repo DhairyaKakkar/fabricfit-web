@@ -332,15 +332,16 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
 }
 
 /* ─── Credit Packs ───────────────────────────────────────────────────────── */
-const PACKS = [
-  { name: 'Small', credits: 40, price: 8, tryOns: '~20 fast try-ons' },
-  { name: 'Standard', credits: 100, price: 20, tryOns: '~50 fast try-ons' },
-  { name: 'Large', credits: 250, price: 50, tryOns: '~125 fast try-ons' },
-];
-
-function CreditPacksSection() {
+function CreditPacksSection({ currency }: { currency: Currency }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
+  const c = PRICING[currency];
+  const packs = [
+    { name: 'Small', credits: 40, price: c.packs.small, tryOns: '~20 fast try-ons' },
+    { name: 'Standard', credits: 100, price: c.packs.standard, tryOns: '~50 fast try-ons' },
+    { name: 'Large', credits: 250, price: c.packs.large, tryOns: '~125 fast try-ons' },
+  ];
+
   return (
     <div ref={ref} style={{ background: '#111', padding: '80px 24px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
@@ -353,7 +354,7 @@ function CreditPacksSection() {
           </p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, maxWidth: 680, margin: '0 auto' }}>
-          {PACKS.map((pack, i) => (
+          {packs.map((pack, i) => (
             <motion.div key={pack.name}
               initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
               animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
@@ -362,7 +363,9 @@ function CreditPacksSection() {
               style={{ background: '#1a1a1a', border: '1px solid rgba(245,158,11,0.12)', borderRadius: 16, padding: '24px 20px', textAlign: 'center' }}
             >
               <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#d97706', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>{pack.name}</p>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: '2rem', fontWeight: 700, color: '#f59e0b', lineHeight: 1 }}>S${pack.price}</p>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: '2rem', fontWeight: 700, color: '#f59e0b', lineHeight: 1 }}>
+                {fmtPrice(pack.price, currency)}
+              </p>
               <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e', marginTop: 4 }}>{pack.credits} credits</p>
               <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#78716c', marginTop: 2, marginBottom: 16 }}>{pack.tryOns}</p>
               <motion.a href="#" whileHover={{ scale: 1.03 }} style={{ display: 'block', padding: '10px 0', borderRadius: 10, border: '1px solid rgba(217,119,6,0.35)', color: '#d97706', fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>

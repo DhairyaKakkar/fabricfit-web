@@ -650,7 +650,7 @@ export default function PricingPageClient() {
 
       <CreditPacksSection currency={currency} />
       <AddOnsSection currency={currency} />
-      <ComparisonSection yearly={yearly} />
+      <ComparisonSection yearly={yearly} currency={currency} />
       <FooterSection />
     </div>
   );

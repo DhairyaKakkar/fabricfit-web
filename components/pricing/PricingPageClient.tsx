@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
+import { PRICING, Currency, countryToCurrency } from '@/lib/pricing';
 
 export type BillingCycle = 'monthly' | 'annual';
 
@@ -146,6 +147,43 @@ function VerticalCutReveal({ children }: { children: string }) {
         </span>
       ))}
     </span>
+  );
+}
+
+/* ─── Country Selector ───────────────────────────────────────────────────── */
+const CURRENCY_ORDER: Currency[] = ['SGD', 'INR', 'AED', 'USD'];
+
+function CountrySelector({ currency, onChange }: { currency: Currency; onChange: (c: Currency) => void }) {
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      <select
+        value={currency}
+        onChange={(e) => onChange(e.target.value as Currency)}
+        style={{
+          appearance: 'none',
+          WebkitAppearance: 'none',
+          background: 'rgba(245,158,11,0.08)',
+          border: '1px solid rgba(245,158,11,0.2)',
+          borderRadius: 100,
+          padding: '7px 32px 7px 14px',
+          fontFamily: 'var(--font-inter)',
+          fontSize: 13,
+          fontWeight: 500,
+          color: '#d97706',
+          cursor: 'pointer',
+          outline: 'none',
+        }}
+      >
+        {CURRENCY_ORDER.map((c) => (
+          <option key={c} value={c} style={{ background: '#1a1a1a', color: '#fef9f0' }}>
+            {PRICING[c].flag}  {PRICING[c].label}
+          </option>
+        ))}
+      </select>
+      <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#d97706', fontSize: 10, pointerEvents: 'none' }}>
+        ▾
+      </span>
+    </div>
   );
 }
 
@@ -520,6 +558,31 @@ function FooterSection() {
 /* ─── Main ───────────────────────────────────────────────────────────────── */
 export default function PricingPageClient() {
   const [yearly, setYearly] = useState(false);
+  const [currency, setCurrency] = useState<Currency>('SGD');
+
+  useEffect(() => {
+    const cached = localStorage.getItem('ff_currency') as Currency | null;
+    if (cached && PRICING[cached]) {
+      setCurrency(cached);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 2000);
+    fetch('https://ipapi.co/json/', { signal: controller.signal })
+      .then((r) => r.json())
+      .then((data: { country_code?: string }) => {
+        const c = countryToCurrency(data.country_code ?? '');
+        setCurrency(c);
+        localStorage.setItem('ff_currency', c);
+      })
+      .catch(() => {})
+      .finally(() => clearTimeout(timer));
+  }, []);
+
+  const handleCurrencyChange = (c: Currency) => {
+    setCurrency(c);
+    localStorage.setItem('ff_currency', c);
+  };
 
   return (
     <div style={{ background: '#0a0a0a', minHeight: '100vh', overflowX: 'hidden', position: 'relative' }}>
@@ -564,8 +627,14 @@ export default function PricingPageClient() {
           Trusted by fabric showrooms across India &amp; Singapore. All plans include a 14-day free trial — no card required.
         </motion.p>
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.65 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.65 }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}
+        >
           <BillingToggle yearly={yearly} onChange={setYearly} />
+          <CountrySelector currency={currency} onChange={handleCurrencyChange} />
         </motion.div>
       </div>
 
@@ -578,13 +647,13 @@ export default function PricingPageClient() {
 
       <div style={{ textAlign: 'center', paddingBottom: 60, position: 'relative', zIndex: 10 }}>
         <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e' }}>
-          All prices in SGD · 40 free credits on signup · no card required
+          All prices in {PRICING[currency].label} · 40 free credits on signup · no card required
         </p>
       </div>
 
-      <CreditPacksSection />
-      <AddOnsSection />
-      <ComparisonSection yearly={yearly} />
+      <CreditPacksSection currency={currency} />
+      <AddOnsSection currency={currency} />
+      <ComparisonSection yearly={yearly} currency={currency} />
       <FooterSection />
     </div>
   );

@@ -11,7 +11,7 @@ import {
   useSensors,
   DragOverEvent,
 } from '@dnd-kit/core';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GARMENTS, GarmentId, Gender } from '@/lib/garments';
 import FloatingGarment from './FloatingGarment';
 import ModelFigure from './ModelFigure';
@@ -19,6 +19,66 @@ import GarmentDragOverlay from './GarmentDragOverlay';
 import HeroCta from './HeroCta';
 
 const FABRIC_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 10 L10 0 M-2 2 L2-2 M18 22 L22 18' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M10 20 L20 10 M-2 18 L2 22 M18-2 L22 2' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3C/svg%3E")`;
+
+// ── Mobile floating garment positions (orbit around centered model) ───────────
+interface MobileGarmentPos {
+  id: GarmentId;
+  side: 'left' | 'right';
+  offset: number; // px from edge — varies per garment to create an arc
+  top: string;    // % of viewport height
+  rot: number;
+  dur: number;
+}
+
+// Left: 3 garments at 3 heights with slight x variation (arc inward at mid)
+// Right: 2 garments mirrored. Both groups close to model edges.
+const MOBILE_GARMENT_LAYOUT: MobileGarmentPos[] = [
+  { id: 'kurta',         side: 'left',  offset: 6,  top: '30%', rot: 10,  dur: 4.2 },
+  { id: 'sherwani',      side: 'left',  offset: 18, top: '48%', rot: -6,  dur: 3.5 },
+  { id: 'nehru-coat',    side: 'left',  offset: 6,  top: '64%', rot: 12,  dur: 4.7 },
+  { id: 'shirt',         side: 'right', offset: 6,  top: '33%', rot: -8,  dur: 3.8 },
+  { id: 'blazer',        side: 'right', offset: 18, top: '51%', rot: -10, dur: 3.6 },
+  { id: 'anarkali',      side: 'left',  offset: 6,  top: '30%', rot: 6,   dur: 4.4 },
+  { id: 'saree',         side: 'left',  offset: 18, top: '48%', rot: -7,  dur: 3.9 },
+  { id: 'lehenga',       side: 'left',  offset: 6,  top: '64%', rot: 9,   dur: 4.6 },
+  { id: 'casual-dress',  side: 'right', offset: 6,  top: '33%', rot: 8,   dur: 4.1 },
+  { id: 'jumpsuit',      side: 'right', offset: 18, top: '51%', rot: -12, dur: 3.5 },
+];
+
+function MobileGarmentFloat({ pos, src, label, idx }: {
+  pos: MobileGarmentPos; src: string; label: string; idx: number;
+}) {
+  return (
+    <motion.div
+      style={{ position: 'absolute', [pos.side]: pos.offset, top: pos.top, zIndex: 4, pointerEvents: 'none' }}
+      initial={{ opacity: 0, scale: 0.3 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.3 }}
+      transition={{ duration: 0.35, delay: idx * 0.07 }}
+    >
+      <motion.div
+        animate={{ y: [0, -9, 0, 9, 0], rotate: [pos.rot, pos.rot + 3, pos.rot, pos.rot - 3, pos.rot] }}
+        transition={{ duration: pos.dur, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        {/* White card so garment pops against the model background */}
+        <div style={{
+          background: 'rgba(255,255,255,0.93)',
+          borderRadius: 14,
+          padding: 6,
+          boxShadow: '0 6px 24px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.06)',
+        }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt={label} style={{ width: 82, height: 110, objectFit: 'contain', display: 'block', userSelect: 'none' }} />
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: '#71717a', textAlign: 'center', marginTop: 4, lineHeight: 1 }}>
+            {label}
+          </p>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function HeroSection() {
   const [maleGarment, setMaleGarment] = useState<GarmentId | null>('kurta');
@@ -28,7 +88,9 @@ export default function HeroSection() {
   const [femaleShimmering, setFemaleShimmering] = useState(false);
   const [maleOver, setMaleOver] = useState(false);
   const [femaleOver, setFemaleOver] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [activeMobileGender, setActiveMobileGender] = useState<'male' | 'female'>('male');
+  const [cycleKey, setCycleKey] = useState(0);
 
   const maleGarmentRef = useRef<GarmentId | null>(null);
   const femaleGarmentRef = useRef<GarmentId | null>(null);
@@ -40,6 +102,15 @@ export default function HeroSection() {
     window.addEventListener('resize', check, { passive: true });
     return () => window.removeEventListener('resize', check);
   }, []);
+
+  // Cycle male ↔ female every 30s on mobile — resets when user manually taps
+  useEffect(() => {
+    if (isMobile !== true) return;
+    const timer = setInterval(() => {
+      setActiveMobileGender(g => g === 'male' ? 'female' : 'male');
+    }, 30000);
+    return () => clearInterval(timer);
+  }, [isMobile, cycleKey]);
 
   useEffect(() => { maleGarmentRef.current = maleGarment; }, [maleGarment]);
   useEffect(() => { femaleGarmentRef.current = femaleGarment; }, [femaleGarment]);
@@ -128,129 +199,183 @@ export default function HeroSection() {
           style={{ backgroundImage: FABRIC_TEXTURE, opacity: 0.04, zIndex: 0 }}
         />
 
-        {/* ── Desktop: models + garments ─────────────────── */}
-        {!isMobile && (
+        {/* ── Desktop: models + garments (UNCHANGED) ──────── */}
+        {isMobile === false && (
           <>
-            {/* Male model — left */}
             <div
               className="absolute flex items-end"
               style={{ left: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
             >
-              <ModelFigure
-                gender="male"
-                garmentId={maleGarment}
-                isShimmering={maleShimmering}
-                isOver={maleOver}
-                width={547}
-                height={791}
-              />
+              <ModelFigure gender="male" garmentId={maleGarment} isShimmering={maleShimmering} isOver={maleOver} width={547} height={791} />
             </div>
-
-            {/* Female model — right */}
             <div
               className="absolute flex items-end"
               style={{ right: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
             >
-              <ModelFigure
-                gender="female"
-                garmentId={femaleGarment}
-                isShimmering={femaleShimmering}
-                isOver={femaleOver}
-                width={553}
-                height={763}
-              />
+              <ModelFigure gender="female" garmentId={femaleGarment} isShimmering={femaleShimmering} isOver={femaleOver} width={553} height={763} />
             </div>
-
-            {/* Floating garments */}
             {GARMENTS.map((garment) => (
               <FloatingGarment key={garment.id} garment={garment} activeDragId={activeDragId} />
             ))}
-
             <GarmentDragOverlay activeGarment={activeGarment} />
           </>
         )}
 
-        {/* ── Mobile: two small models side by side ──────── */}
-        {isMobile && (
+        {/* ── Mobile: one centered model cycling + floating garments ── */}
+        {isMobile === true && (
+          <>
+            {/* Title + subtitle stacked at top — no overlap */}
+            <div
+              className="absolute left-0 right-0 px-5 text-center select-none pointer-events-none"
+              style={{ top: 64, zIndex: 6 }}
+            >
+              <h1
+                className="font-bold text-zinc-950"
+                style={{ fontFamily: 'var(--font-playfair)', fontSize: 32, lineHeight: 1.18, marginBottom: 8 }}
+              >
+                From fabric to look,<br />in seconds.
+              </h1>
+              <div style={{ width: 36, height: 1, background: '#d4d4d8', margin: '0 auto 6px' }} />
+              <p
+                className="font-medium uppercase text-zinc-500"
+                style={{ fontFamily: 'var(--font-inter)', fontSize: 9.5, letterSpacing: '0.14em', lineHeight: 1.6 }}
+              >
+                Virtual try-on for fashion retailers,<br />in-store and online.
+              </p>
+            </div>
+
+            {/* Floating garments — switch with gender */}
+            <AnimatePresence>
+              {MOBILE_GARMENT_LAYOUT
+                .filter(pos => GARMENTS.find(g => g.id === pos.id)!.gender === activeMobileGender)
+                .map((pos, idx) => {
+                  const g = GARMENTS.find(gg => gg.id === pos.id)!;
+                  return (
+                    <MobileGarmentFloat
+                      key={`${activeMobileGender}-${pos.id}`}
+                      pos={pos}
+                      src={g.floatSrc}
+                      label={g.label}
+                      idx={idx}
+                    />
+                  );
+                })}
+            </AnimatePresence>
+
+            {/* Centered model — fades between male and female */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 78,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 2,
+                pointerEvents: 'none',
+                width: 547,
+              }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMobileGender}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.55 }}
+                >
+                  <div style={{ transform: 'scale(0.62)', transformOrigin: 'bottom center' }}>
+                    <ModelFigure
+                      gender={activeMobileGender}
+                      garmentId={activeMobileGender === 'male' ? maleGarment : femaleGarment}
+                      isShimmering={false}
+                      isOver={false}
+                      width={547}
+                      height={activeMobileGender === 'male' ? 791 : 763}
+                    />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Gender toggle — tap to switch, auto-cycles every 30s */}
+            <div
+              className="absolute flex gap-2 select-none"
+              style={{ bottom: 86, left: '50%', transform: 'translateX(-50%)', zIndex: 6 }}
+            >
+              {(['male', 'female'] as const).map(g => (
+                <button
+                  key={g}
+                  onClick={() => { setActiveMobileGender(g); setCycleKey(k => k + 1); }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    padding: '5px 13px',
+                    borderRadius: 20,
+                    border: '1.5px solid',
+                    borderColor: g === activeMobileGender ? '#3f3f46' : '#d4d4d8',
+                    background: g === activeMobileGender ? '#3f3f46' : 'rgba(255,255,255,0.85)',
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-inter)',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: g === activeMobileGender ? '#ffffff' : '#a1a1aa',
+                    transition: 'all 0.3s ease',
+                    backdropFilter: 'blur(6px)',
+                  }}
+                >
+                  {g === 'male' ? '♂ Man' : '♀ Woman'}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* ── Headline — desktop + SSR only ───────────────── */}
+        {isMobile !== true && (
           <div
-            className="absolute inset-x-0 bottom-0 flex justify-between items-end pointer-events-none"
-            style={{ zIndex: 10 }}
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 select-none pointer-events-none px-4"
+            style={{ top: 'clamp(60px, 10%, 80px)', zIndex: 3 }}
           >
-            <div style={{ transform: 'scale(0.52)', transformOrigin: 'bottom left' }}>
-              <ModelFigure
-                gender="male"
-                garmentId={maleGarment}
-                isShimmering={maleShimmering}
-                isOver={false}
-                width={547}
-                height={791}
-              />
-            </div>
-            <div style={{ transform: 'scale(0.52)', transformOrigin: 'bottom right' }}>
-              <ModelFigure
-                gender="female"
-                garmentId={femaleGarment}
-                isShimmering={femaleShimmering}
-                isOver={false}
-                width={553}
-                height={763}
-              />
-            </div>
+            <h1
+              className="font-bold text-zinc-950 text-center"
+              style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(36px, 6vw, 52px)', lineHeight: 1.15 }}
+            >
+              From fabric to look,<br />in seconds.
+            </h1>
           </div>
         )}
 
-        {/* ── Center headline ─────────────────────────────── */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 select-none pointer-events-none px-4"
-          style={{ top: 'clamp(60px, 10%, 80px)', zIndex: 3 }}
-        >
-          <h1
-            className="font-bold text-zinc-950 text-center"
-            style={{
-              fontFamily: 'var(--font-playfair)',
-              fontSize: 'clamp(26px, 5vw, 52px)',
-              lineHeight: 1.15,
-            }}
+        {/* ── Subtitle — desktop + SSR only ───────────────── */}
+        {isMobile !== true && (
+          <div
+            className="absolute left-1/2 flex flex-col items-center gap-2 select-none pointer-events-none px-6 text-center"
+            style={{ top: '50%', transform: 'translate(-50%, -50%)', zIndex: 3, marginTop: 'clamp(-60px, -5vw, -40px)' }}
           >
-            From fabric to look,<br />in seconds.
-          </h1>
-        </div>
-
-        {/* ── Subtitle ────────────────────────────────────── */}
-        <div
-          className="absolute left-1/2 flex flex-col items-center gap-2 select-none pointer-events-none px-6 text-center"
-          style={{
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 3,
-            marginTop: 'clamp(-60px, -5vw, -40px)',
-          }}
-        >
-          <div className="w-12 h-px bg-zinc-300" />
-          <p
-            className="font-medium tracking-widest text-zinc-500 uppercase text-center"
-            style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.12em', fontSize: 'clamp(10px, 1.2vw, 14px)' }}
-          >
-            Virtual try-on for fashion retailers,<br />in-store and online.
-          </p>
-          <p
-            className="text-zinc-400 text-center"
-            style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(10px, 0.9vw, 13px)', maxWidth: 280, lineHeight: 1.5 }}
-          >
-            Let customers preview outfits and fabrics before they buy.
-          </p>
-          {/* Drag hint — desktop only */}
-          {!isMobile && (
-            <motion.p
-              className="text-zinc-400"
-              style={{ fontFamily: 'var(--font-inter)', fontSize: '11px' }}
-              animate={{ y: [0, 4, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            <div className="w-12 h-px bg-zinc-300" />
+            <p
+              className="font-medium tracking-widest text-zinc-500 uppercase text-center"
+              style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.12em', fontSize: 'clamp(10px, 1.2vw, 14px)' }}
             >
-              ↓ Drag a garment onto a model ↓
-            </motion.p>
-          )}
-        </div>
+              Virtual try-on for fashion retailers,<br />in-store and online.
+            </p>
+            <p
+              className="text-zinc-400 text-center"
+              style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(10px, 0.9vw, 13px)', maxWidth: 280, lineHeight: 1.5 }}
+            >
+              Let customers preview outfits and fabrics before they buy.
+            </p>
+            {isMobile === false && (
+              <motion.p
+                className="text-zinc-400"
+                style={{ fontFamily: 'var(--font-inter)', fontSize: '11px' }}
+                animate={{ y: [0, 4, 0] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                ↓ Drag a garment onto a model ↓
+              </motion.p>
+            )}
+          </div>
+        )}
 
         {/* ── CTA buttons — always visible ────────────────── */}
         <HeroCta visible />

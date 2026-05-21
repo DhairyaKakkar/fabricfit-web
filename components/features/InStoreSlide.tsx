@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import FeatureSlide from './FeatureSlide';
 
@@ -27,16 +27,34 @@ const ORBS = [
   { angle: (7 * Math.PI) / 4 },
 ];
 
-const RADIUS = 182;
+const BASE_SIZE = 450;
+const BASE_RADIUS = 182;
+const BASE_ORB = 78;
 
 function ExpandingOrbs() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: false, margin: '-100px' });
+  const [size, setSize] = useState(BASE_SIZE);
+
+  useEffect(() => {
+    const measure = () => {
+      const vw = window.innerWidth;
+      // On mobile use almost full width, cap at BASE_SIZE
+      setSize(Math.min(BASE_SIZE, vw < 768 ? vw - 32 : BASE_SIZE));
+    };
+    measure();
+    window.addEventListener('resize', measure, { passive: true });
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  const scale = size / BASE_SIZE;
+  const radius = Math.round(BASE_RADIUS * scale);
+  const orbSize = Math.round(BASE_ORB * scale);
 
   return (
     <div
       ref={ref}
-      style={{ position: 'relative', width: 450, height: 450, flexShrink: 0 }}
+      style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}
     >
       {/* Outer ring */}
       <motion.div
@@ -79,13 +97,13 @@ function ExpandingOrbs() {
           key={i}
           style={{
             position: 'absolute',
-            width: 78,
-            height: 78,
+            width: orbSize,
+            height: orbSize,
             top: '50%',
             left: '50%',
-            marginTop: -39,
-            marginLeft: -39,
-            borderRadius: 18,
+            marginTop: -orbSize / 2,
+            marginLeft: -orbSize / 2,
+            borderRadius: Math.round(18 * scale),
             overflow: 'hidden',
             border: '3px solid white',
             boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
@@ -93,8 +111,8 @@ function ExpandingOrbs() {
           }}
           initial={{ x: 0, y: 0, opacity: 0, scale: 0 }}
           animate={inView ? {
-            x: Math.cos(orb.angle) * RADIUS,
-            y: Math.sin(orb.angle) * RADIUS,
+            x: Math.cos(orb.angle) * radius,
+            y: Math.sin(orb.angle) * radius,
             opacity: 1,
             scale: 1,
           } : {}}
@@ -270,16 +288,14 @@ export default function InStoreSlide() {
           </div>
         </div>
 
-        {/* Right: Expanding orbs — scaled down on narrow screens */}
+        {/* Right: Expanding orbs — fully responsive via JS measurement */}
         <motion.div
           className="flex justify-center items-center"
           initial={{ opacity: 0, scale: 0.85 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.7, delay: 0.3, type: 'spring', stiffness: 80 }}
         >
-          <div className="orbs-scaler">
-            <ExpandingOrbs />
-          </div>
+          <ExpandingOrbs />
         </motion.div>
       </div>
     </FeatureSlide>

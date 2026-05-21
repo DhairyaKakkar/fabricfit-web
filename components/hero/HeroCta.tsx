@@ -18,14 +18,13 @@ export default function HeroCta({ visible }: Props) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 16 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-30"
+          className="absolute bottom-8 left-0 right-0 flex justify-center gap-3 z-30 px-4"
         >
-          <div className="flex gap-3">
             <a
               href={`https://wa.me/${waNumber}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-semibold shadow-md hover:shadow-lg transition-shadow"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-md hover:shadow-lg transition-shadow whitespace-nowrap"
               style={{ backgroundColor: '#25d366', fontFamily: 'var(--font-inter)' }}
             >
               <WhatsAppIcon />
@@ -33,12 +32,11 @@ export default function HeroCta({ visible }: Props) {
             </a>
             <a
               href="#demo"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-semibold shadow-md hover:bg-zinc-700 transition-colors"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl text-white text-sm font-semibold shadow-md hover:bg-zinc-700 transition-colors whitespace-nowrap"
               style={{ backgroundColor: '#09090b', fontFamily: 'var(--font-inter)' }}
             >
               Book a Free Demo →
             </a>
-          </div>
         </motion.div>
       )}
     </AnimatePresence>

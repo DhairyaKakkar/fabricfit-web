@@ -30,7 +30,18 @@ function ScatterArc() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: false, margin: '-80px' });
   const [phase, setPhase] = useState<ArcPhase>('scatter');
+  const [containerSize, setContainerSize] = useState(320);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    const measure = () => {
+      const vw = window.innerWidth;
+      setContainerSize(Math.min(360, vw < 768 ? vw - 48 : 360));
+    };
+    measure();
+    window.addEventListener('resize', measure, { passive: true });
+    return () => window.removeEventListener('resize', measure);
+  }, []);
 
   useEffect(() => {
     timers.current.forEach(clearTimeout);
@@ -47,10 +58,10 @@ function ScatterArc() {
 
   const scatterPositions = useMemo(() =>
     SCATTER_IMAGES.map(() => ({
-      x: (Math.random() - 0.5) * 480,
-      y: (Math.random() - 0.5) * 340,
+      x: (Math.random() - 0.5) * containerSize * 0.7,
+      y: (Math.random() - 0.5) * containerSize * 0.7,
       rotation: (Math.random() - 0.5) * 120,
-    })), []);
+    })), [containerSize]);
 
   const getTarget = (i: number) => {
     if (phase === 'scatter') return {
@@ -58,17 +69,18 @@ function ScatterArc() {
       rotate: scatterPositions[i].rotation, opacity: 0, scale: 0.4,
     };
     if (phase === 'line') {
-      const spacing = 66;
+      const spacing = Math.min(52, (containerSize * 0.82) / (SCATTER_IMAGES.length - 1));
       const total = (SCATTER_IMAGES.length - 1) * spacing;
-      return { x: i * spacing - total / 2, y: 0, rotate: 0, opacity: 1, scale: 0.85 };
+      return { x: i * spacing - total / 2, y: 0, rotate: 0, opacity: 1, scale: 0.8 };
     }
     const angle = (i / SCATTER_IMAGES.length) * 360 - 90;
     const rad = (angle * Math.PI) / 180;
-    return { x: Math.cos(rad) * 138, y: Math.sin(rad) * 138, rotate: 0, opacity: 1, scale: 1 };
+    const circleRadius = containerSize * 0.36;
+    return { x: Math.cos(rad) * circleRadius, y: Math.sin(rad) * circleRadius, rotate: 0, opacity: 1, scale: 1 };
   };
 
   return (
-    <div ref={ref} className="relative flex items-center justify-center scatter-arc-container" style={{ width: 'min(360px, 80vw)', height: 'min(360px, 80vw)' }}>
+    <div ref={ref} className="relative flex items-center justify-center scatter-arc-container" style={{ width: containerSize, height: containerSize }}>
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{ border: '1px solid rgba(255,255,255,0.08)' }}
@@ -151,13 +163,22 @@ function FlowSection({ children, bg = '#09090b', 'aria-label': ariaLabel }: Flow
 function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     const update = () => setReducedMotion(mq.matches);
     update();
     mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
+
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile, { passive: true });
+
+    return () => {
+      mq.removeEventListener('change', update);
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   useGSAP(
@@ -170,6 +191,7 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
       if (sections.length === 0) return;
 
       const triggers: ScrollTrigger[] = [];
+      const mobile = window.innerWidth < 768;
 
       sections.forEach((section, i) => {
         gsap.set(section, { zIndex: i + 1 });
@@ -177,7 +199,7 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
         const inner = section.querySelector<HTMLElement>('.flow-art-container');
         if (!inner) return;
 
-        if (i > 0) {
+        if (i > 0 && !mobile) {
           gsap.set(inner, { rotation: 30, transformOrigin: 'bottom left' });
           const tween = gsap.to(inner, {
             rotation: 0,
@@ -192,7 +214,7 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
           if (tween.scrollTrigger) triggers.push(tween.scrollTrigger);
         }
 
-        if (i < sections.length - 1) {
+        if (i < sections.length - 1 && !mobile) {
           triggers.push(
             ScrollTrigger.create({
               trigger: section,
@@ -208,7 +230,7 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
       ScrollTrigger.refresh();
       return () => triggers.forEach((t) => t.kill());
     },
-    { scope: containerRef, dependencies: [React.Children.count(children), reducedMotion] },
+    { scope: containerRef, dependencies: [React.Children.count(children), reducedMotion, isMobile] },
   );
 
   return (

@@ -48,14 +48,13 @@ function TiltCard({ inView }: { inView: boolean }) {
         rotateY,
         transformStyle: 'preserve-3d',
         transformPerspective: 800,
-        border: '1px solid #e7e5e4',
+        border: '1px solid #e4e4e7',
         borderRadius: 20,
         overflow: 'hidden',
-        background: '#fff',
+        background: '#ffffff',
         boxShadow: '0 12px 48px rgba(0,0,0,0.08)',
         maxWidth: 380,
         width: '100%',
-        cursor: 'none',
       }}
     >
       {/* Glow overlay */}
@@ -64,17 +63,17 @@ function TiltCard({ inView }: { inView: boolean }) {
           position: 'absolute',
           inset: 0,
           pointerEvents: 'none',
-          background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(245,158,11,0.07) 0%, transparent 60%)`,
+          background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(0,0,0,0.04) 0%, transparent 60%)`,
           zIndex: 10,
         }}
       />
 
       {/* Chrome */}
-      <div style={{ background: '#f5f5f4', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 6, borderBottom: '1px solid #e7e5e4' }}>
+      <div style={{ background: '#f9fafb', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 6, borderBottom: '1px solid #e4e4e7' }}>
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444' }} />
-        <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#f59e0b' }} />
+        <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#eab308' }} />
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#22c55e' }} />
-        <div style={{ flex: 1, marginLeft: 10, background: 'white', borderRadius: 6, padding: '4px 12px', fontSize: 11, color: '#a8a29e', fontFamily: 'var(--font-inter)', border: '1px solid #e7e5e4' }}>
+        <div style={{ flex: 1, marginLeft: 10, background: 'white', borderRadius: 6, padding: '4px 12px', fontSize: 11, color: '#a1a1aa', fontFamily: 'var(--font-inter)', border: '1px solid #e4e4e7' }}>
           yourstore.com/product
         </div>
       </div>
@@ -82,28 +81,28 @@ function TiltCard({ inView }: { inView: boolean }) {
       {/* Content */}
       <div style={{ padding: 24, position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', gap: 16, marginBottom: 20 }}>
-          <div style={{ width: 72, height: 88, borderRadius: 10, background: 'linear-gradient(135deg, #fef3c7, #fed7aa)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}>
-            🧥
+          <div style={{ width: 72, height: 88, borderRadius: 10, background: 'linear-gradient(135deg, #f4f4f5, #e4e4e7)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 32, height: 40, background: '#d4d4d8', borderRadius: 6 }} />
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ height: 12, width: '80%', background: '#f5f5f4', borderRadius: 6, marginBottom: 8 }} />
-            <div style={{ height: 10, width: '55%', background: '#f5f5f4', borderRadius: 6, marginBottom: 6 }} />
-            <div style={{ height: 10, width: '40%', background: '#f5f5f4', borderRadius: 6, marginBottom: 16 }} />
+            <div style={{ height: 12, width: '80%', background: '#f4f4f5', borderRadius: 6, marginBottom: 8 }} />
+            <div style={{ height: 10, width: '55%', background: '#f4f4f5', borderRadius: 6, marginBottom: 6 }} />
+            <div style={{ height: 10, width: '40%', background: '#f4f4f5', borderRadius: 6, marginBottom: 16 }} />
             <motion.div
-              style={{ background: '#92400e', color: '#fff', borderRadius: 10, padding: '8px 18px', fontSize: 12, fontFamily: 'var(--font-inter)', fontWeight: 600, display: 'inline-block' }}
+              style={{ background: '#09090b', color: '#fff', borderRadius: 10, padding: '8px 18px', fontSize: 12, fontFamily: 'var(--font-inter)', fontWeight: 600, display: 'inline-block' }}
               whileHover={{ scale: 1.05 }}
-              animate={{ boxShadow: ['0 0 0 0 rgba(146,64,14,0.3)', '0 0 0 8px rgba(146,64,14,0)', '0 0 0 0 rgba(146,64,14,0)'] }}
+              animate={{ boxShadow: ['0 0 0 0 rgba(0,0,0,0.2)', '0 0 0 8px rgba(0,0,0,0)', '0 0 0 0 rgba(0,0,0,0)'] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              ✨ Try it on
+              Try it on →
             </motion.div>
           </div>
         </div>
 
-        <div style={{ borderTop: '1px solid #f5f5f4', paddingTop: 16, marginBottom: 16 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 8, padding: '6px 12px', fontSize: 11, color: '#92400e', fontFamily: 'var(--font-inter)', fontWeight: 600 }}>
+        <div style={{ borderTop: '1px solid #f4f4f5', paddingTop: 16, marginBottom: 16 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#f4f4f5', border: '1px solid #e4e4e7', borderRadius: 8, padding: '6px 12px', fontSize: 11, color: '#09090b', fontFamily: 'var(--font-inter)', fontWeight: 600 }}>
             <motion.span
-              style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#f59e0b' }}
+              style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#09090b' }}
               animate={{ opacity: [1, 0.2, 1] }}
               transition={{ duration: 1.4, repeat: Infinity }}
             />
@@ -120,11 +119,11 @@ function TiltCard({ inView }: { inView: boolean }) {
               placeholder="your@email.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              style={{ flex: 1, border: '1px solid #e7e5e4', borderRadius: 8, padding: '8px 12px', fontSize: 12, fontFamily: 'var(--font-inter)', outline: 'none', color: '#1c1917' }}
+              style={{ flex: 1, border: '1px solid #e4e4e7', borderRadius: 8, padding: '8px 12px', fontSize: 12, fontFamily: 'var(--font-inter)', outline: 'none', color: '#09090b' }}
             />
             <button
               onClick={() => email && setNotified(true)}
-              style={{ background: '#92400e', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 14px', fontSize: 12, fontFamily: 'var(--font-inter)', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              style={{ background: '#09090b', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 14px', fontSize: 12, fontFamily: 'var(--font-inter)', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
             >
               Notify me
             </button>
@@ -143,7 +142,7 @@ export default function WebEmbedSlide() {
     <FeatureSlide id="web-embed" background="#ffffff">
       <div
         className="absolute select-none pointer-events-none"
-        style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(200px, 30vw, 380px)', fontWeight: 700, color: 'rgba(30,64,175,0.03)', bottom: '-6%', right: '-1%', lineHeight: 1, zIndex: 0 }}
+        style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(200px, 30vw, 380px)', fontWeight: 700, color: 'rgba(0,0,0,0.03)', bottom: '-6%', right: '-1%', lineHeight: 1, zIndex: 0 }}
       >
         02
       </div>
@@ -156,34 +155,34 @@ export default function WebEmbedSlide() {
         {/* Left */}
         <div>
           <motion.div className="flex items-center gap-3 mb-6" initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.45 }}>
-            <div style={{ width: 24, height: 2, background: '#1e40af', borderRadius: 2 }} />
-            <span className="text-xs font-semibold tracking-widest uppercase" style={{ fontFamily: 'var(--font-inter)', color: '#1e40af', letterSpacing: '0.2em' }}>
+            <div style={{ width: 24, height: 2, background: '#09090b', borderRadius: 2 }} />
+            <span className="text-xs font-semibold tracking-widest uppercase" style={{ fontFamily: 'var(--font-inter)', color: '#09090b', letterSpacing: '0.2em' }}>
               Web Embed
             </span>
           </motion.div>
 
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.2rem, 4vw, 3.8rem)', fontWeight: 700, color: '#1c1917', lineHeight: 1.1, marginBottom: '1.5rem' }}>
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.2rem, 4vw, 3.8rem)', fontWeight: 700, color: '#09090b', lineHeight: 1.1, marginBottom: '1.5rem' }}>
             {['Plug in.', 'Let customers try', 'before they buy.'].map((line, i) => (
               <motion.span key={i} className="block"
                 initial={{ opacity: 0, y: 24 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.55, delay: 0.1 + i * 0.12, type: 'spring', stiffness: 90 }}
               >
-                {i === 2 ? <span style={{ color: '#1e40af', fontStyle: 'italic' }}>{line}</span> : line}
+                {i === 2 ? <span style={{ fontStyle: 'italic', color: '#52525b' }}>{line}</span> : line}
               </motion.span>
             ))}
           </h2>
 
-          <motion.p className="text-sm leading-relaxed mb-8" style={{ fontFamily: 'var(--font-inter)', color: '#78716c', maxWidth: 320 }} initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.42 }}>
+          <motion.p className="text-sm leading-relaxed mb-8" style={{ fontFamily: 'var(--font-inter)', color: '#71717a', maxWidth: 320 }} initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.42 }}>
             One embed link. Drop it into your online store and customers try on outfits without leaving your product page.
           </motion.p>
 
           <div className="flex flex-wrap gap-2">
             {PLATFORMS.map((p, i) => (
               <motion.span key={p.name} className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
-                style={{ background: '#f5f5f4', border: '1px solid #e7e5e4', color: '#1c1917', fontFamily: 'var(--font-inter)' }}
+                style={{ background: '#f4f4f5', border: '1px solid #e4e4e7', color: '#09090b', fontFamily: 'var(--font-inter)' }}
                 initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: 0.55 + i * 0.08 }}
-                whileHover={{ scale: 1.05, background: '#fff7ed', borderColor: '#fed7aa' }}
+                whileHover={{ scale: 1.05, background: '#e4e4e7' }}
               >
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: p.dot, display: 'inline-block' }} />
                 {p.name}

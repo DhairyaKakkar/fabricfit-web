@@ -33,8 +33,8 @@ export default function HeroCta({ visible }: Props) {
             </a>
             <a
               href="#demo"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-semibold shadow-md hover:bg-amber-900 transition-colors"
-              style={{ backgroundColor: '#92400e', fontFamily: 'var(--font-inter)' }}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-semibold shadow-md hover:bg-zinc-700 transition-colors"
+              style={{ backgroundColor: '#09090b', fontFamily: 'var(--font-inter)' }}
             >
               Book a Free Demo →
             </a>

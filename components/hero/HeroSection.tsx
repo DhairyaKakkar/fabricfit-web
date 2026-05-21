@@ -18,7 +18,7 @@ import FloatingGarment from './FloatingGarment';
 import ModelFigure from './ModelFigure';
 import GarmentDragOverlay from './GarmentDragOverlay';
 
-const FABRIC_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 10 L10 0 M-2 2 L2-2 M18 22 L22 18' stroke='%2392400e' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M10 20 L20 10 M-2 18 L2 22 M18-2 L22 2' stroke='%2392400e' stroke-width='0.5' opacity='0.5'/%3E%3C/svg%3E")`;
+const FABRIC_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 10 L10 0 M-2 2 L2-2 M18 22 L22 18' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M10 20 L20 10 M-2 18 L2 22 M18-2 L22 2' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3C/svg%3E")`;
 
 export default function HeroSection() {
   const [maleGarment, setMaleGarment] = useState<GarmentId | null>('kurta');
@@ -128,7 +128,7 @@ const [activeDragId, setActiveDragId] = useState<GarmentId | null>(null);
         style={{
           height: '100vh',
           minHeight: 700,
-          backgroundColor: '#fef9f0',
+          backgroundColor: '#ffffff',
         }}
       >
         {/* Fabric texture overlay */}
@@ -176,10 +176,23 @@ const [activeDragId, setActiveDragId] = useState<GarmentId | null>(null);
           className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 select-none pointer-events-none"
           style={{ top: 'calc(10% - 20px)', zIndex: 3, marginLeft: '10px' }}
         >
-          <div className="w-16 h-px bg-gradient-to-r from-amber-600 to-amber-400" />
+          <h1
+            className="font-bold text-zinc-950 text-center"
+            style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(32px, 3.6vw, 52px)', lineHeight: 1.15 }}
+          >
+            From fabric to look,<br />in seconds.
+          </h1>
+        </div>
+
+        {/* Bottom subtitle + drag hint */}
+        <div
+          className="absolute left-1/2 flex flex-col items-center gap-3 select-none pointer-events-none"
+          style={{ top: 'calc(55% - 100px)', transform: 'translate(-50%, -50%)', zIndex: 3, marginLeft: '10px' }}
+        >
+          <div className="w-16 h-px bg-zinc-300" />
           <p
-            className="font-medium text-amber-800 text-center"
-            style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(13px, 1.3vw, 17px)', maxWidth: 340, lineHeight: 1.5 }}
+            className="font-medium tracking-widest text-zinc-500 uppercase text-center"
+            style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em', fontSize: 'clamp(12px, 1.2vw, 16px)' }}
           >
             Virtual try-on for fashion retailers,<br />in-store and online.
           </p>

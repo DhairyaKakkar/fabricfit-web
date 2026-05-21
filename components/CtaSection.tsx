@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
 
 function WhatsAppIcon() {
@@ -11,7 +11,7 @@ function WhatsAppIcon() {
   );
 }
 
-function MagneticButton({ children, href, dark = false }: { children: React.ReactNode; href: string; dark?: boolean }) {
+function MagneticButton({ children, href, outlined = false }: { children: React.ReactNode; href: string; outlined?: boolean }) {
   const btnRef = useRef<HTMLAnchorElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -53,11 +53,10 @@ function MagneticButton({ children, href, dark = false }: { children: React.Reac
         fontSize: 14,
         fontWeight: 600,
         textDecoration: 'none',
-        cursor: 'none',
-        background: dark ? 'rgba(0,0,0,0.2)' : '#fff',
-        color: dark ? '#fff' : '#92400e',
-        border: dark ? '1.5px solid rgba(255,255,255,0.25)' : 'none',
-        boxShadow: dark ? 'none' : '0 8px 32px rgba(0,0,0,0.15)',
+        background: outlined ? 'transparent' : '#ffffff',
+        color: outlined ? 'rgba(255,255,255,0.85)' : '#09090b',
+        border: outlined ? '1.5px solid rgba(255,255,255,0.25)' : 'none',
+        boxShadow: outlined ? 'none' : '0 8px 32px rgba(0,0,0,0.25)',
       }}
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.97 }}
@@ -78,17 +77,17 @@ export default function CtaSection() {
       className="snap-start relative overflow-hidden flex flex-col items-center justify-center"
       style={{
         height: '100vh',
-        background: 'linear-gradient(135deg, #ca8a04 0%, #92400e 45%, #7c2d12 100%)',
+        background: 'linear-gradient(135deg, #09090b 0%, #18181b 50%, #09090b 100%)',
       }}
     >
-      {/* Animated background blobs */}
+      {/* Subtle noise texture */}
       <motion.div
-        style={{ position: 'absolute', width: 600, height: 600, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', top: '-20%', left: '-10%', filter: 'blur(80px)' }}
+        style={{ position: 'absolute', width: 700, height: 700, borderRadius: '50%', background: 'rgba(255,255,255,0.02)', top: '-20%', left: '-10%', filter: 'blur(100px)' }}
         animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
         transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        style={{ position: 'absolute', width: 400, height: 400, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', bottom: '-10%', right: '-5%', filter: 'blur(80px)' }}
+        style={{ position: 'absolute', width: 500, height: 500, borderRadius: '50%', background: 'rgba(255,255,255,0.025)', bottom: '-10%', right: '-5%', filter: 'blur(100px)' }}
         animate={{ x: [0, -30, 0], y: [0, 20, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -96,7 +95,7 @@ export default function CtaSection() {
       {/* Watermark */}
       <div
         className="absolute select-none pointer-events-none"
-        style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(100px, 20vw, 220px)', fontWeight: 700, color: 'rgba(0,0,0,0.07)', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', lineHeight: 1, whiteSpace: 'nowrap' }}
+        style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(100px, 20vw, 220px)', fontWeight: 700, color: 'rgba(255,255,255,0.03)', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', lineHeight: 1, whiteSpace: 'nowrap' }}
       >
         2 min
       </div>
@@ -104,23 +103,23 @@ export default function CtaSection() {
       <div className="max-w-2xl mx-auto px-8 text-center relative">
         <motion.span
           className="inline-block text-xs font-semibold tracking-widest uppercase mb-5"
-          style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.55)', letterSpacing: '0.22em' }}
+          style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.22em' }}
           initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.5 }}
         >
           Get Started
         </motion.span>
 
         <motion.h2
-          style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.4rem, 6vw, 5rem)', fontWeight: 700, color: '#fff', lineHeight: 1.08, marginBottom: '1.2rem' }}
+          style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.4rem, 6vw, 5rem)', fontWeight: 700, color: '#ffffff', lineHeight: 1.08, marginBottom: '1.2rem' }}
           initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.65, delay: 0.1, type: 'spring', stiffness: 80 }}
         >
           See it on your fabric.<br />
-          <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.75)' }}>In 2 minutes.</span>
+          <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.55)' }}>In 2 minutes.</span>
         </motion.h2>
 
         <motion.p
           className="text-sm leading-relaxed mb-10"
-          style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.65)', maxWidth: 420, margin: '0 auto 2.5rem' }}
+          style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.5)', maxWidth: 420, margin: '0 auto 2.5rem' }}
           initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.2 }}
         >
           No setup. No contract. We&apos;ll run a live demo with your own fabric photos on a WhatsApp call — so you see exactly what your customers would see.
@@ -134,14 +133,14 @@ export default function CtaSection() {
             <WhatsAppIcon />
             Chat on WhatsApp
           </MagneticButton>
-          <MagneticButton href="/pricing" dark>
+          <MagneticButton href="/pricing" outlined>
             See Pricing →
           </MagneticButton>
         </motion.div>
 
         <motion.p
           className="mt-10 text-xs"
-          style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.3)' }}
+          style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.25)' }}
           initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.6, delay: 0.5 }}
         >
           Backed by Nanyang Technological University, Singapore · No commitment required

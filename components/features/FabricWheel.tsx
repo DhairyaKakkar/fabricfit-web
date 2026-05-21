@@ -3,20 +3,20 @@
 import { useEffect, useRef, useState } from 'react';
 
 const FABRICS = [
-  { name: 'Silk', color: '#fef3c7' },
-  { name: 'Cotton', color: '#d1fae5' },
-  { name: 'Chiffon', color: '#fce7f3' },
-  { name: 'Linen', color: '#f3f4f6' },
-  { name: 'Georgette', color: '#ede9fe' },
-  { name: 'Velvet', color: '#fee2e2' },
-  { name: 'Satin', color: '#fef9c3' },
-  { name: 'Khadi', color: '#fff7ed' },
-  { name: 'Brocade', color: '#fdf4ff' },
-  { name: 'Muslin', color: '#f0fdf4' },
+  { name: 'Silk', color: '#f4f4f5' },
+  { name: 'Cotton', color: '#f0fdf4' },
+  { name: 'Chiffon', color: '#fdf4ff' },
+  { name: 'Linen', color: '#f9fafb' },
+  { name: 'Georgette', color: '#eff6ff' },
+  { name: 'Velvet', color: '#fff1f2' },
+  { name: 'Satin', color: '#fefce8' },
+  { name: 'Khadi', color: '#f5f5f4' },
+  { name: 'Brocade', color: '#f0f9ff' },
+  { name: 'Muslin', color: '#f7fee7' },
 ];
 
 const RADIUS = 148;
-const SPEED = 12; // seconds per revolution
+const SPEED = 12;
 
 export default function FabricWheel() {
   const [rotation, setRotation] = useState(0);
@@ -51,13 +51,12 @@ export default function FabricWheel() {
   };
 
   const centerColor = hovered
-    ? FABRICS.find(f => f.name === hovered)?.color ?? '#fff7ed'
-    : '#fff7ed';
+    ? FABRICS.find(f => f.name === hovered)?.color ?? '#f4f4f5'
+    : '#f4f4f5';
 
   return (
     <div
       style={{ position: 'relative', width: 340, height: 340, flexShrink: 0 }}
-      data-cursor
     >
       {/* Outer dashed ring */}
       <div
@@ -65,7 +64,7 @@ export default function FabricWheel() {
           position: 'absolute',
           inset: 0,
           borderRadius: '50%',
-          border: '1px dashed rgba(146,64,14,0.15)',
+          border: '1px dashed rgba(0,0,0,0.1)',
         }}
       />
       {/* Inner ring */}
@@ -74,7 +73,7 @@ export default function FabricWheel() {
           position: 'absolute',
           inset: '20%',
           borderRadius: '50%',
-          border: '1px solid rgba(146,64,14,0.08)',
+          border: '1px solid rgba(0,0,0,0.06)',
         }}
       />
 
@@ -106,7 +105,7 @@ export default function FabricWheel() {
                 fontFamily: 'var(--font-inter)',
                 fontSize: isActive ? 14 : 12,
                 fontWeight: isActive ? 700 : 400,
-                color: isActive ? '#92400e' : '#c5b8aa',
+                color: isActive ? '#09090b' : '#a1a1aa',
                 whiteSpace: 'nowrap',
                 transition: 'color 0.2s, font-size 0.2s, font-weight 0.2s',
                 letterSpacing: isActive ? '0.06em' : '0.02em',
@@ -126,38 +125,35 @@ export default function FabricWheel() {
           inset: '28%',
           borderRadius: '50%',
           background: centerColor,
-          border: '1px solid rgba(146,64,14,0.12)',
+          border: '1px solid rgba(0,0,0,0.08)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
           transition: 'background 0.4s',
-          boxShadow: '0 4px 24px rgba(146,64,14,0.08)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
         }}
       >
         {hovered ? (
-          <>
-            <span style={{ fontSize: 24, marginBottom: 2 }}>🧵</span>
-            <span
-              style={{
-                fontFamily: 'var(--font-playfair)',
-                fontSize: 12,
-                color: '#92400e',
-                fontStyle: 'italic',
-                textAlign: 'center',
-              }}
-            >
-              {hovered}
-            </span>
-          </>
+          <span
+            style={{
+              fontFamily: 'var(--font-playfair)',
+              fontSize: 12,
+              color: '#09090b',
+              fontStyle: 'italic',
+              textAlign: 'center',
+            }}
+          >
+            {hovered}
+          </span>
         ) : (
           <>
-            <span style={{ fontSize: 22, marginBottom: 2 }}>✦</span>
+            <span style={{ fontSize: 18, marginBottom: 2, color: '#09090b' }}>✦</span>
             <span
               style={{
                 fontFamily: 'var(--font-inter)',
                 fontSize: 9,
-                color: '#a8a29e',
+                color: '#a1a1aa',
                 textTransform: 'uppercase',
                 letterSpacing: '0.12em',
                 textAlign: 'center',
@@ -183,7 +179,7 @@ export default function FabricWheel() {
             key={i}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
           >
-            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(146,64,14,0.12)" strokeWidth={i % 9 === 0 ? 2 : 1} />
+            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(0,0,0,0.1)" strokeWidth={i % 9 === 0 ? 2 : 1} />
           </svg>
         );
       })}

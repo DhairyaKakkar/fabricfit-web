@@ -83,7 +83,7 @@ function Sparkles() {
 
   useEffect(() => {
     setParticles(
-      Array.from({ length: 60 }, (_, i) => ({
+      Array.from({ length: 40 }, (_, i) => ({
         id: i,
         x: Math.random() * 100,
         delay: Math.random() * 4,
@@ -104,10 +104,11 @@ function Sparkles() {
             width: p.size,
             height: p.size,
             borderRadius: '50%',
-            background: '#f59e0b',
+            background: '#d97706',
+            opacity: 0.4,
           }}
           initial={{ bottom: '-5%', opacity: 0 }}
-          animate={{ bottom: '105%', opacity: [0, 0.8, 0] }}
+          animate={{ bottom: '105%', opacity: [0, 0.5, 0] }}
           transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeOut' }}
         />
       ))}
@@ -149,24 +150,24 @@ function CountrySelector({ currency, onChange }: { currency: Currency; onChange:
           appearance: 'none',
           WebkitAppearance: 'none',
           background: 'rgba(245,158,11,0.08)',
-          border: '1px solid rgba(245,158,11,0.2)',
+          border: '1px solid rgba(217,119,6,0.25)',
           borderRadius: 100,
           padding: '7px 32px 7px 14px',
           fontFamily: 'var(--font-inter)',
           fontSize: 13,
           fontWeight: 500,
-          color: '#d97706',
+          color: '#92400e',
           cursor: 'pointer',
           outline: 'none',
         }}
       >
         {CURRENCY_ORDER.map((c) => (
-          <option key={c} value={c} style={{ background: '#1a1a1a', color: '#fef9f0' }}>
+          <option key={c} value={c} style={{ background: '#fff', color: '#1c1917' }}>
             {PRICING[c].flag}  {PRICING[c].label}
           </option>
         ))}
       </select>
-      <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#d97706', fontSize: 10, pointerEvents: 'none' }}>
+      <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#92400e', fontSize: 10, pointerEvents: 'none' }}>
         ▾
       </span>
     </div>
@@ -177,7 +178,7 @@ function CountrySelector({ currency, onChange }: { currency: Currency; onChange:
 function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: boolean) => void }) {
   return (
     <div className="flex justify-center">
-      <div className="relative flex w-fit rounded-full border border-amber-800/40 bg-neutral-900 p-1">
+      <div className="relative flex w-fit rounded-full border border-amber-200 bg-amber-50 p-1">
         {['Monthly', 'Yearly'].map((label, i) => {
           const active = yearly ? i === 1 : i === 0;
           return (
@@ -185,20 +186,20 @@ function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: bo
               key={label}
               onClick={() => onChange(i === 1)}
               className="relative z-10 h-10 rounded-full px-6 text-sm font-medium transition-colors"
-              style={{ color: active ? '#fff' : 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-inter)' }}
+              style={{ color: active ? '#fff' : '#92400e', fontFamily: 'var(--font-inter)' }}
             >
               {active && (
                 <motion.span
                   layoutId="billing-pill"
                   className="absolute inset-0 rounded-full"
-                  style={{ background: 'linear-gradient(to top, #92400e, #d97706)', boxShadow: '0 0 20px rgba(217,119,6,0.4)' }}
+                  style={{ background: 'linear-gradient(to top, #92400e, #d97706)', boxShadow: '0 0 16px rgba(217,119,6,0.3)' }}
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}
               <span className="relative flex items-center gap-1.5">
                 {label}
                 {label === 'Yearly' && (
-                  <span style={{ fontSize: 10, background: 'rgba(245,158,11,0.15)', color: '#f59e0b', borderRadius: 4, padding: '1px 5px', fontWeight: 600 }}>
+                  <span style={{ fontSize: 10, background: 'rgba(217,119,6,0.12)', color: '#92400e', borderRadius: 4, padding: '1px 5px', fontWeight: 600 }}>
                     -15%
                   </span>
                 )}
@@ -236,10 +237,12 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
         display: 'flex',
         flexDirection: 'column',
         background: plan.popular
-          ? 'linear-gradient(135deg, #1c1208 0%, #2d1a08 50%, #1c1208 100%)'
-          : 'linear-gradient(135deg, #111 0%, #1a1a1a 100%)',
-        border: plan.popular ? '1.5px solid rgba(217,119,6,0.5)' : '1px solid rgba(255,255,255,0.06)',
-        boxShadow: plan.popular ? '0 0 60px rgba(217,119,6,0.15), 0 4px 24px rgba(0,0,0,0.4)' : '0 4px 24px rgba(0,0,0,0.3)',
+          ? 'linear-gradient(135deg, #7c2d12 0%, #92400e 50%, #7c2d12 100%)'
+          : '#ffffff',
+        border: plan.popular ? '1.5px solid rgba(217,119,6,0.5)' : '1px solid rgba(217,119,6,0.18)',
+        boxShadow: plan.popular
+          ? '0 0 40px rgba(217,119,6,0.2), 0 4px 24px rgba(0,0,0,0.1)'
+          : '0 2px 12px rgba(0,0,0,0.06)',
       }}
     >
       {plan.popular && (
@@ -250,10 +253,10 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
         </div>
       )}
 
-      <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.4rem', fontWeight: 700, color: plan.popular ? '#fef3c7' : '#e7e5e4', marginBottom: 6 }}>
+      <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.4rem', fontWeight: 700, color: plan.popular ? '#fef3c7' : '#1c1917', marginBottom: 6 }}>
         {plan.name}
       </h3>
-      <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', lineHeight: 1.6, marginBottom: 20 }}>
+      <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? 'rgba(254,243,199,0.7)' : '#78716c', lineHeight: 1.6, marginBottom: 20 }}>
         {plan.description}
       </p>
 
@@ -262,24 +265,24 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
         {isPayg ? (
           <>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#78716c', marginRight: 2 }}>from {c.symbol}</span>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2.2rem', fontWeight: 700, color: '#f59e0b', lineHeight: 1 }}>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: plan.popular ? 'rgba(254,243,199,0.7)' : '#78716c', marginRight: 2 }}>from {c.symbol}</span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2.2rem', fontWeight: 700, color: plan.popular ? '#fef3c7' : '#92400e', lineHeight: 1 }}>
                 <NumberFlow key={currency} value={packFrom!} />
               </span>
             </div>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#57534e', marginTop: 4 }}>per credit pack · never expire</p>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: plan.popular ? 'rgba(254,243,199,0.6)' : '#a8a29e', marginTop: 4 }}>per credit pack · never expire</p>
           </>
         ) : (
           <>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#78716c', marginRight: 2 }}>{c.symbol}</span>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2.2rem', fontWeight: 700, color: '#f59e0b', lineHeight: 1 }}>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: plan.popular ? 'rgba(254,243,199,0.7)' : '#78716c', marginRight: 2 }}>{c.symbol}</span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2.2rem', fontWeight: 700, color: plan.popular ? '#fef3c7' : '#92400e', lineHeight: 1 }}>
                 <NumberFlow key={currency} value={price!} />
               </span>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e', marginLeft: 4 }}>/{yearly ? 'mo' : 'month'}</span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? 'rgba(254,243,199,0.6)' : '#a8a29e', marginLeft: 4 }}>/{yearly ? 'mo' : 'month'}</span>
             </div>
             {yearly && planPricing && (
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#57534e', marginTop: 4 }}>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: plan.popular ? 'rgba(254,243,199,0.6)' : '#a8a29e', marginTop: 4 }}>
                 billed {fmtPrice(planPricing.annual, currency)} annually
               </p>
             )}
@@ -288,18 +291,24 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
       </div>
 
       {/* Credits chip */}
-      <div style={{ background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.15)', borderRadius: 10, padding: '10px 14px', marginBottom: 20 }}>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: '#f59e0b' }}>{plan.credits}</p>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', marginTop: 2 }}>{plan.tryOns} · {rate} / try-on</p>
+      <div style={{
+        background: plan.popular ? 'rgba(254,243,199,0.1)' : 'rgba(245,158,11,0.07)',
+        border: `1px solid ${plan.popular ? 'rgba(254,243,199,0.2)' : 'rgba(217,119,6,0.15)'}`,
+        borderRadius: 10,
+        padding: '10px 14px',
+        marginBottom: 20,
+      }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: plan.popular ? '#fef3c7' : '#d97706' }}>{plan.credits}</p>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: plan.popular ? 'rgba(254,243,199,0.7)' : '#b45309', marginTop: 2 }}>{plan.tryOns} · {rate} / try-on</p>
       </div>
 
-      <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', marginBottom: 16 }} />
+      <div style={{ height: 1, background: plan.popular ? 'rgba(254,243,199,0.15)' : 'rgba(0,0,0,0.06)', marginBottom: 16 }} />
 
       {/* Features */}
       <ul style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
         {plan.features.map((f, i) => (
-          <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontFamily: 'var(--font-inter)', fontSize: 12, color: '#a8a29e' }}>
-            <span style={{ color: '#d97706', fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span>
+          <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? 'rgba(254,243,199,0.8)' : '#57534e' }}>
+            <span style={{ color: plan.popular ? '#fbbf24' : '#d97706', fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span>
             {f}
           </li>
         ))}
@@ -318,11 +327,11 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
           fontSize: 14,
           fontWeight: 600,
           textDecoration: 'none',
-          background: plan.popular ? 'linear-gradient(to top, #92400e, #d97706)' : 'transparent',
-          color: plan.popular ? '#fff' : '#d97706',
-          border: plan.popular ? 'none' : '1px solid rgba(217,119,6,0.4)',
-          boxShadow: plan.popular ? '0 4px 20px rgba(217,119,6,0.3)' : 'none',
-          cursor: 'none',
+          cursor: 'pointer',
+          background: plan.popular ? '#fef3c7' : 'transparent',
+          color: plan.popular ? '#7c2d12' : '#92400e',
+          border: plan.popular ? 'none' : '1px solid rgba(146,64,14,0.4)',
+          boxShadow: plan.popular ? '0 2px 12px rgba(254,243,199,0.2)' : 'none',
         }}
       >
         Get Started →
@@ -343,13 +352,13 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
   ];
 
   return (
-    <div ref={ref} style={{ background: '#111', padding: '80px 24px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+    <div ref={ref} style={{ background: '#fdf3e3', padding: '80px 24px', borderTop: '1px solid rgba(217,119,6,0.1)' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#d97706', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>No Subscription Needed</span>
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#fef9f0', marginTop: 8, marginBottom: 8 }}>Credit Packs</h2>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>No Subscription Needed</span>
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#1c1917', marginTop: 8, marginBottom: 8 }}>Credit Packs</h2>
           <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto 12px', borderRadius: 2 }} />
-          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#78716c', maxWidth: 480, margin: '0 auto' }}>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#57534e', maxWidth: 480, margin: '0 auto' }}>
             Buy credits à la carte. They never expire. Subscribers can also top up at the same rate when they run low.
           </p>
         </div>
@@ -359,22 +368,22 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
               initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
               animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
               transition={{ duration: 0.45, delay: i * 0.1 }}
-              whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(245,158,11,0.1)' }}
-              style={{ background: '#1a1a1a', border: '1px solid rgba(245,158,11,0.12)', borderRadius: 16, padding: '24px 20px', textAlign: 'center' }}
+              whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(217,119,6,0.12)' }}
+              style={{ background: '#ffffff', border: '1px solid rgba(217,119,6,0.2)', borderRadius: 16, padding: '24px 20px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
             >
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#d97706', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>{pack.name}</p>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: '2rem', fontWeight: 700, color: '#f59e0b', lineHeight: 1 }}>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>{pack.name}</p>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: '2rem', fontWeight: 700, color: '#92400e', lineHeight: 1 }}>
                 {fmtPrice(pack.price, currency)}
               </p>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e', marginTop: 4 }}>{pack.credits} credits</p>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#78716c', marginTop: 2, marginBottom: 16 }}>{pack.tryOns}</p>
-              <motion.a href="#" whileHover={{ scale: 1.03 }} style={{ display: 'block', padding: '10px 0', borderRadius: 10, border: '1px solid rgba(217,119,6,0.35)', color: '#d97706', fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', marginTop: 4 }}>{pack.credits} credits</p>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a8a29e', marginTop: 2, marginBottom: 16 }}>{pack.tryOns}</p>
+              <motion.a href="#" whileHover={{ scale: 1.03 }} style={{ display: 'block', padding: '10px 0', borderRadius: 10, border: '1px solid rgba(146,64,14,0.35)', color: '#92400e', fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, textDecoration: 'none', cursor: 'pointer' }}>
                 Buy Pack
               </motion.a>
             </motion.div>
           ))}
         </div>
-        <p style={{ textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 11, color: '#57534e', marginTop: 24 }}>
+        <p style={{ textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a8a29e', marginTop: 24 }}>
           Pack credits never expire · 15-day history · FabricFit watermark · no catalogue exports
         </p>
       </div>
@@ -393,11 +402,11 @@ function AddOnsSection({ currency }: { currency: Currency }) {
   ];
 
   return (
-    <div ref={ref} style={{ background: '#0d0d0d', padding: '80px 24px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+    <div ref={ref} style={{ background: '#fef9f0', padding: '80px 24px', borderTop: '1px solid rgba(217,119,6,0.08)' }}>
       <div style={{ maxWidth: 700, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#d97706', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>Extras</span>
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#fef9f0', marginTop: 8, marginBottom: 8 }}>Add-Ons</h2>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>Extras</span>
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#1c1917', marginTop: 8, marginBottom: 8 }}>Add-Ons</h2>
           <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto', borderRadius: 2 }} />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
@@ -406,16 +415,16 @@ function AddOnsSection({ currency }: { currency: Currency }) {
               initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
               animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
               transition={{ duration: 0.45, delay: i * 0.12 }}
-              style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: 24 }}
+              style={{ background: '#ffffff', border: '1px solid rgba(217,119,6,0.15)', borderRadius: 16, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
             >
               <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                <span style={{ color: '#f59e0b', fontSize: 20, flexShrink: 0, marginTop: 2 }}>{addon.icon}</span>
+                <span style={{ color: '#d97706', fontSize: 20, flexShrink: 0, marginTop: 2 }}>{addon.icon}</span>
                 <div>
-                  <h3 style={{ fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 600, color: '#fef9f0', marginBottom: 6 }}>{addon.name}</h3>
+                  <h3 style={{ fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 600, color: '#1c1917', marginBottom: 6 }}>{addon.name}</h3>
                   <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', lineHeight: 1.6, marginBottom: 14 }}>{addon.desc}</p>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                    <span style={{ fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 700, color: '#f59e0b' }}>{addon.price}</span>
-                    <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#57534e', background: '#222', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 100, padding: '3px 10px' }}>{addon.badge}</span>
+                    <span style={{ fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 700, color: '#92400e' }}>{addon.price}</span>
+                    <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#78716c', background: '#f5f5f4', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 100, padding: '3px 10px' }}>{addon.badge}</span>
                   </div>
                 </div>
               </div>
@@ -462,23 +471,23 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
     : [c.addons.topupFrom, `${fmt(c.plans.starter.monthly)}/mo`, `${fmt(c.plans.pro.monthly)}/mo`, `${fmt(c.plans.business.monthly)}/mo`];
 
   return (
-    <div ref={ref} style={{ background: '#111', padding: '80px 24px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+    <div ref={ref} style={{ background: '#fdf3e3', padding: '80px 24px', borderTop: '1px solid rgba(217,119,6,0.1)' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#d97706', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>Compare</span>
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#fef9f0', marginTop: 8, marginBottom: 8 }}>Full Feature Comparison</h2>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>Compare</span>
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#1c1917', marginTop: 8, marginBottom: 8 }}>Full Feature Comparison</h2>
           <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto', borderRadius: 2 }} />
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
-          style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid rgba(255,255,255,0.06)' }}
+          style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid rgba(217,119,6,0.15)', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
             <thead>
-              <tr style={{ background: '#1a1a1a', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <tr style={{ background: '#fef9f0', borderBottom: '1px solid rgba(217,119,6,0.12)' }}>
                 <th style={{ padding: '14px 20px', textAlign: 'left', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', fontWeight: 500, minWidth: 160 }}>Feature</th>
                 {['PAYG', 'Starter', 'Pro', 'Business'].map((n, i) => (
-                  <th key={n} style={{ padding: '14px 16px', textAlign: 'center', fontFamily: 'var(--font-playfair)', fontSize: 14, fontWeight: 700, color: i === 2 ? '#f59e0b' : '#e7e5e4', minWidth: 110 }}>
+                  <th key={n} style={{ padding: '14px 16px', textAlign: 'center', fontFamily: 'var(--font-playfair)', fontSize: 14, fontWeight: 700, color: i === 2 ? '#92400e' : '#1c1917', minWidth: 110, background: i === 2 ? 'rgba(245,158,11,0.06)' : 'transparent' }}>
                     {n}{i === 2 && <span style={{ display: 'block', fontFamily: 'var(--font-inter)', fontSize: 10, color: '#d97706', fontWeight: 400, fontStyle: 'normal', marginTop: 2 }}>Popular</span>}
                   </th>
                 ))}
@@ -487,23 +496,23 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
             <tbody>
               {tableGroups.map((group) => (
                 <Fragment key={group.heading}>
-                  <tr style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td colSpan={5} style={{ padding: '8px 20px', fontFamily: 'var(--font-inter)', fontSize: 10, color: '#57534e', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600 }}>{group.heading}</td>
+                  <tr style={{ background: '#fdf0e0', borderTop: '1px solid rgba(217,119,6,0.08)' }}>
+                    <td colSpan={5} style={{ padding: '8px 20px', fontFamily: 'var(--font-inter)', fontSize: 10, color: '#92400e', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600 }}>{group.heading}</td>
                   </tr>
                   {group.rows.map((row, ri) => (
-                    <tr key={row.label} style={{ borderTop: '1px solid rgba(255,255,255,0.03)', background: ri % 2 === 0 ? '#111' : '#0f0f0f' }}>
-                      <td style={{ padding: '12px 20px', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c' }}>{row.label}</td>
+                    <tr key={row.label} style={{ borderTop: '1px solid rgba(0,0,0,0.04)', background: ri % 2 === 0 ? '#ffffff' : '#fdfaf6' }}>
+                      <td style={{ padding: '12px 20px', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e' }}>{row.label}</td>
                       {row.values.map((val, ci) => (
-                        <td key={ci} style={{ padding: '12px 16px', textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 12, color: ci === 2 ? '#f59e0b' : val === '—' || val === 'None' ? '#3a3a3a' : '#a8a29e', fontWeight: ci === 2 ? 600 : 400 }}>{val}</td>
+                        <td key={ci} style={{ padding: '12px 16px', textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 12, color: ci === 2 ? '#92400e' : val === '—' || val === 'None' ? '#d4d0cb' : '#57534e', fontWeight: ci === 2 ? 600 : 400, background: ci === 2 ? 'rgba(245,158,11,0.04)' : 'transparent' }}>{val}</td>
                       ))}
                     </tr>
                   ))}
                 </Fragment>
               ))}
-              <tr style={{ borderTop: '2px solid rgba(245,158,11,0.2)', background: '#1a1a1a' }}>
-                <td style={{ padding: '14px 20px', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#d97706', fontWeight: 600 }}>Price</td>
+              <tr style={{ borderTop: '2px solid rgba(217,119,6,0.2)', background: '#fef9f0' }}>
+                <td style={{ padding: '14px 20px', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#92400e', fontWeight: 600 }}>Price</td>
                 {prices.map((p, i) => (
-                  <td key={i} style={{ padding: '14px 16px', textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 700, color: i === 2 ? '#f59e0b' : '#a8a29e' }}>{p}</td>
+                  <td key={i} style={{ padding: '14px 16px', textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 700, color: i === 2 ? '#92400e' : '#1c1917', background: i === 2 ? 'rgba(245,158,11,0.06)' : 'transparent' }}>{p}</td>
                 ))}
               </tr>
             </tbody>
@@ -525,26 +534,25 @@ function FooterSection() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
   return (
-    <div ref={ref} style={{ background: '#0a0a0a', padding: '80px 24px 60px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+    <div ref={ref} style={{ background: '#fef9f0', padding: '80px 24px 60px', borderTop: '1px solid rgba(217,119,6,0.08)' }}>
       <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 700, color: '#fef9f0', marginBottom: 8 }}>Good to know</h2>
+        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 700, color: '#1c1917', marginBottom: 8 }}>Good to know</h2>
         <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto 40px', borderRadius: 2 }} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 48 }}>
           {RULES.map((rule, i) => (
             <motion.div key={rule.title}
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-              style={{ background: '#151515', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 14, padding: '24px 20px' }}
+              style={{ background: '#ffffff', border: '1px solid rgba(217,119,6,0.12)', borderRadius: 14, padding: '24px 20px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
             >
-              <span style={{ fontSize: 22, color: '#f59e0b', display: 'block', marginBottom: 10 }}>{rule.icon}</span>
-              <h3 style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, color: '#fef9f0', marginBottom: 8 }}>{rule.title}</h3>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e', lineHeight: 1.6 }}>{rule.body}</p>
+              <span style={{ fontSize: 22, color: '#d97706', display: 'block', marginBottom: 10 }}>{rule.icon}</span>
+              <h3 style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, color: '#1c1917', marginBottom: 8 }}>{rule.title}</h3>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', lineHeight: 1.6 }}>{rule.body}</p>
             </motion.div>
           ))}
         </div>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#3a3a3a' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#a8a29e' }}>
           Questions?{' '}
-          <a href="#" style={{ color: '#d97706', textDecoration: 'underline' }}>Chat with us on WhatsApp</a>
-          {' '}· Payments via Razorpay — UPI, cards, net banking, EMI supported
+          <a href="#" style={{ color: '#92400e', textDecoration: 'underline' }}>Chat with us on WhatsApp</a>
         </p>
       </div>
     </div>
@@ -585,14 +593,14 @@ export default function PricingPageClient() {
   };
 
   return (
-    <div style={{ background: '#0a0a0a', minHeight: '100vh', overflowX: 'hidden', position: 'relative' }}>
+    <div style={{ background: '#fef9f0', minHeight: '100vh', overflowX: 'hidden', position: 'relative' }}>
 
       {/* Top sparkle area */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '45vh', maskImage: 'radial-gradient(50% 50% at 50% 0%, white, transparent)' }}>
         {/* Grid */}
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)',
           backgroundSize: '60px 70px',
         }} />
         <Sparkles />
@@ -600,7 +608,7 @@ export default function PricingPageClient() {
 
       {/* Amber glow ring */}
       <div style={{ position: 'absolute', top: '-60px', left: '50%', transform: 'translateX(-50%)', width: '80vw', height: '60vh', pointerEvents: 'none', zIndex: 0 }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '160px solid rgba(146,64,14,0.08)', filter: 'blur(60px)' }} />
+        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '160px solid rgba(217,119,6,0.06)', filter: 'blur(60px)' }} />
       </div>
 
       {/* Hero text */}
@@ -609,12 +617,12 @@ export default function PricingPageClient() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#d97706', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'block', marginBottom: 16 }}
+          style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#92400e', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'block', marginBottom: 16 }}
         >
           Pricing
         </motion.span>
 
-        <h1 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 700, color: '#fef9f0', lineHeight: 1.15, marginBottom: 16 }}>
+        <h1 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 700, color: '#1c1917', lineHeight: 1.15, marginBottom: 16 }}>
           <VerticalCutReveal>Plans that work for your showroom</VerticalCutReveal>
         </h1>
 
@@ -622,7 +630,7 @@ export default function PricingPageClient() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: '#78716c', lineHeight: 1.7, marginBottom: 32 }}
+          style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: '#57534e', lineHeight: 1.7, marginBottom: 32 }}
         >
           Trusted by fabric showrooms across India &amp; Singapore. All plans include a 14-day free trial — no card required.
         </motion.p>
@@ -646,7 +654,7 @@ export default function PricingPageClient() {
       </div>
 
       <div style={{ textAlign: 'center', paddingBottom: 60, position: 'relative', zIndex: 10 }}>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#a8a29e' }}>
           All prices in {PRICING[currency].label} · 40 free credits on signup · no card required
         </p>
       </div>

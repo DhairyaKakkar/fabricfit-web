@@ -33,6 +33,7 @@ export default function CustomCursor() {
       rafId = requestAnimationFrame(tick);
     };
 
+    document.documentElement.style.cursor = 'none';
     window.addEventListener('mousemove', onMove);
     rafId = requestAnimationFrame(tick);
 
@@ -61,6 +62,7 @@ export default function CustomCursor() {
     });
 
     return () => {
+      document.documentElement.style.cursor = '';
       window.removeEventListener('mousemove', onMove);
       cancelAnimationFrame(rafId);
     };

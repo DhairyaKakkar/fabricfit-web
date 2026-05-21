@@ -40,6 +40,7 @@ function MagneticButton({ children, href, outlined = false }: { children: React.
       rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      className="w-full sm:w-auto"
       style={{
         x: springX,
         y: springY,
@@ -100,7 +101,7 @@ export default function CtaSection() {
         2 min
       </div>
 
-      <div className="max-w-2xl mx-auto px-8 text-center relative">
+      <div className="max-w-2xl mx-auto px-6 md:px-8 text-center relative">
         <motion.span
           className="inline-block text-xs font-semibold tracking-widest uppercase mb-5"
           style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.22em' }}
@@ -126,7 +127,7 @@ export default function CtaSection() {
         </motion.p>
 
         <motion.div
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-3 justify-center w-full sm:w-auto"
           initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.3 }}
         >
           <MagneticButton href={`https://wa.me/${waNumber}`}>

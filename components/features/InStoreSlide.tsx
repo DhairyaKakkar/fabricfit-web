@@ -150,7 +150,7 @@ export default function InStoreSlide() {
 
       <div
         ref={ref}
-        className="max-w-6xl mx-auto px-8 md:px-16 w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
+        className="max-w-6xl mx-auto px-5 md:px-16 w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center py-8 md:py-0"
         style={{ zIndex: 1, position: 'relative' }}
       >
         {/* Left */}
@@ -270,14 +270,16 @@ export default function InStoreSlide() {
           </div>
         </div>
 
-        {/* Right: Expanding orbs */}
+        {/* Right: Expanding orbs — scaled down on narrow screens */}
         <motion.div
           className="flex justify-center items-center"
           initial={{ opacity: 0, scale: 0.85 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.7, delay: 0.3, type: 'spring', stiffness: 80 }}
         >
-          <ExpandingOrbs />
+          <div className="orbs-scaler">
+            <ExpandingOrbs />
+          </div>
         </motion.div>
       </div>
     </FeatureSlide>

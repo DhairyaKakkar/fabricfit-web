@@ -72,7 +72,7 @@ export default function CatalogSlide() {
       <div ref={ref} className="w-full" style={{ zIndex: 1, position: 'relative' }}>
 
         {/* Top: text content */}
-        <div className="max-w-6xl mx-auto px-8 md:px-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-10">
+        <div className="max-w-6xl mx-auto px-5 md:px-16 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mb-6 md:mb-10 pt-8 md:pt-0">
           <div>
             <motion.div className="flex items-center gap-3 mb-6" initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.45 }}>
               <div style={{ width: 24, height: 2, background: '#09090b', borderRadius: 2 }} />

@@ -54,3 +54,34 @@ body {
 }
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ── Mobile responsive utilities ───────────────────────── */
+
+/* Scale ExpandingOrbs (450×450) down so it fits narrow screens */
+.orbs-scaler {
+  transform-origin: center;
+}
+@media (max-width: 480px) {
+  .orbs-scaler { transform: scale(0.62); margin: -85px; }
+}
+@media (min-width: 481px) and (max-width: 767px) {
+  .orbs-scaler { transform: scale(0.78); margin: -50px; }
+}
+
+/* Ensure feature slide grid items stack and have breathing room on mobile */
+@media (max-width: 767px) {
+  /* InStoreSlide / WebEmbedSlide: hide orbs column on very small and show text full-width */
+  .feature-orbs-col { display: none; }
+
+  /* VideoSection text: tighten letter-spacing on mobile */
+  .video-subtitle { letter-spacing: 0.08em !important; }
+}
+
+/* HowItWorks FlowSection: reduce padding on mobile */
+@media (max-width: 767px) {
+  .flow-art-container {
+    padding: 5vw !important;
+    padding-top: 80px !important;
+    gap: 1rem;
+  }
+}

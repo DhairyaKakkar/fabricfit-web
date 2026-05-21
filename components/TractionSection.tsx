@@ -72,7 +72,7 @@ export default function TractionSection() {
         </motion.div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-between max-w-6xl mx-auto px-8 md:px-16 w-full py-8">
+      <div className="flex-1 flex flex-col justify-between max-w-6xl mx-auto px-5 md:px-16 w-full py-6 md:py-8">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
@@ -105,18 +105,26 @@ export default function TractionSection() {
           </motion.div>
         </div>
 
-        {/* Giant stats */}
+        {/* Giant stats — 2×2 on mobile, 4×1 on desktop */}
         <motion.div
-          className="grid grid-cols-4 gap-0"
+          className="grid grid-cols-2 md:grid-cols-4 gap-0"
           style={{ borderTop: '1px solid #f4f4f5', borderBottom: '1px solid #f4f4f5' }}
           initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.5, delay: 0.25 }}
         >
           {STATS.map((stat, i) => (
-            <div key={stat.label} style={{ padding: '20px 0', textAlign: 'center', borderRight: i < 3 ? '1px solid #f4f4f5' : 'none' }}>
-              <div style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.2rem, 4vw, 4rem)', fontWeight: 700, color: '#09090b', lineHeight: 1 }}>
+            <div
+              key={stat.label}
+              className={[
+                'py-4 text-center',
+                i % 2 === 0 ? 'border-r border-zinc-100' : '',
+                i < 2 ? 'border-b border-zinc-100 md:border-b-0' : '',
+                i < 3 ? 'md:border-r md:border-zinc-100' : 'md:border-r-0',
+              ].filter(Boolean).join(' ')}
+            >
+              <div style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.8rem, 5vw, 4rem)', fontWeight: 700, color: '#09090b', lineHeight: 1 }}>
                 <AnimatedNumber {...stat} started={started} />
               </div>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 6 }}>{stat.label}</p>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 5 }}>{stat.label}</p>
             </div>
           ))}
         </motion.div>

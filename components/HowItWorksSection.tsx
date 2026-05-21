@@ -68,7 +68,7 @@ function ScatterArc() {
   };
 
   return (
-    <div ref={ref} className="relative flex items-center justify-center" style={{ width: 360, height: 360 }}>
+    <div ref={ref} className="relative flex items-center justify-center scatter-arc-container" style={{ width: 'min(360px, 80vw)', height: 'min(360px, 80vw)' }}>
       <motion.div
         className="absolute inset-0 rounded-full"
         style={{ border: '1px solid rgba(255,255,255,0.08)' }}

@@ -204,13 +204,13 @@ export default function HeroSection() {
           <>
             <div
               className="absolute flex items-end"
-              style={{ left: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
+              style={{ left: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10 }}
             >
               <ModelFigure gender="male" garmentId={maleGarment} isShimmering={maleShimmering} isOver={maleOver} width={547} height={791} />
             </div>
             <div
               className="absolute flex items-end"
-              style={{ right: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
+              style={{ right: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10 }}
             >
               <ModelFigure gender="female" garmentId={femaleGarment} isShimmering={femaleShimmering} isOver={femaleOver} width={553} height={763} />
             </div>

@@ -22,7 +22,7 @@ import HeroCta from './HeroCta';
 const FABRIC_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 10 L10 0 M-2 2 L2-2 M18 22 L22 18' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M10 20 L20 10 M-2 18 L2 22 M18-2 L22 2' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3C/svg%3E")`;
 
 // ── Mobile garment wheel ──────────────────────────────────────────────────────
-const WHEEL_RADIUS = 115;
+const WHEEL_RADIUS = 120;
 const GARMENT_COUNT = 5;
 const WHEEL_ANGLE_STEP = 360 / GARMENT_COUNT; // 72°
 const CARD_SIZE = 80;

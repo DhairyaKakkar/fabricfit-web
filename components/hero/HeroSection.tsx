@@ -291,7 +291,7 @@ export default function HeroSection() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <div style={{ transform: 'scale(1)', transformOrigin: 'bottom left' }}>
+                    <div style={{ transform: 'scale(0.75)', transformOrigin: 'bottom left' }}>
                       <ModelFigure
                         gender={activeMobileGender}
                         garmentId={mobileGarmentId}

@@ -306,7 +306,7 @@ export default function HeroSection() {
                     zIndex: 2,
                     pointerEvents: 'none',
                   }}>
-                    <div style={{ transform: 'scale(0.7)', transformOrigin: 'bottom center' }}>
+                    <div style={{ transform: 'scale(0.6)', transformOrigin: 'bottom center' }}>
                       <ModelFigure
                         gender="male"
                         garmentId={maleGarmentId}
@@ -340,7 +340,7 @@ export default function HeroSection() {
                     zIndex: 2,
                     pointerEvents: 'none',
                   }}>
-                    <div style={{ transform: 'scale(0.7)', transformOrigin: 'bottom center' }}>
+                    <div style={{ transform: 'scale(0.6)', transformOrigin: 'bottom center' }}>
                       <ModelFigure
                         gender="female"
                         garmentId={femaleGarmentId}

@@ -1,16 +1,27 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
-const LINKS = [
-  { href: '#how-it-works', label: 'How it Works' },
-  { href: '#features', label: 'Features' },
-  { href: '/pricing', label: 'Pricing' },
-];
+const NAV_LINKS = [
+  { anchor: 'how-it-works', label: 'How it Works' },
+  { anchor: 'features', label: 'Features' },
+] as const;
+const PRICING_LINK = { href: '/pricing', label: 'Pricing' };
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+
+  const links = [
+    ...NAV_LINKS.map(l => ({
+      href: isHome ? `#${l.anchor}` : `/#${l.anchor}`,
+      label: l.label,
+    })),
+    PRICING_LINK,
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -39,7 +50,7 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <nav className="hidden md:flex flex-1 justify-center gap-8">
-          {LINKS.map((l) => (
+          {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
@@ -90,7 +101,7 @@ export default function Navbar() {
         style={{ maxHeight: open ? 280 : 0 }}
       >
         <div className="border-t border-zinc-100 bg-white/95 backdrop-blur-md px-5 py-5 flex flex-col gap-1">
-          {LINKS.map((l) => (
+          {links.map((l) => (
             <a
               key={l.href}
               href={l.href}

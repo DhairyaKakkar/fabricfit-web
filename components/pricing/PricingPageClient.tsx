@@ -12,15 +12,15 @@ const PLAN_META = [
   {
     id: 'payg' as const,
     name: 'Pay As You Go',
-    description: 'No commitment. Buy credits when you need them — they never expire.',
+    description: 'No commitment. Buy credits when you need them.',
     credits: 'Pack-based credits',
     tryOns: 'Pack-based',
     popular: false,
     features: [
-      'Branches: 1',
+      '1 branch',
       'Session-only storage',
-      'Try-on history: 15 days',
-      'Watermark: always on',
+      '15-day try-on history',
+      'FabricFit watermark',
       'No catalogue exports',
       'No support',
     ],
@@ -33,9 +33,9 @@ const PLAN_META = [
     tryOns: '60–80 try-ons',
     popular: false,
     features: [
-      'Branches: 1',
+      '1 branch',
       '200 items storage',
-      'Try-on history: 30 days',
+      '30-day try-on history',
       'Watermark removable',
       '10 catalogue exports / mo',
       'Email support',
@@ -49,10 +49,10 @@ const PLAN_META = [
     tryOns: '120–160 try-ons',
     popular: true,
     features: [
-      'Branches: up to 3',
+      'Up to 3 branches',
       '500 items storage',
-      'Try-on history: 90 days',
-      'Watermark removed',
+      '90-day try-on history',
+      'No watermark',
       '50 catalogue exports / mo',
       'Priority email support',
     ],
@@ -60,82 +60,22 @@ const PLAN_META = [
   {
     id: 'business' as const,
     name: 'Business',
-    description: 'For enterprise retailers with unlimited scale and analytics.',
+    description: 'For enterprise retailers needing unlimited scale.',
     credits: '1,000 credits / month',
     tryOns: '300–400 try-ons',
     popular: false,
     features: [
-      'Branches: unlimited',
+      'Unlimited branches',
       'Unlimited storage',
-      'Try-on history: 1 year',
-      'Watermark removed',
+      '1-year try-on history',
+      'No watermark',
       '100 catalogue exports / mo',
-      'Dedicated manager',
+      'Dedicated account manager',
     ],
   },
 ];
 
 type PlanId = typeof PLAN_META[number]['id'];
-
-/* ─── Sparkles ───────────────────────────────────────────────────────────── */
-function Sparkles() {
-  const [particles, setParticles] = useState<{ id: number; x: number; delay: number; duration: number; size: number }[]>([]);
-
-  useEffect(() => {
-    setParticles(
-      Array.from({ length: 40 }, (_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        delay: Math.random() * 4,
-        duration: 3 + Math.random() * 4,
-        size: 1 + Math.random() * 2,
-      }))
-    );
-  }, []);
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map(p => (
-        <motion.div
-          key={p.id}
-          style={{
-            position: 'absolute',
-            left: `${p.x}%`,
-            width: p.size,
-            height: p.size,
-            borderRadius: '50%',
-            background: '#d97706',
-            opacity: 0.4,
-          }}
-          initial={{ bottom: '-5%', opacity: 0 }}
-          animate={{ bottom: '105%', opacity: [0, 0.5, 0] }}
-          transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeOut' }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ─── VerticalCutReveal ──────────────────────────────────────────────────── */
-function VerticalCutReveal({ children }: { children: string }) {
-  const words = children.split(' ');
-  return (
-    <span className="inline-flex flex-wrap justify-center gap-x-2">
-      {words.map((word, i) => (
-        <span key={i} style={{ overflow: 'hidden', display: 'inline-block' }}>
-          <motion.span
-            style={{ display: 'inline-block' }}
-            initial={{ y: '110%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 250, damping: 40, delay: i * 0.12 }}
-          >
-            {word}
-          </motion.span>
-        </span>
-      ))}
-    </span>
-  );
-}
 
 /* ─── Country Selector ───────────────────────────────────────────────────── */
 const CURRENCY_ORDER: Currency[] = ['SGD', 'INR', 'AED', 'USD'];
@@ -146,73 +86,53 @@ function CountrySelector({ currency, onChange }: { currency: Currency; onChange:
       <select
         value={currency}
         onChange={(e) => onChange(e.target.value as Currency)}
-        style={{
-          appearance: 'none',
-          WebkitAppearance: 'none',
-          background: 'rgba(245,158,11,0.08)',
-          border: '1px solid rgba(217,119,6,0.25)',
-          borderRadius: 100,
-          padding: '7px 32px 7px 14px',
-          fontFamily: 'var(--font-inter)',
-          fontSize: 13,
-          fontWeight: 500,
-          color: '#92400e',
-          cursor: 'pointer',
-          outline: 'none',
-        }}
+        className="appearance-none bg-white border border-zinc-200 rounded-full text-sm font-medium text-zinc-700 cursor-pointer outline-none hover:border-zinc-300 transition-colors"
+        style={{ padding: '6px 28px 6px 12px', fontFamily: 'var(--font-inter)' }}
       >
         {CURRENCY_ORDER.map((c) => (
-          <option key={c} value={c} style={{ background: '#fff', color: '#1c1917' }}>
+          <option key={c} value={c}>
             {PRICING[c].flag}  {PRICING[c].label}
           </option>
         ))}
       </select>
-      <span style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#92400e', fontSize: 10, pointerEvents: 'none' }}>
-        ▾
-      </span>
+      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-[10px]">▾</span>
     </div>
   );
 }
 
-/* ─── Toggle ─────────────────────────────────────────────────────────────── */
+/* ─── Billing Toggle ─────────────────────────────────────────────────────── */
 function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: boolean) => void }) {
   return (
-    <div className="flex justify-center">
-      <div className="relative flex w-fit rounded-full border border-amber-200 bg-amber-50 p-1">
-        {['Monthly', 'Yearly'].map((label, i) => {
-          const active = yearly ? i === 1 : i === 0;
-          return (
-            <button
-              key={label}
-              onClick={() => onChange(i === 1)}
-              className="relative z-10 h-10 rounded-full px-6 text-sm font-medium transition-colors"
-              style={{ color: active ? '#fff' : '#92400e', fontFamily: 'var(--font-inter)' }}
-            >
-              {active && (
-                <motion.span
-                  layoutId="billing-pill"
-                  className="absolute inset-0 rounded-full"
-                  style={{ background: 'linear-gradient(to top, #92400e, #d97706)', boxShadow: '0 0 16px rgba(217,119,6,0.3)' }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-              )}
-              <span className="relative flex items-center gap-1.5">
-                {label}
-                {label === 'Yearly' && (
-                  <span style={{ fontSize: 10, background: 'rgba(217,119,6,0.12)', color: '#92400e', borderRadius: 4, padding: '1px 5px', fontWeight: 600 }}>
-                    -15%
-                  </span>
-                )}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+    <div className="flex items-center gap-3" style={{ fontFamily: 'var(--font-inter)' }}>
+      <button
+        onClick={() => onChange(false)}
+        className={`text-sm transition-colors ${!yearly ? 'text-zinc-900 font-medium' : 'text-zinc-400'}`}
+      >
+        Monthly
+      </button>
+      <button
+        onClick={() => onChange(!yearly)}
+        className="relative w-10 h-5 rounded-full transition-colors duration-200"
+        style={{ background: yearly ? '#09090b' : '#e4e4e7' }}
+      >
+        <motion.span
+          className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm"
+          animate={{ left: yearly ? '1.375rem' : '0.125rem' }}
+          transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+        />
+      </button>
+      <button
+        onClick={() => onChange(true)}
+        className={`text-sm transition-colors flex items-center gap-1.5 ${yearly ? 'text-zinc-900 font-medium' : 'text-zinc-400'}`}
+      >
+        Yearly
+        <span className="text-[10px] font-semibold bg-zinc-100 text-zinc-600 rounded px-1.5 py-0.5">2 months free</span>
+      </button>
     </div>
   );
 }
 
-/* ─── Plan card ──────────────────────────────────────────────────────────── */
+/* ─── Plan Card ──────────────────────────────────────────────────────────── */
 function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]; yearly: boolean; currency: Currency; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
@@ -227,115 +147,98 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 32, filter: 'blur(10px)' }}
-      animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.4, delay: index * 0.06 }}
+      className="relative flex flex-col rounded-2xl p-6"
       style={{
-        position: 'relative',
-        borderRadius: 20,
-        padding: 24,
-        display: 'flex',
-        flexDirection: 'column',
-        background: plan.popular
-          ? 'linear-gradient(135deg, #7c2d12 0%, #92400e 50%, #7c2d12 100%)'
-          : '#ffffff',
-        border: plan.popular ? '1.5px solid rgba(217,119,6,0.5)' : '1px solid rgba(217,119,6,0.18)',
-        boxShadow: plan.popular
-          ? '0 0 40px rgba(217,119,6,0.2), 0 4px 24px rgba(0,0,0,0.1)'
-          : '0 2px 12px rgba(0,0,0,0.06)',
+        background: plan.popular ? '#09090b' : '#ffffff',
+        border: plan.popular ? '1px solid #27272a' : '1px solid #e4e4e7',
+        boxShadow: plan.popular ? '0 8px 32px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.04)',
       }}
     >
       {plan.popular && (
-        <div style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
-          <span style={{ background: 'linear-gradient(to right, #92400e, #d97706)', color: '#fff', fontSize: 11, fontWeight: 700, padding: '4px 16px', borderRadius: 100, whiteSpace: 'nowrap', fontFamily: 'var(--font-inter)', letterSpacing: '0.06em' }}>
-            MOST POPULAR
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+          <span className="bg-white text-zinc-900 text-[11px] font-semibold px-3 py-1 rounded-full shadow-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+            Most Popular
           </span>
         </div>
       )}
 
-      <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.4rem', fontWeight: 700, color: plan.popular ? '#fef3c7' : '#1c1917', marginBottom: 6 }}>
+      <p className="text-xs font-semibold uppercase tracking-widest mb-3"
+        style={{ color: plan.popular ? '#71717a' : '#a1a1aa', fontFamily: 'var(--font-inter)', letterSpacing: '0.1em' }}>
         {plan.name}
-      </h3>
-      <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? 'rgba(254,243,199,0.7)' : '#78716c', lineHeight: 1.6, marginBottom: 20 }}>
-        {plan.description}
       </p>
 
       {/* Price */}
-      <div style={{ marginBottom: 20 }}>
+      <div className="mb-4">
         {isPayg ? (
           <>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: plan.popular ? 'rgba(254,243,199,0.7)' : '#78716c', marginRight: 2 }}>from {c.symbol}</span>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2.2rem', fontWeight: 700, color: plan.popular ? '#fef3c7' : '#92400e', lineHeight: 1 }}>
+            <div className="flex items-baseline gap-0.5">
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: plan.popular ? '#71717a' : '#a1a1aa' }}>from {c.symbol}</span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2rem', fontWeight: 700, color: plan.popular ? '#ffffff' : '#09090b', lineHeight: 1, marginLeft: 2 }}>
                 <NumberFlow key={currency} value={packFrom!} />
               </span>
             </div>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: plan.popular ? 'rgba(254,243,199,0.6)' : '#a8a29e', marginTop: 4 }}>per credit pack · never expire</p>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? '#52525b' : '#a1a1aa', marginTop: 4 }}>per credit pack · credits never expire</p>
           </>
         ) : (
           <>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: plan.popular ? 'rgba(254,243,199,0.7)' : '#78716c', marginRight: 2 }}>{c.symbol}</span>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2.2rem', fontWeight: 700, color: plan.popular ? '#fef3c7' : '#92400e', lineHeight: 1 }}>
+            <div className="flex items-baseline gap-0.5">
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: plan.popular ? '#71717a' : '#a1a1aa' }}>{c.symbol}</span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: '2rem', fontWeight: 700, color: plan.popular ? '#ffffff' : '#09090b', lineHeight: 1, marginLeft: 2 }}>
                 <NumberFlow key={currency} value={price!} />
               </span>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? 'rgba(254,243,199,0.6)' : '#a8a29e', marginLeft: 4 }}>/{yearly ? 'mo' : 'month'}</span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? '#52525b' : '#a1a1aa', marginLeft: 4 }}>/ mo</span>
             </div>
             {yearly && planPricing && (
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: plan.popular ? 'rgba(254,243,199,0.6)' : '#a8a29e', marginTop: 4 }}>
-                billed {fmtPrice(planPricing.annual, currency)} annually
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? '#52525b' : '#a1a1aa', marginTop: 4 }}>
+                billed {fmtPrice(planPricing.annual, currency)} / year
               </p>
             )}
           </>
         )}
       </div>
 
+      <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? '#71717a' : '#71717a', lineHeight: 1.6, marginBottom: 20 }}>
+        {plan.description}
+      </p>
+
       {/* Credits chip */}
-      <div style={{
-        background: plan.popular ? 'rgba(254,243,199,0.1)' : 'rgba(245,158,11,0.07)',
-        border: `1px solid ${plan.popular ? 'rgba(254,243,199,0.2)' : 'rgba(217,119,6,0.15)'}`,
-        borderRadius: 10,
-        padding: '10px 14px',
-        marginBottom: 20,
+      <div className="rounded-lg px-3 py-2 mb-5" style={{
+        background: plan.popular ? 'rgba(255,255,255,0.05)' : '#f4f4f5',
+        border: `1px solid ${plan.popular ? 'rgba(255,255,255,0.08)' : '#e4e4e7'}`,
       }}>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: plan.popular ? '#fef3c7' : '#d97706' }}>{plan.credits}</p>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: plan.popular ? 'rgba(254,243,199,0.7)' : '#b45309', marginTop: 2 }}>{plan.tryOns} · {rate} / try-on</p>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: plan.popular ? '#e4e4e7' : '#18181b' }}>{plan.credits}</p>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: plan.popular ? '#71717a' : '#71717a', marginTop: 2 }}>{plan.tryOns} · {rate} / try-on</p>
       </div>
 
-      <div style={{ height: 1, background: plan.popular ? 'rgba(254,243,199,0.15)' : 'rgba(0,0,0,0.06)', marginBottom: 16 }} />
+      <div style={{ height: 1, background: plan.popular ? 'rgba(255,255,255,0.07)' : '#f4f4f5', marginBottom: 16 }} />
 
-      {/* Features */}
-      <ul style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
+      <ul className="flex-1 flex flex-col gap-2.5 mb-6">
         {plan.features.map((f, i) => (
-          <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontFamily: 'var(--font-inter)', fontSize: 12, color: plan.popular ? 'rgba(254,243,199,0.8)' : '#57534e' }}>
-            <span style={{ color: plan.popular ? '#fbbf24' : '#d97706', fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span>
+          <li key={i} className="flex items-start gap-2 text-xs" style={{ fontFamily: 'var(--font-inter)', color: plan.popular ? '#a1a1aa' : '#52525b' }}>
+            <span style={{ color: plan.popular ? '#ffffff' : '#09090b', fontWeight: 700, marginTop: 1, flexShrink: 0 }}>✓</span>
             {f}
           </li>
         ))}
       </ul>
 
-      <motion.a
+      <a
         href="#"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.97 }}
+        className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all duration-150"
         style={{
-          display: 'block',
-          textAlign: 'center',
-          padding: '12px 0',
-          borderRadius: 12,
           fontFamily: 'var(--font-inter)',
-          fontSize: 14,
-          fontWeight: 600,
-          textDecoration: 'none',
           cursor: 'pointer',
-          background: plan.popular ? '#fef3c7' : 'transparent',
-          color: plan.popular ? '#7c2d12' : '#92400e',
-          border: plan.popular ? 'none' : '1px solid rgba(146,64,14,0.4)',
-          boxShadow: plan.popular ? '0 2px 12px rgba(254,243,199,0.2)' : 'none',
+          background: plan.popular ? '#ffffff' : 'transparent',
+          color: plan.popular ? '#09090b' : '#09090b',
+          border: plan.popular ? 'none' : '1px solid #d4d4d8',
         }}
+        onMouseEnter={e => { if (!plan.popular) (e.currentTarget as HTMLAnchorElement).style.background = '#f4f4f5'; }}
+        onMouseLeave={e => { if (!plan.popular) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
       >
-        Get Started →
-      </motion.a>
+        Get started
+      </a>
     </motion.div>
   );
 }
@@ -346,45 +249,43 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
   const inView = useInView(ref, { once: true, margin: '-40px' });
   const c = PRICING[currency];
   const packs = [
-    { name: 'Small', credits: 40, price: c.packs.small, tryOns: '~20 fast try-ons' },
-    { name: 'Standard', credits: 100, price: c.packs.standard, tryOns: '~50 fast try-ons' },
-    { name: 'Large', credits: 250, price: c.packs.large, tryOns: '~125 fast try-ons' },
+    { name: 'Small', credits: 40, price: c.packs.small, tryOns: '~20 try-ons' },
+    { name: 'Standard', credits: 100, price: c.packs.standard, tryOns: '~50 try-ons' },
+    { name: 'Large', credits: 250, price: c.packs.large, tryOns: '~125 try-ons' },
   ];
 
   return (
-    <div ref={ref} style={{ background: '#fdf3e3', padding: '80px 24px', borderTop: '1px solid rgba(217,119,6,0.1)' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>No Subscription Needed</span>
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#1c1917', marginTop: 8, marginBottom: 8 }}>Credit Packs</h2>
-          <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto 12px', borderRadius: 2 }} />
-          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#57534e', maxWidth: 480, margin: '0 auto' }}>
-            Buy credits à la carte. They never expire. Subscribers can also top up at the same rate when they run low.
+    <div ref={ref} className="py-20 px-6 border-t border-zinc-100">
+      <div style={{ maxWidth: 860, margin: '0 auto' }}>
+        <div className="text-center mb-10">
+          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}>No subscription needed</p>
+          <h2 className="text-2xl font-bold text-zinc-900 mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>Credit Packs</h2>
+          <p className="text-sm text-zinc-500 max-w-md mx-auto" style={{ fontFamily: 'var(--font-inter)' }}>
+            Buy credits à la carte — they never expire. Subscribers can top up at the same rate.
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, maxWidth: 680, margin: '0 auto' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
           {packs.map((pack, i) => (
-            <motion.div key={pack.name}
-              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-              transition={{ duration: 0.45, delay: i * 0.1 }}
-              whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(217,119,6,0.12)' }}
-              style={{ background: '#ffffff', border: '1px solid rgba(217,119,6,0.2)', borderRadius: 16, padding: '24px 20px', textAlign: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
+            <motion.div
+              key={pack.name}
+              initial={{ opacity: 0, y: 16 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.35, delay: i * 0.07 }}
+              className="bg-white rounded-2xl border border-zinc-200 p-6 flex flex-col items-center text-center"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
             >
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 600, marginBottom: 12 }}>{pack.name}</p>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: '2rem', fontWeight: 700, color: '#92400e', lineHeight: 1 }}>
-                {fmtPrice(pack.price, currency)}
-              </p>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', marginTop: 4 }}>{pack.credits} credits</p>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a8a29e', marginTop: 2, marginBottom: 16 }}>{pack.tryOns}</p>
-              <motion.a href="#" whileHover={{ scale: 1.03 }} style={{ display: 'block', padding: '10px 0', borderRadius: 10, border: '1px solid rgba(146,64,14,0.35)', color: '#92400e', fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, textDecoration: 'none', cursor: 'pointer' }}>
-                Buy Pack
-              </motion.a>
+              <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.12em' }}>{pack.name}</p>
+              <p className="text-3xl font-bold text-zinc-900 mb-1" style={{ fontFamily: 'var(--font-inter)' }}>{fmtPrice(pack.price, currency)}</p>
+              <p className="text-xs text-zinc-400 mb-1" style={{ fontFamily: 'var(--font-inter)' }}>{pack.credits} credits</p>
+              <p className="text-xs text-zinc-400 mb-5" style={{ fontFamily: 'var(--font-inter)' }}>{pack.tryOns}</p>
+              <a href="#" className="w-full block text-center py-2 rounded-xl text-sm font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition-colors" style={{ fontFamily: 'var(--font-inter)', cursor: 'pointer' }}>
+                Buy pack
+              </a>
             </motion.div>
           ))}
         </div>
-        <p style={{ textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a8a29e', marginTop: 24 }}>
-          Pack credits never expire · 15-day history · FabricFit watermark · no catalogue exports
+        <p className="text-center text-xs text-zinc-400 mt-6" style={{ fontFamily: 'var(--font-inter)' }}>
+          15-day history · FabricFit watermark · no catalogue exports · 1 branch
         </p>
       </div>
     </div>
@@ -398,33 +299,34 @@ function AddOnsSection({ currency }: { currency: Currency }) {
   const c = PRICING[currency];
   const addons = [
     { icon: '✦', name: 'Remove Watermark', desc: 'Strip the FabricFit watermark from all future try-on results. Starter plan only.', price: c.addons.watermark, badge: 'Starter only' },
-    { icon: '⚡', name: 'Credit Top-Up', desc: 'Buy extra credits at PAYG rate mid-month. Top-up credits never expire.', price: c.addons.topupFrom, badge: 'All plans' },
+    { icon: '⚡', name: 'Credit Top-Up', desc: 'Buy extra credits at the PAYG rate mid-month. Top-up credits never expire.', price: c.addons.topupFrom, badge: 'All plans' },
   ];
 
   return (
-    <div ref={ref} style={{ background: '#fef9f0', padding: '80px 24px', borderTop: '1px solid rgba(217,119,6,0.08)' }}>
-      <div style={{ maxWidth: 700, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>Extras</span>
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#1c1917', marginTop: 8, marginBottom: 8 }}>Add-Ons</h2>
-          <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto', borderRadius: 2 }} />
+    <div ref={ref} className="py-20 px-6 bg-zinc-50 border-t border-zinc-100">
+      <div style={{ maxWidth: 680, margin: '0 auto' }}>
+        <div className="text-center mb-10">
+          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}>Extras</p>
+          <h2 className="text-2xl font-bold text-zinc-900" style={{ fontFamily: 'var(--font-playfair)' }}>Add-Ons</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {addons.map((addon, i) => (
-            <motion.div key={addon.name}
-              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-              animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-              transition={{ duration: 0.45, delay: i * 0.12 }}
-              style={{ background: '#ffffff', border: '1px solid rgba(217,119,6,0.15)', borderRadius: 16, padding: 24, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
+            <motion.div
+              key={addon.name}
+              initial={{ opacity: 0, y: 16 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.35, delay: i * 0.08 }}
+              className="bg-white rounded-2xl border border-zinc-200 p-6"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
             >
-              <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                <span style={{ color: '#d97706', fontSize: 20, flexShrink: 0, marginTop: 2 }}>{addon.icon}</span>
+              <div className="flex gap-3">
+                <span className="text-zinc-400 text-lg shrink-0 mt-0.5">{addon.icon}</span>
                 <div>
-                  <h3 style={{ fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 600, color: '#1c1917', marginBottom: 6 }}>{addon.name}</h3>
-                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', lineHeight: 1.6, marginBottom: 14 }}>{addon.desc}</p>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                    <span style={{ fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 700, color: '#92400e' }}>{addon.price}</span>
-                    <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#78716c', background: '#f5f5f4', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 100, padding: '3px 10px' }}>{addon.badge}</span>
+                  <h3 className="text-sm font-semibold text-zinc-900 mb-1.5" style={{ fontFamily: 'var(--font-inter)' }}>{addon.name}</h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed mb-4" style={{ fontFamily: 'var(--font-inter)' }}>{addon.desc}</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-bold text-zinc-900" style={{ fontFamily: 'var(--font-inter)' }}>{addon.price}</span>
+                    <span className="text-xs text-zinc-400 bg-zinc-50 border border-zinc-200 rounded-full px-2.5 py-0.5" style={{ fontFamily: 'var(--font-inter)' }}>{addon.badge}</span>
                   </div>
                 </div>
               </div>
@@ -446,7 +348,7 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
     { heading: 'Credits & Try-Ons', rows: [
       { label: 'Credits', values: ['Packs (no expiry)', '200 / month', '400 / month', '1,000 / month'] },
       { label: 'Fast try-ons (approx)', values: ['Pack-based', '60–80', '120–160', '300–400'] },
-      { label: 'Effective rate / try-on', values: [c.rates.paygStarter, c.rates.paygStarter, c.rates.pro, c.rates.business] },
+      { label: 'Rate / try-on', values: [c.rates.paygStarter, c.rates.paygStarter, c.rates.pro, c.rates.business] },
     ]},
     { heading: 'Branches & Access', rows: [
       { label: 'Branches', values: ['1', '1', 'Up to 3', 'Unlimited'] },
@@ -461,7 +363,7 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
       { label: 'Watermark', values: ['Always on', 'Removable', 'Removed', 'Removed'] },
     ]},
     { heading: 'Support', rows: [
-      { label: 'Support tier', values: ['None', 'Email', 'Priority email', 'Dedicated manager'] },
+      { label: 'Support tier', values: ['None', 'Email', 'Priority email', 'Dedicated'] },
     ]},
   ];
 
@@ -471,48 +373,62 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
     : [c.addons.topupFrom, `${fmt(c.plans.starter.monthly)}/mo`, `${fmt(c.plans.pro.monthly)}/mo`, `${fmt(c.plans.business.monthly)}/mo`];
 
   return (
-    <div ref={ref} style={{ background: '#fdf3e3', padding: '80px 24px', borderTop: '1px solid rgba(217,119,6,0.1)' }}>
+    <div ref={ref} className="py-20 px-6 border-t border-zinc-100">
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#92400e', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 600 }}>Compare</span>
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, color: '#1c1917', marginTop: 8, marginBottom: 8 }}>Full Feature Comparison</h2>
-          <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto', borderRadius: 2 }} />
+        <div className="text-center mb-10">
+          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}>Compare</p>
+          <h2 className="text-2xl font-bold text-zinc-900" style={{ fontFamily: 'var(--font-playfair)' }}>Full Feature Comparison</h2>
         </div>
         <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
-          style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid rgba(217,119,6,0.15)', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.4 }}
+          className="overflow-x-auto rounded-2xl border border-zinc-200"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
             <thead>
-              <tr style={{ background: '#fef9f0', borderBottom: '1px solid rgba(217,119,6,0.12)' }}>
-                <th style={{ padding: '14px 20px', textAlign: 'left', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', fontWeight: 500, minWidth: 160 }}>Feature</th>
+              <tr className="border-b border-zinc-100" style={{ background: '#fafafa' }}>
+                <th className="text-left px-5 py-4 text-xs font-medium text-zinc-400 w-44" style={{ fontFamily: 'var(--font-inter)' }}>Feature</th>
                 {['PAYG', 'Starter', 'Pro', 'Business'].map((n, i) => (
-                  <th key={n} style={{ padding: '14px 16px', textAlign: 'center', fontFamily: 'var(--font-playfair)', fontSize: 14, fontWeight: 700, color: i === 2 ? '#92400e' : '#1c1917', minWidth: 110, background: i === 2 ? 'rgba(245,158,11,0.06)' : 'transparent' }}>
-                    {n}{i === 2 && <span style={{ display: 'block', fontFamily: 'var(--font-inter)', fontSize: 10, color: '#d97706', fontWeight: 400, fontStyle: 'normal', marginTop: 2 }}>Popular</span>}
+                  <th key={n} className="px-4 py-4 text-center min-w-[110px]" style={{ background: i === 2 ? '#09090b' : 'transparent' }}>
+                    <span className="block text-sm font-bold" style={{ fontFamily: 'var(--font-playfair)', color: i === 2 ? '#ffffff' : '#18181b' }}>{n}</span>
+                    {i === 2 && <span className="block text-[10px] text-zinc-400 font-normal mt-0.5" style={{ fontFamily: 'var(--font-inter)' }}>Most Popular</span>}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white">
               {tableGroups.map((group) => (
                 <Fragment key={group.heading}>
-                  <tr style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <td colSpan={5} style={{ padding: '8px 20px', fontFamily: 'var(--font-inter)', fontSize: 10, color: '#57534e', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 600 }}>{group.heading}</td>
+                  <tr className="border-t border-zinc-100" style={{ background: '#fafafa' }}>
+                    <td colSpan={5} className="px-5 py-2 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.1em' }}>{group.heading}</td>
                   </tr>
                   {group.rows.map((row, ri) => (
-                    <tr key={row.label} style={{ borderTop: '1px solid rgba(0,0,0,0.04)', background: ri % 2 === 0 ? '#ffffff' : '#fdfaf6' }}>
-                      <td style={{ padding: '12px 20px', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#57534e' }}>{row.label}</td>
+                    <tr key={row.label} className="border-t border-zinc-100" style={{ background: ri % 2 === 0 ? '#ffffff' : '#fafafa' }}>
+                      <td className="px-5 py-3 text-xs text-zinc-500" style={{ fontFamily: 'var(--font-inter)' }}>{row.label}</td>
                       {row.values.map((val, ci) => (
-                        <td key={ci} style={{ padding: '12px 16px', textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 12, color: ci === 2 ? '#92400e' : val === '—' || val === 'None' ? '#d4d0cb' : '#57534e', fontWeight: ci === 2 ? 600 : 400, background: ci === 2 ? 'rgba(245,158,11,0.04)' : 'transparent' }}>{val}</td>
+                        <td key={ci} className="px-4 py-3 text-center text-xs" style={{
+                          fontFamily: 'var(--font-inter)',
+                          color: ci === 2 ? '#ffffff' : val === '—' || val === 'None' ? '#d4d4d8' : '#3f3f46',
+                          fontWeight: ci === 2 ? 600 : 400,
+                          background: ci === 2 ? '#09090b' : 'transparent',
+                        }}>
+                          {val}
+                        </td>
                       ))}
                     </tr>
                   ))}
                 </Fragment>
               ))}
-              <tr style={{ borderTop: '2px solid rgba(217,119,6,0.2)', background: '#fef9f0' }}>
-                <td style={{ padding: '14px 20px', fontFamily: 'var(--font-inter)', fontSize: 12, color: '#92400e', fontWeight: 600 }}>Price</td>
+              <tr className="border-t-2 border-zinc-200">
+                <td className="px-5 py-4 text-xs font-semibold text-zinc-900" style={{ fontFamily: 'var(--font-inter)', background: '#fafafa' }}>Price</td>
                 {prices.map((p, i) => (
-                  <td key={i} style={{ padding: '14px 16px', textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 700, color: i === 2 ? '#92400e' : '#1c1917', background: i === 2 ? 'rgba(245,158,11,0.06)' : 'transparent' }}>{p}</td>
+                  <td key={i} className="px-4 py-4 text-center text-sm font-bold" style={{
+                    fontFamily: 'var(--font-inter)',
+                    color: i === 2 ? '#ffffff' : '#09090b',
+                    background: i === 2 ? '#09090b' : '#fafafa',
+                  }}>{p}</td>
                 ))}
               </tr>
             </tbody>
@@ -523,10 +439,10 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
   );
 }
 
-/* ─── Footer ─────────────────────────────────────────────────────────────── */
+/* ─── Good to Know ───────────────────────────────────────────────────────── */
 const RULES = [
-  { icon: '↻', title: 'Credits reset on billing date', body: 'Not the 1st of the month. Your credits reset on the same day you subscribed — every month.' },
-  { icon: '✕', title: "Unused credits don't roll over", body: 'Subscription credits expire at reset. Top-up pack credits never expire, even for subscribers.' },
+  { icon: '↻', title: 'Credits reset on billing date', body: 'Your credits reset on the same day you subscribed — not the 1st of the month.' },
+  { icon: '✕', title: "Unused credits don't roll over", body: 'Subscription credits expire at reset. Top-up pack credits never expire.' },
   { icon: '★', title: '14-day free trial', body: '40 credits, ~20 fast try-ons, no card required. Converts to PAYG or a paid plan at the end.' },
 ];
 
@@ -534,25 +450,28 @@ function FooterSection() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-40px' });
   return (
-    <div ref={ref} style={{ background: '#fef9f0', padding: '80px 24px 60px', borderTop: '1px solid rgba(217,119,6,0.08)' }}>
-      <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 700, color: '#1c1917', marginBottom: 8 }}>Good to know</h2>
-        <div style={{ width: 40, height: 2, background: 'linear-gradient(to right, #f59e0b, #92400e)', margin: '0 auto 40px', borderRadius: 2 }} />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 48 }}>
+    <div ref={ref} className="py-20 px-6 bg-zinc-50 border-t border-zinc-100">
+      <div style={{ maxWidth: 760, margin: '0 auto', textAlign: 'center' }}>
+        <h2 className="text-xl font-bold text-zinc-900 mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>Good to know</h2>
+        <div className="w-8 h-px bg-zinc-200 mx-auto mb-10" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           {RULES.map((rule, i) => (
             <motion.div key={rule.title}
-              initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-              style={{ background: '#ffffff', border: '1px solid rgba(217,119,6,0.12)', borderRadius: 14, padding: '24px 20px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.35, delay: i * 0.08 }}
+              className="bg-white rounded-xl border border-zinc-200 p-5 text-left"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
             >
-              <span style={{ fontSize: 22, color: '#d97706', display: 'block', marginBottom: 10 }}>{rule.icon}</span>
-              <h3 style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, color: '#1c1917', marginBottom: 8 }}>{rule.title}</h3>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#78716c', lineHeight: 1.6 }}>{rule.body}</p>
+              <span className="text-xl text-zinc-300 block mb-3">{rule.icon}</span>
+              <h3 className="text-xs font-semibold text-zinc-900 mb-2" style={{ fontFamily: 'var(--font-inter)' }}>{rule.title}</h3>
+              <p className="text-xs text-zinc-500 leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>{rule.body}</p>
             </motion.div>
           ))}
         </div>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#a8a29e' }}>
+        <p className="text-xs text-zinc-400" style={{ fontFamily: 'var(--font-inter)' }}>
           Questions?{' '}
-          <a href="#" style={{ color: '#92400e', textDecoration: 'underline' }}>Chat with us on WhatsApp</a>
+          <a href="#" className="underline text-zinc-500 hover:text-zinc-700 transition-colors">Chat with us on WhatsApp</a>
         </p>
       </div>
     </div>
@@ -593,70 +512,62 @@ export default function PricingPageClient() {
   };
 
   return (
-    <div style={{ background: '#fef9f0', minHeight: '100vh', overflowX: 'hidden', position: 'relative' }}>
+    <div className="bg-white min-h-screen">
 
-      {/* Top sparkle area */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '45vh', maskImage: 'radial-gradient(50% 50% at 50% 0%, white, transparent)' }}>
-        {/* Grid */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)',
-          backgroundSize: '60px 70px',
-        }} />
-        <Sparkles />
-      </div>
-
-      {/* Amber glow ring */}
-      <div style={{ position: 'absolute', top: '-60px', left: '50%', transform: 'translateX(-50%)', width: '80vw', height: '60vh', pointerEvents: 'none', zIndex: 0 }}>
-        <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '160px solid rgba(217,119,6,0.06)', filter: 'blur(60px)' }} />
-      </div>
-
-      {/* Hero text */}
-      <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', paddingTop: 120, paddingBottom: 48, maxWidth: 680, margin: '0 auto', paddingLeft: 24, paddingRight: 24 }}>
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#92400e', letterSpacing: '0.2em', textTransform: 'uppercase', display: 'block', marginBottom: 16 }}
+      {/* Hero */}
+      <div className="pt-28 pb-16 px-6 text-center">
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4"
+          style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}
         >
           Pricing
-        </motion.span>
-
-        <h1 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 700, color: '#1c1917', lineHeight: 1.15, marginBottom: 16 }}>
-          <VerticalCutReveal>Plans that work for your showroom</VerticalCutReveal>
-        </h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: '#57534e', lineHeight: 1.7, marginBottom: 32 }}
-        >
-          Trusted by fabric showrooms across India &amp; Singapore. All plans include a 14-day free trial — no card required.
         </motion.p>
-
-        <motion.div
+        <motion.h1
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.65 }}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}
+          transition={{ duration: 0.45, delay: 0.08 }}
+          className="text-4xl md:text-5xl font-bold text-zinc-900 mb-4 leading-tight"
+          style={{ fontFamily: 'var(--font-playfair)' }}
+        >
+          Simple, transparent pricing
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.14 }}
+          className="text-sm text-zinc-500 max-w-md mx-auto mb-10"
+          style={{ fontFamily: 'var(--font-inter)', lineHeight: 1.7 }}
+        >
+          All plans include a 14-day free trial — 40 credits, no card required.
+        </motion.p>
+
+        {/* Controls */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <BillingToggle yearly={yearly} onChange={setYearly} />
+          <div className="w-px h-5 bg-zinc-200 hidden sm:block" />
           <CountrySelector currency={currency} onChange={handleCurrencyChange} />
         </motion.div>
-      </div>
 
-      {/* Cards */}
-      <div style={{ position: 'relative', zIndex: 10, maxWidth: 1100, margin: '0 auto', padding: '0 24px 80px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
-        {PLAN_META.map((plan, i) => (
-          <PlanCard key={plan.id} plan={plan} yearly={yearly} currency={currency} index={i} />
-        ))}
-      </div>
-
-      <div style={{ textAlign: 'center', paddingBottom: 60, position: 'relative', zIndex: 10 }}>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#a8a29e' }}>
-          All prices in {PRICING[currency].label} · 40 free credits on signup · no card required
+        <p className="text-xs text-zinc-400 mt-3" style={{ fontFamily: 'var(--font-inter)' }}>
+          All prices in {PRICING[currency].label}
         </p>
+      </div>
+
+      {/* Plan Cards */}
+      <div className="px-6 pb-20">
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+          {PLAN_META.map((plan, i) => (
+            <PlanCard key={plan.id} plan={plan} yearly={yearly} currency={currency} index={i} />
+          ))}
+        </div>
       </div>
 
       <CreditPacksSection currency={currency} />

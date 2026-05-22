@@ -300,7 +300,7 @@ export default function HeroSection() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                   <div style={{
                     position: 'absolute',
-                    bottom: WHEEL_RADIUS + 130,
+                    bottom: WHEEL_RADIUS + 115,
                     left: '50%',
                     transform: 'translateX(-50%)',
                     zIndex: 2,

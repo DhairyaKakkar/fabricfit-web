@@ -30,6 +30,7 @@ export default function FloatingGarment({ garment, activeDragId }: Props) {
         left: `${layout.x}%`,
         top: `${layout.y}%`,
         zIndex: isDragging ? 50 : 5,
+        touchAction: 'none',
         ...dndStyle,
       }}
       {...listeners}

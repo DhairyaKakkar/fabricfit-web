@@ -40,7 +40,7 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver, w
       <div
         ref={setNodeRef}
         className="relative"
-        style={{ width, zIndex: 1 }}
+        style={{ width, zIndex: 1, pointerEvents: 'auto' }}
       >
         {/* Model image */}
         <motion.div

@@ -10,6 +10,7 @@ import {
   useSensor,
   useSensors,
   DragOverEvent,
+  pointerWithin,
 } from '@dnd-kit/core';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GARMENTS, GarmentId, Gender } from '@/lib/garments';
@@ -185,6 +186,7 @@ export default function HeroSection() {
   return (
     <DndContext
       sensors={sensors}
+      collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
@@ -204,13 +206,13 @@ export default function HeroSection() {
           <>
             <div
               className="absolute flex items-end"
-              style={{ left: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10 }}
+              style={{ left: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
             >
               <ModelFigure gender="male" garmentId={maleGarment} isShimmering={maleShimmering} isOver={maleOver} width={547} height={791} />
             </div>
             <div
               className="absolute flex items-end"
-              style={{ right: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10 }}
+              style={{ right: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
             >
               <ModelFigure gender="female" garmentId={femaleGarment} isShimmering={femaleShimmering} isOver={femaleOver} width={553} height={763} />
             </div>

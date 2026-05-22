@@ -300,13 +300,13 @@ export default function HeroSection() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                   <div style={{
                     position: 'absolute',
-                    bottom: WHEEL_RADIUS,
+                    bottom: WHEEL_RADIUS + 100,
                     left: '50%',
                     transform: 'translateX(-50%)',
                     zIndex: 2,
                     pointerEvents: 'none',
                   }}>
-                    <div style={{ transform: 'scale(0.6)', transformOrigin: 'bottom center' }}>
+                    <div style={{ transform: 'scale(0.7)', transformOrigin: 'bottom center' }}>
                       <ModelFigure
                         gender="male"
                         garmentId={maleGarmentId}
@@ -334,13 +334,13 @@ export default function HeroSection() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                   <div style={{
                     position: 'absolute',
-                    bottom: WHEEL_RADIUS,
+                    bottom: WHEEL_RADIUS + 100,
                     left: '50%',
                     transform: 'translateX(-50%)',
                     zIndex: 2,
                     pointerEvents: 'none',
                   }}>
-                    <div style={{ transform: 'scale(0.6)', transformOrigin: 'bottom center' }}>
+                    <div style={{ transform: 'scale(0.7)', transformOrigin: 'bottom center' }}>
                       <ModelFigure
                         gender="female"
                         garmentId={femaleGarmentId}

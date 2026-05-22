@@ -29,16 +29,17 @@ const CARD_SIZE = 80;
 
 function MobileGarmentWheel({
   gender,
-  activeIndex,
+  steps,
   onSelect,
 }: {
   gender: Gender;
-  activeIndex: number;
+  steps: number;
   onSelect: (i: number) => void;
 }) {
   const garments = GARMENTS.filter(g => g.gender === gender);
-  // Rotate ring so garment[activeIndex] sits at 180° = leftmost visible point
-  const ringDeg = 180 - activeIndex * WHEEL_ANGLE_STEP;
+  const activeIndex = steps % GARMENT_COUNT;
+  // Always subtract — rotation only ever goes one direction, no reversal
+  const ringDeg = 180 - steps * WHEEL_ANGLE_STEP;
 
   return (
     <div
@@ -123,7 +124,7 @@ export default function HeroSection() {
   const [femaleOver, setFemaleOver] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [activeMobileGender, setActiveMobileGender] = useState<'male' | 'female'>('male');
-  const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
+  const [mobileSteps, setMobileSteps] = useState(0);
 
   const maleGarmentRef = useRef<GarmentId | null>(null);
   const femaleGarmentRef = useRef<GarmentId | null>(null);
@@ -136,11 +137,11 @@ export default function HeroSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Auto-spin wheel every 2.5s on mobile — resets on gender switch
+  // Auto-spin wheel every 2.5s on mobile — always forward, resets on gender switch
   useEffect(() => {
     if (isMobile !== true) return;
     const timer = setInterval(() => {
-      setMobileActiveIndex(i => (i + 1) % GARMENT_COUNT);
+      setMobileSteps(s => s + 1);
     }, 2500);
     return () => clearInterval(timer);
   }, [isMobile, activeMobileGender]);
@@ -258,7 +259,7 @@ export default function HeroSection() {
         {/* ── Mobile: model left + garment wheel right ── */}
         {isMobile === true && (() => {
           const mobileGarments = GARMENTS.filter(g => g.gender === activeMobileGender);
-          const mobileGarmentId = mobileGarments[mobileActiveIndex]?.id ?? null;
+          const mobileGarmentId = mobileGarments[mobileSteps % GARMENT_COUNT]?.id ?? null;
           return (
             <>
               {/* Title at top */}
@@ -308,8 +309,15 @@ export default function HeroSection() {
               {/* Garment wheel — right side, half off screen */}
               <MobileGarmentWheel
                 gender={activeMobileGender}
-                activeIndex={mobileActiveIndex}
-                onSelect={setMobileActiveIndex}
+                steps={mobileSteps}
+                onSelect={(i) => {
+                  // Advance the minimum number of steps forward to reach garment i
+                  setMobileSteps(s => {
+                    const curr = s % GARMENT_COUNT;
+                    const fwd = (i - curr + GARMENT_COUNT) % GARMENT_COUNT;
+                    return fwd === 0 ? s : s + fwd;
+                  });
+                }}
               />
 
               {/* Gender toggle */}
@@ -320,7 +328,7 @@ export default function HeroSection() {
                 {(['male', 'female'] as const).map(g => (
                   <button
                     key={g}
-                    onClick={() => { setActiveMobileGender(g); setMobileActiveIndex(0); }}
+                    onClick={() => { setActiveMobileGender(g); setMobileSteps(0); }}
                     style={{
                       display: 'flex',
                       alignItems: 'center',

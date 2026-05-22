@@ -40,13 +40,15 @@ function MobileGarmentWheel({
 }) {
   const garments = GARMENTS.filter(g => g.gender === gender);
   const activeIndex = steps % GARMENT_COUNT;
-  // Left corner: active at 45° (upper-right); right corner: active at 135° (upper-left)
-  const baseAngle = corner === 'left' ? 45 : 135;
+  // Left corner: active at 280° (upper-right) + next at 352° both visible
+  // Right corner: active at 260° (upper-left) + prev at 188° both visible
+  const baseAngle = corner === 'left' ? 280 : 260;
   const ringDeg = baseAngle - steps * WHEEL_ANGLE_STEP;
 
+  // Offset 20px inward from corner in both axes so cards aren't clipped at edges
   const posStyle: React.CSSProperties = corner === 'left'
-    ? { bottom: -WHEEL_RADIUS, left: -WHEEL_RADIUS }
-    : { bottom: -WHEEL_RADIUS, right: -WHEEL_RADIUS };
+    ? { bottom: -WHEEL_RADIUS + 20, left: -WHEEL_RADIUS + 20 }
+    : { bottom: -WHEEL_RADIUS + 20, right: -WHEEL_RADIUS + 20 };
 
   return (
     <div
@@ -298,11 +300,10 @@ export default function HeroSection() {
                   left: 0,
                   right: 0,
                   display: 'flex',
-                  overflow: 'hidden',
                 }}
               >
                 {/* ── Man column ── */}
-                <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ flex: 1, position: 'relative' }}>
                   <div style={{
                     position: 'absolute',
                     bottom: WHEEL_RADIUS + 115,
@@ -337,7 +338,7 @@ export default function HeroSection() {
                 </div>
 
                 {/* ── Woman column ── */}
-                <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ flex: 1, position: 'relative' }}>
                   <div style={{
                     position: 'absolute',
                     bottom: WHEEL_RADIUS + 130,

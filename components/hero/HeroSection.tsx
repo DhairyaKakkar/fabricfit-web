@@ -21,65 +21,93 @@ import HeroCta from './HeroCta';
 
 const FABRIC_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 10 L10 0 M-2 2 L2-2 M18 22 L22 18' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M10 20 L20 10 M-2 18 L2 22 M18-2 L22 2' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3C/svg%3E")`;
 
-// ── Mobile floating garment positions (orbit around centered model) ───────────
-interface MobileGarmentPos {
-  id: GarmentId;
-  side: 'left' | 'right';
-  offset: number; // px from edge — varies per garment to create an arc
-  top: string;    // % of viewport height
-  rot: number;
-  dur: number;
-}
+// ── Mobile garment wheel ──────────────────────────────────────────────────────
+const WHEEL_RADIUS = 130;
+const GARMENT_COUNT = 5;
+const WHEEL_ANGLE_STEP = 360 / GARMENT_COUNT; // 72°
+const CARD_SIZE = 70;
 
-// Left: 3 garments at 3 heights with slight x variation (arc inward at mid)
-// Right: 2 garments mirrored. Both groups close to model edges.
-const MOBILE_GARMENT_LAYOUT: MobileGarmentPos[] = [
-  { id: 'kurta',         side: 'left',  offset: 6,  top: '30%', rot: 10,  dur: 4.2 },
-  { id: 'sherwani',      side: 'left',  offset: 18, top: '48%', rot: -6,  dur: 3.5 },
-  { id: 'nehru-coat',    side: 'left',  offset: 6,  top: '64%', rot: 12,  dur: 4.7 },
-  { id: 'shirt',         side: 'right', offset: 6,  top: '33%', rot: -8,  dur: 3.8 },
-  { id: 'blazer',        side: 'right', offset: 18, top: '51%', rot: -10, dur: 3.6 },
-  { id: 'anarkali',      side: 'left',  offset: 6,  top: '30%', rot: 6,   dur: 4.4 },
-  { id: 'saree',         side: 'left',  offset: 18, top: '48%', rot: -7,  dur: 3.9 },
-  { id: 'lehenga',       side: 'left',  offset: 6,  top: '64%', rot: 9,   dur: 4.6 },
-  { id: 'casual-dress',  side: 'right', offset: 6,  top: '33%', rot: 8,   dur: 4.1 },
-  { id: 'jumpsuit',      side: 'right', offset: 18, top: '51%', rot: -12, dur: 3.5 },
-];
-
-function MobileGarmentFloat({ pos, src, label, idx, isSelected, onClick }: {
-  pos: MobileGarmentPos; src: string; label: string; idx: number;
-  isSelected: boolean; onClick: () => void;
+function MobileGarmentWheel({
+  gender,
+  activeIndex,
+  onSelect,
+}: {
+  gender: Gender;
+  activeIndex: number;
+  onSelect: (i: number) => void;
 }) {
+  const garments = GARMENTS.filter(g => g.gender === gender);
+  // Rotate ring so garment[activeIndex] sits at 180° = leftmost visible point
+  const ringDeg = 180 - activeIndex * WHEEL_ANGLE_STEP;
+
   return (
-    <motion.div
-      style={{ position: 'absolute', [pos.side]: pos.offset, top: pos.top, zIndex: 4, cursor: 'pointer' }}
-      initial={{ opacity: 0, scale: 0.3 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.3 }}
-      transition={{ duration: 0.35, delay: idx * 0.07 }}
-      onClick={onClick}
+    <div
+      style={{
+        position: 'absolute',
+        right: -WHEEL_RADIUS,
+        top: '50%',
+        transform: 'translateY(-40%)',
+        width: WHEEL_RADIUS * 2,
+        height: WHEEL_RADIUS * 2,
+        zIndex: 5,
+      }}
     >
       <motion.div
-        animate={{ y: [0, -9, 0, 9, 0], rotate: [pos.rot, pos.rot + 3, pos.rot, pos.rot - 3, pos.rot] }}
-        transition={{ duration: pos.dur, repeat: Infinity, ease: 'easeInOut' }}
+        animate={{ rotate: ringDeg }}
+        transition={{ type: 'spring', stiffness: 60, damping: 18 }}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: '50%',
+          border: '1.5px solid rgba(0,0,0,0.1)',
+        }}
       >
-        <div style={{
-          background: isSelected ? '#09090b' : 'rgba(255,255,255,0.93)',
-          borderRadius: 14,
-          padding: 6,
-          boxShadow: isSelected
-            ? '0 6px 24px rgba(0,0,0,0.3), 0 0 0 2px #09090b'
-            : '0 6px 24px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.06)',
-          transition: 'background 0.2s, box-shadow 0.2s',
-        }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={src} alt={label} style={{ width: 82, height: 110, objectFit: 'contain', display: 'block', userSelect: 'none' }} />
-          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: isSelected ? '#a1a1aa' : '#71717a', textAlign: 'center', marginTop: 4, lineHeight: 1 }}>
-            {label}
-          </p>
-        </div>
+        {garments.map((g, i) => {
+          const rad = (i * WHEEL_ANGLE_STEP * Math.PI) / 180;
+          const cx = Math.cos(rad) * WHEEL_RADIUS;
+          const cy = Math.sin(rad) * WHEEL_RADIUS;
+          const isActive = i === activeIndex;
+
+          return (
+            <motion.div
+              key={g.id}
+              animate={{ rotate: -ringDeg }}
+              transition={{ type: 'spring', stiffness: 60, damping: 18 }}
+              onClick={() => onSelect(i)}
+              style={{
+                position: 'absolute',
+                left: WHEEL_RADIUS + cx - CARD_SIZE / 2,
+                top: WHEEL_RADIUS + cy - CARD_SIZE / 2,
+                width: CARD_SIZE,
+                height: CARD_SIZE,
+                cursor: 'pointer',
+                zIndex: isActive ? 2 : 1,
+              }}
+            >
+              <div style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: 14,
+                background: 'white',
+                overflow: 'hidden',
+                border: `2.5px solid ${isActive ? '#09090b' : 'rgba(210,210,210,0.8)'}`,
+                boxShadow: isActive
+                  ? '0 6px 20px rgba(0,0,0,0.22)'
+                  : '0 2px 10px rgba(0,0,0,0.10)',
+                transition: 'border-color 0.3s, box-shadow 0.3s',
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={g.floatSrc}
+                  alt={g.label}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                />
+              </div>
+            </motion.div>
+          );
+        })}
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -95,7 +123,7 @@ export default function HeroSection() {
   const [femaleOver, setFemaleOver] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [activeMobileGender, setActiveMobileGender] = useState<'male' | 'female'>('male');
-  const [cycleKey, setCycleKey] = useState(0);
+  const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
 
   const maleGarmentRef = useRef<GarmentId | null>(null);
   const femaleGarmentRef = useRef<GarmentId | null>(null);
@@ -108,14 +136,14 @@ export default function HeroSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Cycle male ↔ female every 30s on mobile — resets when user manually taps
+  // Auto-spin wheel every 2.5s on mobile — resets on gender switch
   useEffect(() => {
     if (isMobile !== true) return;
     const timer = setInterval(() => {
-      setActiveMobileGender(g => g === 'male' ? 'female' : 'male');
-    }, 30000);
+      setMobileActiveIndex(i => (i + 1) % GARMENT_COUNT);
+    }, 2500);
     return () => clearInterval(timer);
-  }, [isMobile, cycleKey]);
+  }, [isMobile, activeMobileGender]);
 
   useEffect(() => { maleGarmentRef.current = maleGarment; }, [maleGarment]);
   useEffect(() => { femaleGarmentRef.current = femaleGarment; }, [femaleGarment]);
@@ -227,129 +255,97 @@ export default function HeroSection() {
           </>
         )}
 
-        {/* ── Mobile: one centered model cycling + floating garments ── */}
-        {isMobile === true && (
-          <>
-            {/* Title + subtitle stacked at top — no overlap */}
-            <div
-              className="absolute left-0 right-0 px-5 text-center select-none pointer-events-none"
-              style={{ top: 64, zIndex: 6 }}
-            >
-              <h1
-                className="font-bold text-zinc-950"
-                style={{ fontFamily: 'var(--font-playfair)', fontSize: 32, lineHeight: 1.18, marginBottom: 8 }}
+        {/* ── Mobile: model left + garment wheel right ── */}
+        {isMobile === true && (() => {
+          const mobileGarments = GARMENTS.filter(g => g.gender === activeMobileGender);
+          const mobileGarmentId = mobileGarments[mobileActiveIndex]?.id ?? null;
+          return (
+            <>
+              {/* Title at top */}
+              <div
+                className="absolute left-0 right-0 px-5 text-center select-none pointer-events-none"
+                style={{ top: 52, zIndex: 6 }}
               >
-                From fabric to look,<br />in seconds.
-              </h1>
-              <div style={{ width: 36, height: 1, background: '#d4d4d8', margin: '0 auto 6px' }} />
-              <p
-                className="font-medium uppercase text-zinc-500"
-                style={{ fontFamily: 'var(--font-inter)', fontSize: 9.5, letterSpacing: '0.14em', lineHeight: 1.6 }}
+                <h1
+                  className="font-bold text-zinc-950"
+                  style={{ fontFamily: 'var(--font-playfair)', fontSize: 28, lineHeight: 1.2, marginBottom: 6 }}
+                >
+                  From fabric to look,<br />in seconds.
+                </h1>
+                <div style={{ width: 32, height: 1, background: '#d4d4d8', margin: '0 auto 5px' }} />
+                <p
+                  className="font-medium uppercase text-zinc-500"
+                  style={{ fontFamily: 'var(--font-inter)', fontSize: 9, letterSpacing: '0.13em', lineHeight: 1.6 }}
+                >
+                  Virtual try-on for fashion retailers
+                </p>
+              </div>
+
+              {/* Model — left side, bottom-anchored */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeMobileGender}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <div style={{ transform: 'scale(0.38)', transformOrigin: 'bottom left' }}>
+                      <ModelFigure
+                        gender={activeMobileGender}
+                        garmentId={mobileGarmentId}
+                        isShimmering={false}
+                        isOver={false}
+                        width={547}
+                        height={activeMobileGender === 'male' ? 791 : 763}
+                      />
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Garment wheel — right side, half off screen */}
+              <MobileGarmentWheel
+                gender={activeMobileGender}
+                activeIndex={mobileActiveIndex}
+                onSelect={setMobileActiveIndex}
+              />
+
+              {/* Gender toggle */}
+              <div
+                className="absolute flex gap-2 select-none"
+                style={{ bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 6 }}
               >
-                Virtual try-on for fashion retailers,<br />in-store and online.
-              </p>
-            </div>
-
-            {/* Floating garments — tap to apply, switch with gender */}
-            <AnimatePresence>
-              {MOBILE_GARMENT_LAYOUT
-                .filter(pos => GARMENTS.find(g => g.id === pos.id)!.gender === activeMobileGender)
-                .map((pos, idx) => {
-                  const g = GARMENTS.find(gg => gg.id === pos.id)!;
-                  const isSelected = activeMobileGender === 'male'
-                    ? maleGarment === pos.id
-                    : femaleGarment === pos.id;
-                  return (
-                    <MobileGarmentFloat
-                      key={`${activeMobileGender}-${pos.id}`}
-                      pos={pos}
-                      src={g.floatSrc}
-                      label={g.label}
-                      idx={idx}
-                      isSelected={isSelected}
-                      onClick={() => {
-                        if (activeMobileGender === 'male') {
-                          setMaleGarment(pos.id);
-                          setMaleShimmering(true);
-                          setTimeout(() => setMaleShimmering(false), 400);
-                        } else {
-                          setFemaleGarment(pos.id);
-                          setFemaleShimmering(true);
-                          setTimeout(() => setFemaleShimmering(false), 400);
-                        }
-                      }}
-                    />
-                  );
-                })}
-            </AnimatePresence>
-
-            {/* Centered model — fades between male and female */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 78,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 2,
-                pointerEvents: 'none',
-                width: 547,
-              }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeMobileGender}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.55 }}
-                >
-                  <div style={{ transform: 'scale(0.62)', transformOrigin: 'bottom center' }}>
-                    <ModelFigure
-                      gender={activeMobileGender}
-                      garmentId={activeMobileGender === 'male' ? maleGarment : femaleGarment}
-                      isShimmering={activeMobileGender === 'male' ? maleShimmering : femaleShimmering}
-                      isOver={false}
-                      width={547}
-                      height={activeMobileGender === 'male' ? 791 : 763}
-                    />
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Gender toggle — tap to switch, auto-cycles every 30s */}
-            <div
-              className="absolute flex gap-2 select-none"
-              style={{ bottom: 86, left: '50%', transform: 'translateX(-50%)', zIndex: 6 }}
-            >
-              {(['male', 'female'] as const).map(g => (
-                <button
-                  key={g}
-                  onClick={() => { setActiveMobileGender(g); setCycleKey(k => k + 1); }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4,
-                    padding: '5px 13px',
-                    borderRadius: 20,
-                    border: '1.5px solid',
-                    borderColor: g === activeMobileGender ? '#3f3f46' : '#d4d4d8',
-                    background: g === activeMobileGender ? '#3f3f46' : 'rgba(255,255,255,0.85)',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-inter)',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: g === activeMobileGender ? '#ffffff' : '#a1a1aa',
-                    transition: 'all 0.3s ease',
-                    backdropFilter: 'blur(6px)',
-                  }}
-                >
-                  {g === 'male' ? '♂ Man' : '♀ Woman'}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
+                {(['male', 'female'] as const).map(g => (
+                  <button
+                    key={g}
+                    onClick={() => { setActiveMobileGender(g); setMobileActiveIndex(0); }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: '5px 13px',
+                      borderRadius: 20,
+                      border: '1.5px solid',
+                      borderColor: g === activeMobileGender ? '#3f3f46' : '#d4d4d8',
+                      background: g === activeMobileGender ? '#3f3f46' : 'rgba(255,255,255,0.85)',
+                      cursor: 'pointer',
+                      fontFamily: 'var(--font-inter)',
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: g === activeMobileGender ? '#ffffff' : '#a1a1aa',
+                      transition: 'all 0.3s ease',
+                      backdropFilter: 'blur(6px)',
+                    }}
+                  >
+                    {g === 'male' ? '♂ Man' : '♀ Woman'}
+                  </button>
+                ))}
+              </div>
+            </>
+          );
+        })()}
 
         {/* ── Headline — desktop + SSR only ───────────────── */}
         {isMobile !== true && (

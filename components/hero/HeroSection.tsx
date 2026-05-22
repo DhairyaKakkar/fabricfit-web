@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   DndContext,
   DragStartEvent,
@@ -31,23 +31,28 @@ function MobileGarmentWheel({
   gender,
   steps,
   onSelect,
+  corner,
 }: {
   gender: Gender;
   steps: number;
   onSelect: (i: number) => void;
+  corner: 'left' | 'right';
 }) {
   const garments = GARMENTS.filter(g => g.gender === gender);
   const activeIndex = steps % GARMENT_COUNT;
-  // Active garment stays at top (270°) — ring only ever decreases, no reversal
-  const ringDeg = 270 - steps * WHEEL_ANGLE_STEP;
+  // Left corner: active at 45° (upper-right); right corner: active at 135° (upper-left)
+  const baseAngle = corner === 'left' ? 45 : 135;
+  const ringDeg = baseAngle - steps * WHEEL_ANGLE_STEP;
+
+  const posStyle: React.CSSProperties = corner === 'left'
+    ? { bottom: -WHEEL_RADIUS, left: -WHEEL_RADIUS }
+    : { bottom: -WHEEL_RADIUS, right: -WHEEL_RADIUS };
 
   return (
     <div
       style={{
         position: 'absolute',
-        bottom: -WHEEL_RADIUS,
-        left: '50%',
-        transform: 'translateX(-50%)',
+        ...posStyle,
         width: WHEEL_RADIUS * 2,
         height: WHEEL_RADIUS * 2,
         zIndex: 5,
@@ -320,6 +325,7 @@ export default function HeroSection() {
                   <MobileGarmentWheel
                     gender="male"
                     steps={maleSteps}
+                    corner="left"
                     onSelect={(i) => {
                       setMaleSteps(s => {
                         const curr = s % GARMENT_COUNT;
@@ -354,6 +360,7 @@ export default function HeroSection() {
                   <MobileGarmentWheel
                     gender="female"
                     steps={femaleSteps}
+                    corner="right"
                     onSelect={(i) => {
                       setFemaleSteps(s => {
                         const curr = s % GARMENT_COUNT;

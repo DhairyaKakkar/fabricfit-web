@@ -282,7 +282,7 @@ export default function HeroSection() {
               </div>
 
               {/* Model — left side, bottom-anchored */}
-              <div style={{ position: 'absolute', bottom: 0, left: -155, zIndex: 2, pointerEvents: 'none' }}>
+              <div style={{ position: 'absolute', bottom: 0, left: -135, zIndex: 2, pointerEvents: 'none' }}>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeMobileGender}

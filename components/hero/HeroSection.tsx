@@ -282,7 +282,7 @@ export default function HeroSection() {
               </div>
 
               {/* Model — left side, bottom-anchored */}
-              <div style={{ position: 'absolute', bottom: 0, left: 0, zIndex: 2, pointerEvents: 'none' }}>
+              <div style={{ position: 'absolute', bottom: 0, left: -10, zIndex: 2, pointerEvents: 'none' }}>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeMobileGender}
@@ -291,7 +291,7 @@ export default function HeroSection() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <div style={{ transform: 'scale(0.38)', transformOrigin: 'bottom left' }}>
+                    <div style={{ transform: 'scale(0.55)', transformOrigin: 'bottom left' }}>
                       <ModelFigure
                         gender={activeMobileGender}
                         garmentId={mobileGarmentId}

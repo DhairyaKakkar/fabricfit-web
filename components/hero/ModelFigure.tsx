@@ -23,7 +23,7 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver, w
   const imageSrc = garment ? garment.compositeSrc : BASE_MODELS[gender];
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div className="relative flex flex-col items-center" style={{ pointerEvents: 'none' }}>
       {/* Ambient glow behind model */}
       <div
         className={`absolute inset-0 rounded-full blur-[80px] transition-all duration-300 ${
@@ -40,7 +40,7 @@ export default function ModelFigure({ gender, garmentId, isShimmering, isOver, w
       <div
         ref={setNodeRef}
         className="relative"
-        style={{ width, zIndex: 1, pointerEvents: 'auto' }}
+        style={{ width, zIndex: 1, pointerEvents: 'none' }}
       >
         {/* Model image */}
         <motion.div

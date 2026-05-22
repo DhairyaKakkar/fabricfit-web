@@ -38,16 +38,16 @@ function MobileGarmentWheel({
 }) {
   const garments = GARMENTS.filter(g => g.gender === gender);
   const activeIndex = steps % GARMENT_COUNT;
-  // Always subtract — rotation only ever goes one direction, no reversal
-  const ringDeg = 180 - steps * WHEEL_ANGLE_STEP;
+  // Active garment stays at top (270°) — ring only ever decreases, no reversal
+  const ringDeg = 270 - steps * WHEEL_ANGLE_STEP;
 
   return (
     <div
       style={{
         position: 'absolute',
-        right: -WHEEL_RADIUS,
-        top: '50%',
-        transform: 'translateY(-40%)',
+        bottom: -WHEEL_RADIUS,
+        left: '50%',
+        transform: 'translateX(-50%)',
         width: WHEEL_RADIUS * 2,
         height: WHEEL_RADIUS * 2,
         zIndex: 5,
@@ -123,8 +123,8 @@ export default function HeroSection() {
   const [maleOver, setMaleOver] = useState(false);
   const [femaleOver, setFemaleOver] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
-  const [activeMobileGender, setActiveMobileGender] = useState<'male' | 'female'>('male');
-  const [mobileSteps, setMobileSteps] = useState(0);
+  const [maleSteps, setMaleSteps] = useState(0);
+  const [femaleSteps, setFemaleSteps] = useState(0);
 
   const maleGarmentRef = useRef<GarmentId | null>(null);
   const femaleGarmentRef = useRef<GarmentId | null>(null);
@@ -137,14 +137,13 @@ export default function HeroSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Auto-spin wheel every 2.5s on mobile — always forward, resets on gender switch
+  // Auto-spin both wheels independently on mobile — always forward
   useEffect(() => {
     if (isMobile !== true) return;
-    const timer = setInterval(() => {
-      setMobileSteps(s => s + 1);
-    }, 2500);
-    return () => clearInterval(timer);
-  }, [isMobile, activeMobileGender]);
+    const mTimer = setInterval(() => setMaleSteps(s => s + 1), 2500);
+    const fTimer = setInterval(() => setFemaleSteps(s => s + 1), 3100);
+    return () => { clearInterval(mTimer); clearInterval(fTimer); };
+  }, [isMobile]);
 
   useEffect(() => { maleGarmentRef.current = maleGarment; }, [maleGarment]);
   useEffect(() => { femaleGarmentRef.current = femaleGarment; }, [femaleGarment]);
@@ -256,10 +255,13 @@ export default function HeroSection() {
           </>
         )}
 
-        {/* ── Mobile: model left + garment wheel right ── */}
+        {/* ── Mobile: two-column — man left, woman right ── */}
         {isMobile === true && (() => {
-          const mobileGarments = GARMENTS.filter(g => g.gender === activeMobileGender);
-          const mobileGarmentId = mobileGarments[mobileSteps % GARMENT_COUNT]?.id ?? null;
+          const maleGarments = GARMENTS.filter(g => g.gender === 'male');
+          const femaleGarments = GARMENTS.filter(g => g.gender === 'female');
+          const maleGarmentId = maleGarments[maleSteps % GARMENT_COUNT]?.id ?? null;
+          const femaleGarmentId = femaleGarments[femaleSteps % GARMENT_COUNT]?.id ?? null;
+
           return (
             <>
               {/* Title at top */}
@@ -282,74 +284,85 @@ export default function HeroSection() {
                 </p>
               </div>
 
-              {/* Model — left side, bottom-anchored */}
-              <div style={{ position: 'absolute', bottom: 0, left: -105, zIndex: 2, pointerEvents: 'none' }}>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeMobileGender}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <div style={{ transform: 'scale(0.75)', transformOrigin: 'bottom left' }}>
+              {/* Two-column model + wheel area */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 130,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  display: 'flex',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* ── Man column ── */}
+                <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+                  <div style={{
+                    position: 'absolute',
+                    bottom: WHEEL_RADIUS,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 2,
+                    pointerEvents: 'none',
+                  }}>
+                    <div style={{ transform: 'scale(0.6)', transformOrigin: 'bottom center' }}>
                       <ModelFigure
-                        gender={activeMobileGender}
-                        garmentId={mobileGarmentId}
+                        gender="male"
+                        garmentId={maleGarmentId}
                         isShimmering={false}
                         isOver={false}
                         width={547}
-                        height={activeMobileGender === 'male' ? 791 : 763}
+                        height={791}
                       />
                     </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              {/* Garment wheel — right side, half off screen */}
-              <MobileGarmentWheel
-                gender={activeMobileGender}
-                steps={mobileSteps}
-                onSelect={(i) => {
-                  // Advance the minimum number of steps forward to reach garment i
-                  setMobileSteps(s => {
-                    const curr = s % GARMENT_COUNT;
-                    const fwd = (i - curr + GARMENT_COUNT) % GARMENT_COUNT;
-                    return fwd === 0 ? s : s + fwd;
-                  });
-                }}
-              />
-
-              {/* Gender toggle */}
-              <div
-                className="absolute flex gap-2 select-none"
-                style={{ bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 6 }}
-              >
-                {(['male', 'female'] as const).map(g => (
-                  <button
-                    key={g}
-                    onClick={() => { setActiveMobileGender(g); setMobileSteps(0); }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: '5px 13px',
-                      borderRadius: 20,
-                      border: '1.5px solid',
-                      borderColor: g === activeMobileGender ? '#3f3f46' : '#d4d4d8',
-                      background: g === activeMobileGender ? '#3f3f46' : 'rgba(255,255,255,0.85)',
-                      cursor: 'pointer',
-                      fontFamily: 'var(--font-inter)',
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: g === activeMobileGender ? '#ffffff' : '#a1a1aa',
-                      transition: 'all 0.3s ease',
-                      backdropFilter: 'blur(6px)',
+                  </div>
+                  <MobileGarmentWheel
+                    gender="male"
+                    steps={maleSteps}
+                    onSelect={(i) => {
+                      setMaleSteps(s => {
+                        const curr = s % GARMENT_COUNT;
+                        const fwd = (i - curr + GARMENT_COUNT) % GARMENT_COUNT;
+                        return fwd === 0 ? s : s + fwd;
+                      });
                     }}
-                  >
-                    {g === 'male' ? '♂ Man' : '♀ Woman'}
-                  </button>
-                ))}
+                  />
+                </div>
+
+                {/* ── Woman column ── */}
+                <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+                  <div style={{
+                    position: 'absolute',
+                    bottom: WHEEL_RADIUS,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 2,
+                    pointerEvents: 'none',
+                  }}>
+                    <div style={{ transform: 'scale(0.6)', transformOrigin: 'bottom center' }}>
+                      <ModelFigure
+                        gender="female"
+                        garmentId={femaleGarmentId}
+                        isShimmering={false}
+                        isOver={false}
+                        width={553}
+                        height={763}
+                      />
+                    </div>
+                  </div>
+                  <MobileGarmentWheel
+                    gender="female"
+                    steps={femaleSteps}
+                    onSelect={(i) => {
+                      setFemaleSteps(s => {
+                        const curr = s % GARMENT_COUNT;
+                        const fwd = (i - curr + GARMENT_COUNT) % GARMENT_COUNT;
+                        return fwd === 0 ? s : s + fwd;
+                      });
+                    }}
+                  />
+                </div>
               </div>
             </>
           );
@@ -402,8 +415,8 @@ export default function HeroSection() {
           </div>
         )}
 
-        {/* ── CTA buttons — always visible ────────────────── */}
-        <HeroCta visible />
+        {/* ── CTA buttons — desktop only ──────────────────── */}
+        {isMobile !== true && <HeroCta visible />}
       </section>
     </DndContext>
   );

@@ -46,31 +46,35 @@ const MOBILE_GARMENT_LAYOUT: MobileGarmentPos[] = [
   { id: 'jumpsuit',      side: 'right', offset: 18, top: '51%', rot: -12, dur: 3.5 },
 ];
 
-function MobileGarmentFloat({ pos, src, label, idx }: {
+function MobileGarmentFloat({ pos, src, label, idx, isSelected, onClick }: {
   pos: MobileGarmentPos; src: string; label: string; idx: number;
+  isSelected: boolean; onClick: () => void;
 }) {
   return (
     <motion.div
-      style={{ position: 'absolute', [pos.side]: pos.offset, top: pos.top, zIndex: 4, pointerEvents: 'none' }}
+      style={{ position: 'absolute', [pos.side]: pos.offset, top: pos.top, zIndex: 4, cursor: 'pointer' }}
       initial={{ opacity: 0, scale: 0.3 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.3 }}
       transition={{ duration: 0.35, delay: idx * 0.07 }}
+      onClick={onClick}
     >
       <motion.div
         animate={{ y: [0, -9, 0, 9, 0], rotate: [pos.rot, pos.rot + 3, pos.rot, pos.rot - 3, pos.rot] }}
         transition={{ duration: pos.dur, repeat: Infinity, ease: 'easeInOut' }}
       >
-        {/* White card so garment pops against the model background */}
         <div style={{
-          background: 'rgba(255,255,255,0.93)',
+          background: isSelected ? '#09090b' : 'rgba(255,255,255,0.93)',
           borderRadius: 14,
           padding: 6,
-          boxShadow: '0 6px 24px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.06)',
+          boxShadow: isSelected
+            ? '0 6px 24px rgba(0,0,0,0.3), 0 0 0 2px #09090b'
+            : '0 6px 24px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.06)',
+          transition: 'background 0.2s, box-shadow 0.2s',
         }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={src} alt={label} style={{ width: 82, height: 110, objectFit: 'contain', display: 'block', userSelect: 'none' }} />
-          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: '#71717a', textAlign: 'center', marginTop: 4, lineHeight: 1 }}>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: isSelected ? '#a1a1aa' : '#71717a', textAlign: 'center', marginTop: 4, lineHeight: 1 }}>
             {label}
           </p>
         </div>
@@ -246,12 +250,15 @@ export default function HeroSection() {
               </p>
             </div>
 
-            {/* Floating garments — switch with gender */}
+            {/* Floating garments — tap to apply, switch with gender */}
             <AnimatePresence>
               {MOBILE_GARMENT_LAYOUT
                 .filter(pos => GARMENTS.find(g => g.id === pos.id)!.gender === activeMobileGender)
                 .map((pos, idx) => {
                   const g = GARMENTS.find(gg => gg.id === pos.id)!;
+                  const isSelected = activeMobileGender === 'male'
+                    ? maleGarment === pos.id
+                    : femaleGarment === pos.id;
                   return (
                     <MobileGarmentFloat
                       key={`${activeMobileGender}-${pos.id}`}
@@ -259,6 +266,18 @@ export default function HeroSection() {
                       src={g.floatSrc}
                       label={g.label}
                       idx={idx}
+                      isSelected={isSelected}
+                      onClick={() => {
+                        if (activeMobileGender === 'male') {
+                          setMaleGarment(pos.id);
+                          setMaleShimmering(true);
+                          setTimeout(() => setMaleShimmering(false), 400);
+                        } else {
+                          setFemaleGarment(pos.id);
+                          setFemaleShimmering(true);
+                          setTimeout(() => setFemaleShimmering(false), 400);
+                        }
+                      }}
                     />
                   );
                 })}
@@ -288,7 +307,7 @@ export default function HeroSection() {
                     <ModelFigure
                       gender={activeMobileGender}
                       garmentId={activeMobileGender === 'male' ? maleGarment : femaleGarment}
-                      isShimmering={false}
+                      isShimmering={activeMobileGender === 'male' ? maleShimmering : femaleShimmering}
                       isOver={false}
                       width={547}
                       height={activeMobileGender === 'male' ? 791 : 763}

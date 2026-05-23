@@ -2,10 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 
-// Ordered list of snap-section IDs. HowItWorks is intentionally absent.
+// Ordered snap targets. how-it-works IS included so we snap to its top entry,
+// then GSAP handles the internal 3 pages, then snapping resumes after.
 const SNAP_IDS = [
   'hero',
   'video-section',
+  'how-it-works',
   'in-store',
   'web-embed',
   'catalog',
@@ -13,21 +15,22 @@ const SNAP_IDS = [
   'cta',
 ];
 
-// ID prefix that belongs to HowItWorks — wheel events here scroll naturally.
-const HOW_IT_WORKS_ID = 'how-it-works';
+const SNAP_COOLDOWN = 1100;      // ms: lock after a snap fires
+const EXIT_HIW_COOLDOWN = 1600;  // ms: grace period after leaving HowItWorks
 
 export default function ScrollSnapper() {
-  const isSnapping = useRef(false);
-  const lastSnap = useRef(0);
+  const isSnapping   = useRef(false);
+  const wasInHIW     = useRef(false);
+  const exitCooldown = useRef(false);
 
   useEffect(() => {
-    const COOLDOWN = 800; // ms between snaps
-
     function inHowItWorks(): boolean {
-      const el = document.getElementById(HOW_IT_WORKS_ID);
+      const el = document.getElementById('how-it-works');
       if (!el) return false;
       const { top, bottom } = el.getBoundingClientRect();
-      return top <= window.innerHeight * 0.5 && bottom >= window.innerHeight * 0.5;
+      const vh = window.innerHeight;
+      // Inside if the viewport midpoint is within the element
+      return top < vh * 0.5 && bottom > vh * 0.5;
     }
 
     function getSnapEls(): HTMLElement[] {
@@ -37,33 +40,62 @@ export default function ScrollSnapper() {
     }
 
     function currentIndex(els: HTMLElement[]): number {
-      // Find the section whose top is closest to 0 (viewport top)
-      let best = 0;
-      let bestDist = Infinity;
+      let best = 0, bestDist = Infinity;
       els.forEach((el, i) => {
-        const dist = Math.abs(el.getBoundingClientRect().top);
-        if (dist < bestDist) { bestDist = dist; best = i; }
+        const d = Math.abs(el.getBoundingClientRect().top);
+        if (d < bestDist) { bestDist = d; best = i; }
       });
       return best;
     }
 
     function snapTo(el: HTMLElement) {
       isSnapping.current = true;
-      lastSnap.current = Date.now();
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => { isSnapping.current = false; }, COOLDOWN);
+
+      // Primary: listen for scrollend (Chrome 109+, Firefox 109+)
+      const onScrollEnd = () => {
+        isSnapping.current = false;
+        window.removeEventListener('scrollend', onScrollEnd);
+      };
+      window.addEventListener('scrollend', onScrollEnd, { once: true });
+
+      // Fallback: always release after SNAP_COOLDOWN regardless
+      setTimeout(() => {
+        isSnapping.current = false;
+        window.removeEventListener('scrollend', onScrollEnd);
+      }, SNAP_COOLDOWN);
     }
 
+    let exitTimer: ReturnType<typeof setTimeout> | null = null;
+
     function onWheel(e: WheelEvent) {
-      if (inHowItWorks()) return; // let HowItWorks scroll naturally
+      const nowInHIW = inHowItWorks();
+
+      // Track enter / exit transitions
+      if (!wasInHIW.current && nowInHIW) {
+        wasInHIW.current = true;
+        exitCooldown.current = false;
+        if (exitTimer) { clearTimeout(exitTimer); exitTimer = null; }
+      } else if (wasInHIW.current && !nowInHIW) {
+        wasInHIW.current = false;
+        isSnapping.current = false;   // clear any stale lock from before HIW
+        exitCooldown.current = true;
+        if (exitTimer) clearTimeout(exitTimer);
+        exitTimer = setTimeout(() => { exitCooldown.current = false; }, EXIT_HIW_COOLDOWN);
+      }
+
+      // Let GSAP / natural scroll handle HowItWorks and the grace period after it
+      if (nowInHIW || exitCooldown.current) return;
+
+      // Block during an active snap
       if (isSnapping.current) { e.preventDefault(); return; }
-      if (Date.now() - lastSnap.current < COOLDOWN) { e.preventDefault(); return; }
 
       const els = getSnapEls();
-      if (els.length === 0) return;
+      if (!els.length) return;
 
-      const idx = currentIndex(els);
-      const next = e.deltaY > 0 ? Math.min(idx + 1, els.length - 1) : Math.max(idx - 1, 0);
+      const idx  = currentIndex(els);
+      const dir  = e.deltaY > 0 ? 1 : -1;
+      const next = Math.max(0, Math.min(idx + dir, els.length - 1));
       if (next === idx) return;
 
       e.preventDefault();
@@ -71,7 +103,10 @@ export default function ScrollSnapper() {
     }
 
     window.addEventListener('wheel', onWheel, { passive: false });
-    return () => window.removeEventListener('wheel', onWheel);
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      if (exitTimer) clearTimeout(exitTimer);
+    };
   }, []);
 
   return null;

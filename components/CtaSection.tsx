@@ -1,7 +1,8 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+import LiquidButton from '@/components/ui/LiquidButton';
 
 function WhatsAppIcon() {
   return (
@@ -11,61 +12,6 @@ function WhatsAppIcon() {
   );
 }
 
-function MagneticButton({ children, href, outlined = false }: { children: React.ReactNode; href: string; outlined?: boolean }) {
-  const btnRef = useRef<HTMLAnchorElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 200, damping: 18 });
-  const springY = useSpring(y, { stiffness: 200, damping: 18 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!btnRef.current) return;
-    const rect = btnRef.current.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    x.set((e.clientX - cx) * 0.35);
-    y.set((e.clientY - cy) * 0.35);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.a
-      ref={btnRef}
-      href={href}
-      target={href.startsWith('http') ? '_blank' : undefined}
-      rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="w-full sm:w-auto"
-      style={{
-        x: springX,
-        y: springY,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        padding: '16px 36px',
-        borderRadius: 100,
-        fontFamily: 'var(--font-inter)',
-        fontSize: 14,
-        fontWeight: 600,
-        textDecoration: 'none',
-        background: outlined ? 'transparent' : '#ffffff',
-        color: outlined ? 'rgba(255,255,255,0.85)' : '#09090b',
-        border: outlined ? '1.5px solid rgba(255,255,255,0.25)' : 'none',
-        boxShadow: outlined ? 'none' : '0 8px 32px rgba(0,0,0,0.25)',
-      }}
-      whileHover={{ scale: 1.04 }}
-      whileTap={{ scale: 0.97 }}
-    >
-      {children}
-    </motion.a>
-  );
-}
 
 export default function CtaSection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -131,13 +77,25 @@ export default function CtaSection() {
           className="flex flex-col sm:flex-row gap-3 justify-center w-full sm:w-auto"
           initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <MagneticButton href={`https://wa.me/${waNumber}`}>
+          <LiquidButton
+            href={`https://wa.me/${waNumber}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="#09090b"
+            bg="rgba(255,255,255,0.94)"
+            padding="16px 36px"
+          >
             <WhatsAppIcon />
             Chat on WhatsApp
-          </MagneticButton>
-          <MagneticButton href="/pricing" outlined>
+          </LiquidButton>
+          <LiquidButton
+            href="/pricing"
+            color="rgba(255,255,255,0.85)"
+            bg="rgba(255,255,255,0.06)"
+            padding="16px 36px"
+          >
             See Pricing →
-          </MagneticButton>
+          </LiquidButton>
         </motion.div>
 
         <motion.p

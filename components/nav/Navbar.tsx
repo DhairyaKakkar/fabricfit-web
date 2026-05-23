@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import LiquidButton from '@/components/ui/LiquidButton';
+import { slowScrollTo } from '@/lib/scrollTo';
 
 const NAV_LINKS = [
   { anchor: 'how-it-works', label: 'How it Works' },
@@ -29,6 +31,14 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      slowScrollTo(href.slice(1));
+      setOpen(false);
+    }
+  };
+
   const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919999999999';
 
   return (
@@ -54,6 +64,7 @@ export default function Navbar() {
             <a
               key={l.href}
               href={l.href}
+              onClick={(e) => handleAnchorClick(e, l.href)}
               className="text-sm text-zinc-400 hover:text-zinc-950 transition-colors"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
@@ -62,16 +73,19 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Desktop CTA */}
-        <a
+        {/* Desktop CTA — glass button */}
+        <LiquidButton
           href={`https://wa.me/${waNumber}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden md:inline-flex px-4 py-2 rounded-md bg-zinc-950 text-white text-sm font-medium hover:bg-zinc-700 transition-colors shrink-0"
-          style={{ fontFamily: 'var(--font-inter)' }}
+          color="#ffffff"
+          bg="rgba(9,9,11,0.92)"
+          padding="9px 20px"
+          fontSize={13}
+          className="hidden md:inline-flex shrink-0"
         >
           Book a Demo
-        </a>
+        </LiquidButton>
 
         {/* Mobile spacer + hamburger */}
         <div className="flex-1 md:hidden" />
@@ -105,7 +119,7 @@ export default function Navbar() {
             <a
               key={l.href}
               href={l.href}
-              onClick={() => setOpen(false)}
+              onClick={(e) => handleAnchorClick(e, l.href)}
               className="text-sm text-zinc-600 hover:text-zinc-950 transition-colors py-2.5 border-b border-zinc-50 last:border-0"
               style={{ fontFamily: 'var(--font-inter)' }}
             >

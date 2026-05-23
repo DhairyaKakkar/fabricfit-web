@@ -1,7 +1,9 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import LiquidButton from '@/components/ui/LiquidButton';
+import { slowScrollTo } from '@/lib/scrollTo';
 
 const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919999999999';
 
@@ -24,14 +26,6 @@ function WhatsAppIcon() {
 export default function VideoSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { once: true });
-  const [expanded, setExpanded] = useState(false);
-
-  // Trigger expansion shortly after section mounts in view
-  useEffect(() => {
-    if (!inView) return;
-    const t = setTimeout(() => setExpanded(true), 250);
-    return () => clearTimeout(t);
-  }, [inView]);
 
   return (
     <section
@@ -44,17 +38,18 @@ export default function VideoSection() {
       <div className="blob-2" aria-hidden="true" />
       <div className="blob-3" aria-hidden="true" />
 
-      {/* Video card — starts inset, expands to full-bleed on load */}
-      <motion.div
-        animate={{
-          top:          expanded ? 0 : 32,
-          left:         expanded ? 0 : 32,
-          right:        expanded ? 0 : 32,
-          bottom:       expanded ? 0 : 32,
-          borderRadius: expanded ? 0 : 24,
+      {/* Video card — permanent inset with rounded corners */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 72,
+          left: 32,
+          right: 32,
+          bottom: 32,
+          borderRadius: 24,
+          overflow: 'hidden',
+          zIndex: 1,
         }}
-        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{ position: 'absolute', overflow: 'hidden', zIndex: 1 }}
       >
         <video
           src="/videos/hero-video.mp4"
@@ -69,7 +64,7 @@ export default function VideoSection() {
             pointerEvents: 'none',
           }}
         />
-      </motion.div>
+      </div>
 
       {/* Headline + subtitle */}
       <div
@@ -150,61 +145,26 @@ export default function VideoSection() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 1.4 }}
         className="hidden md:flex"
-        style={{
-          position: 'absolute',
-          bottom: 100,
-          left: 0,
-          right: 0,
-          justifyContent: 'center',
-          gap: 12,
-          zIndex: 3,
-        }}
+        style={{ position: 'absolute', bottom: 100, left: 0, right: 0, justifyContent: 'center', gap: 12, zIndex: 3 }}
       >
-        <a
+        <LiquidButton
           href={`https://wa.me/${WA_NUMBER}`}
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '13px 28px',
-            borderRadius: 100,
-            backgroundColor: '#25d366',
-            color: '#ffffff',
-            fontFamily: 'var(--font-inter)',
-            fontSize: 14,
-            fontWeight: 600,
-            textDecoration: 'none',
-            boxShadow: '0 4px 24px rgba(37,211,102,0.35)',
-            whiteSpace: 'nowrap',
-          }}
+          color="#ffffff"
+          bg="rgba(37,211,102,0.25)"
         >
           <WhatsAppIcon />
           Chat on WhatsApp
-        </a>
-        <a
+        </LiquidButton>
+        <LiquidButton
           href="#see-it-live"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '13px 28px',
-            borderRadius: 100,
-            backgroundColor: 'rgba(255,255,255,0.12)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255,255,255,0.28)',
-            color: '#ffffff',
-            fontFamily: 'var(--font-inter)',
-            fontSize: 14,
-            fontWeight: 600,
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-          }}
+          color="#ffffff"
+          bg="rgba(255,255,255,0.10)"
+          onClick={(e) => { e.preventDefault(); slowScrollTo('see-it-live'); }}
         >
           See It Live →
-        </a>
+        </LiquidButton>
       </motion.div>
 
       {/* Stat pills */}

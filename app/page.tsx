@@ -7,11 +7,13 @@ import FeaturesSection from '@/components/features/FeaturesSection';
 import TractionSection from '@/components/TractionSection';
 import CtaSection from '@/components/CtaSection';
 import ScrollSnapper from '@/components/ScrollSnapper';
+import SmoothScroll from '@/components/SmoothScroll';
 
 export default function Home() {
   return (
     <>
       <ScrollSnapper />
+      <SmoothScroll />
       <Navbar />
       <VideoSection />
       <MarqueeDivider />

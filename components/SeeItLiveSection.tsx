@@ -30,7 +30,7 @@ export default function SeeItLiveSection() {
           paddingTop: 48,
           gap: 6,
           pointerEvents: 'none',
-          background: 'linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 70%, transparent 100%)',
+          background: 'none',
         }}
       >
         <span
@@ -52,12 +52,12 @@ export default function SeeItLiveSection() {
             fontSize: 'clamp(28px, 3.5vw, 48px)',
             fontWeight: 700,
             color: '#09090b',
-            lineHeight: 1.1,
+            lineHeight: 1.15,
             margin: 0,
             textAlign: 'center',
           }}
         >
-          Drag a garment.{' '}
+          Drag a garment.<br />
           <span style={{ fontStyle: 'italic', color: '#a8a29e' }}>See it on the model.</span>
         </h2>
       </motion.div>

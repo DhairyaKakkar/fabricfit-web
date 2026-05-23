@@ -24,21 +24,24 @@ function WhatsAppIcon() {
 export default function VideoSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
+  // scrollYProgress 0→1 as scrollY goes from 0 to 180vh (outer div height)
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end start'],
   });
 
-  // Video card expansion: inset 32px → full-bleed over first 65% of scroll
-  const rawTop    = useTransform(scrollYProgress, [0, 0.65], [32, 0]);
-  const rawLeft   = useTransform(scrollYProgress, [0, 0.65], [32, 0]);
-  const rawRight  = useTransform(scrollYProgress, [0, 0.65], [32, 0]);
-  const rawBottom = useTransform(scrollYProgress, [0, 0.65], [32, 0]);
-  const rawRadius = useTransform(scrollYProgress, [0, 0.65], [24, 0]);
+  // Sticky inner stays pinned for (180vh - 100vh) = 80vh of scroll.
+  // scrollYProgress at sticky-end = 80/180 ≈ 0.444
+  // Expansion completes exactly when the sticky phase ends → no dead space while pinned.
+  const rawTop    = useTransform(scrollYProgress, [0, 0.44], [32, 0]);
+  const rawLeft   = useTransform(scrollYProgress, [0, 0.44], [32, 0]);
+  const rawRight  = useTransform(scrollYProgress, [0, 0.44], [32, 0]);
+  const rawBottom = useTransform(scrollYProgress, [0, 0.44], [32, 0]);
+  const rawRadius = useTransform(scrollYProgress, [0, 0.44], [24, 0]);
 
-  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
-  const statsOpacity     = useTransform(scrollYProgress, [0.55, 0.78], [0, 1]);
-  const statsY           = useTransform(scrollYProgress, [0.55, 0.78], [24, 0]);
+  const indicatorOpacity = useTransform(scrollYProgress, [0, 0.06], [1, 0]);
+  const statsOpacity     = useTransform(scrollYProgress, [0.33, 0.43], [0, 1]);
+  const statsY           = useTransform(scrollYProgress, [0.33, 0.43], [22, 0]);
 
   const cfg = { stiffness: 80, damping: 20 };
   const top    = useSpring(rawTop,    cfg);
@@ -48,20 +51,22 @@ export default function VideoSection() {
   const radius = useSpring(rawRadius, cfg);
 
   return (
+    // Outer div has NO background — avoids the cream gap when sticky unsticks.
+    // The sticky inner carries the cream bg; the transition div below it fades to white.
     <div
       id="hero"
       ref={sectionRef}
-      style={{ height: '145vh', position: 'relative', backgroundColor: '#faf9f6' }}
+      style={{ height: '180vh', position: 'relative' }}
     >
-      {/* Sticky viewport-height inner */}
-      <div style={{ position: 'sticky', top: 0, height: '100vh' }}>
+      {/* ── Sticky inner: cream background, full viewport height ── */}
+      <div style={{ position: 'sticky', top: 0, height: '100vh', backgroundColor: '#faf9f6', overflow: 'hidden' }}>
 
         {/* Ambient blobs */}
         <div className="blob-1" aria-hidden="true" />
         <div className="blob-2" aria-hidden="true" />
         <div className="blob-3" aria-hidden="true" />
 
-        {/* Video card — inset → full-bleed */}
+        {/* Video card — inset → full-bleed as user scrolls */}
         <motion.div
           style={{
             position: 'absolute',
@@ -80,7 +85,7 @@ export default function VideoSection() {
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.38) 100%)',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.38) 100%)',
               pointerEvents: 'none',
             }}
           />
@@ -125,7 +130,7 @@ export default function VideoSection() {
                 {word}
               </motion.span>
             ))}
-            {/* Last word with amber gradient */}
+            {/* "retail." in amber gradient */}
             <motion.span
               initial={{ opacity: 0, filter: 'blur(4px)', y: 12 }}
               animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
@@ -167,7 +172,7 @@ export default function VideoSection() {
           className="hidden md:flex"
           style={{
             position: 'absolute',
-            bottom: 96,
+            bottom: 100,
             left: 0,
             right: 0,
             justifyContent: 'center',
@@ -222,7 +227,7 @@ export default function VideoSection() {
           </a>
         </motion.div>
 
-        {/* Floating stat pills — appear as video finishes expanding */}
+        {/* Stat pills — appear as video finishes expanding */}
         <motion.div
           style={{
             position: 'absolute',
@@ -247,7 +252,7 @@ export default function VideoSection() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: 2,
-                padding: '10px 20px',
+                padding: '10px 22px',
                 borderRadius: 100,
                 backgroundColor: 'rgba(255,255,255,0.1)',
                 backdropFilter: 'blur(16px)',
@@ -286,6 +291,16 @@ export default function VideoSection() {
         </motion.div>
 
       </div>
+
+      {/* ── Transition div: covers the 80vh gap left after sticky unsticks.
+           Fades from cream (#faf9f6) to white so there's no jarring cut. ── */}
+      <div
+        aria-hidden="true"
+        style={{
+          height: '80vh',
+          background: 'linear-gradient(to bottom, #faf9f6 0%, #ffffff 60%)',
+        }}
+      />
     </div>
   );
 }

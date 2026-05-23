@@ -376,52 +376,7 @@ export default function HeroSection() {
           );
         })()}
 
-        {/* ── Headline — desktop + SSR only ───────────────── */}
-        {isMobile !== true && (
-          <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 select-none pointer-events-none px-4"
-            style={{ top: 'clamp(60px, 10%, 80px)', zIndex: 3 }}
-          >
-            <h1
-              className="font-bold text-zinc-950 text-center"
-              style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(36px, 6vw, 52px)', lineHeight: 1.15 }}
-            >
-              From fabric to look,<br />in seconds.
-            </h1>
-          </div>
-        )}
-
-        {/* ── Subtitle — desktop + SSR only ───────────────── */}
-        {isMobile !== true && (
-          <div
-            className="absolute left-1/2 flex flex-col items-center gap-2 select-none pointer-events-none px-6 text-center"
-            style={{ top: '50%', transform: 'translate(-50%, -50%)', zIndex: 3, marginTop: 'clamp(-60px, -5vw, -40px)' }}
-          >
-            <div className="w-12 h-px bg-zinc-300" />
-            <p
-              className="font-medium tracking-widest text-zinc-500 uppercase text-center"
-              style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.12em', fontSize: 'clamp(10px, 1.2vw, 14px)' }}
-            >
-              Virtual try-on for fashion retailers,<br />in-store and online.
-            </p>
-            <p
-              className="text-zinc-400 text-center"
-              style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(10px, 0.9vw, 13px)', maxWidth: 280, lineHeight: 1.5 }}
-            >
-              Let customers preview outfits and fabrics before they buy.
-            </p>
-            {isMobile === false && (
-              <motion.p
-                className="text-zinc-400"
-                style={{ fontFamily: 'var(--font-inter)', fontSize: '11px' }}
-                animate={{ y: [0, 4, 0] }}
-                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                ↓ Drag a garment onto a model ↓
-              </motion.p>
-            )}
-          </div>
-        )}
+        {/* Desktop headline/subtitle removed — SeeItLiveSection provides the header overlay */}
 
         {/* ── CTA buttons — desktop only ──────────────────── */}
         {isMobile !== true && <HeroCta visible />}

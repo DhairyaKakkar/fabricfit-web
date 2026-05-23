@@ -9,75 +9,60 @@ export default function SeeItLiveSection() {
   const inView = useInView(ref, { once: true, margin: '-10%' });
 
   return (
-    <div id="see-it-live" ref={ref} style={{ position: 'relative', backgroundColor: '#ffffff' }}>
+    // Outer div is exactly the HeroSection height (100vh).
+    // The header overlays the top of the canvas absolutely so nothing overflows.
+    <div id="see-it-live" ref={ref} style={{ position: 'relative' }}>
 
-      {/* Section header — desktop only, fades in above the DnD canvas */}
+      {/* Header overlay — sits on top of the DnD canvas, desktop only */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="hidden md:block"
+        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        className="hidden md:flex"
         style={{
-          paddingTop: 80,
-          paddingBottom: 40,
-          textAlign: 'center',
-          position: 'relative',
-          zIndex: 1,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 20,
+          flexDirection: 'column',
+          alignItems: 'center',
+          paddingTop: 48,
+          gap: 6,
+          pointerEvents: 'none',
+          background: 'linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 70%, transparent 100%)',
         }}
       >
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.1 }}
+        <span
           style={{
-            display: 'inline-block',
             fontFamily: 'var(--font-inter)',
             fontSize: 10,
             fontWeight: 600,
             letterSpacing: '0.26em',
             textTransform: 'uppercase',
             color: '#a8a29e',
-            marginBottom: 12,
           }}
         >
           Virtual Try-On · Live Demo
-        </motion.span>
+        </span>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.55, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
+        <h2
           style={{
             fontFamily: 'var(--font-playfair)',
-            fontSize: 'clamp(32px, 4vw, 56px)',
+            fontSize: 'clamp(28px, 3.5vw, 48px)',
             fontWeight: 700,
             color: '#09090b',
             lineHeight: 1.1,
-            margin: '0 auto',
-            maxWidth: 560,
+            margin: 0,
+            textAlign: 'center',
           }}
         >
-          Drag a garment.<br />
+          Drag a garment.{' '}
           <span style={{ fontStyle: 'italic', color: '#a8a29e' }}>See it on the model.</span>
-        </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.28 }}
-          style={{
-            fontFamily: 'var(--font-inter)',
-            fontSize: 14,
-            color: '#71717a',
-            marginTop: 16,
-            lineHeight: 1.6,
-          }}
-        >
-          Drag any fabric card onto the model — exactly as your sales staff would.
-        </motion.p>
+        </h2>
       </motion.div>
 
-      {/* The DnD canvas — completely unchanged */}
+      {/* HeroSection fills 100vh — exactly one viewport, no overflow */}
       <HeroSection />
     </div>
   );

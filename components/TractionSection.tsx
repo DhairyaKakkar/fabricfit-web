@@ -52,6 +52,7 @@ export default function TractionSection() {
 
   return (
     <section
+      id="traction"
       ref={ref}
       className="snap-start relative overflow-hidden flex flex-col"
       style={{ height: '100vh', backgroundColor: '#ffffff' }}

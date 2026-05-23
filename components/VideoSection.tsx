@@ -2,7 +2,7 @@
 
 export default function VideoSection() {
   return (
-    <section className="snap-start w-full relative" style={{ height: '100vh', backgroundColor: '#ffffff' }}>
+    <section id="video-section" className="snap-start w-full relative" style={{ height: '100vh', backgroundColor: '#ffffff' }}>
       {/* Video inset with margins + rounded corners */}
       <div
         style={{

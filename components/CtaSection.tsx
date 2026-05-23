@@ -74,6 +74,7 @@ export default function CtaSection() {
 
   return (
     <section
+      id="cta"
       ref={ref}
       className="snap-start relative overflow-hidden flex flex-col items-center justify-center"
       style={{

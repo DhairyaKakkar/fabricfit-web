@@ -2,46 +2,58 @@
 
 export default function VideoSection() {
   return (
-    <section className="snap-start w-full relative" style={{ height: '100vh', backgroundColor: '#1a0a00' }}>
-      <video
-        src="/videos/hero-video.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'block',
-          objectFit: 'cover',
-        }}
-      />
-
-      {/* Whitish dim overlay */}
+    <section className="snap-start w-full relative" style={{ height: '100vh', backgroundColor: '#ffffff' }}>
+      {/* Video inset with margins + rounded corners */}
       <div
         style={{
           position: 'absolute',
-          inset: 0,
-          backgroundColor: 'rgba(255, 255, 255, 0.35)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Text overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '16px',
-          pointerEvents: 'none',
-          textAlign: 'center',
-          padding: '0 24px',
+          top: 32,
+          left: 32,
+          right: 32,
+          bottom: 32,
+          borderRadius: 24,
+          overflow: 'hidden',
         }}
       >
+        <video
+          src="/videos/hero-video.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'block',
+            objectFit: 'cover',
+          }}
+        />
+
+        {/* Whitish dim overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.35)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Text overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '16px',
+            pointerEvents: 'none',
+            textAlign: 'center',
+            padding: '0 24px',
+          }}
+        >
         <h2
           style={{
             fontFamily: 'var(--font-playfair)',
@@ -70,6 +82,7 @@ export default function VideoSection() {
         >
           TrialRoomStudio — Powered by AI
         </p>
+        </div>
       </div>
     </section>
   );

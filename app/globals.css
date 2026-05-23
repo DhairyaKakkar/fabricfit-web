@@ -78,3 +78,64 @@ body {
     gap: 1rem;
   }
 }
+
+/* ── Hero ambient blobs ─────────────────────────────────── */
+@keyframes blob-drift-1 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(40px, -30px) scale(1.08); }
+  66%       { transform: translate(-20px, 20px) scale(0.96); }
+}
+
+@keyframes blob-drift-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1.05); }
+  33%       { transform: translate(-50px, 20px) scale(0.95); }
+  66%       { transform: translate(30px, -40px) scale(1.1); }
+}
+
+@keyframes blob-drift-3 {
+  0%, 100% { transform: translate(0px, 0px) scale(0.98); }
+  33%       { transform: translate(20px, 40px) scale(1.05); }
+  66%       { transform: translate(-40px, -20px) scale(0.93); }
+}
+
+.blob-1 {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  background: rgba(245, 158, 11, 0.10);
+  border-radius: 50%;
+  filter: blur(100px);
+  top: -80px;
+  left: 8%;
+  animation: blob-drift-1 24s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-2 {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  background: rgba(180, 100, 30, 0.07);
+  border-radius: 50%;
+  filter: blur(90px);
+  bottom: 40px;
+  right: 10%;
+  animation: blob-drift-2 30s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-3 {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  background: rgba(251, 191, 36, 0.08);
+  border-radius: 50%;
+  filter: blur(80px);
+  top: 45%;
+  left: 48%;
+  animation: blob-drift-3 18s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}

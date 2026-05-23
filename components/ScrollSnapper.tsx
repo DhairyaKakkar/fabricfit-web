@@ -2,11 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 
-// Ordered snap targets. how-it-works IS included so we snap to its top entry,
-// then GSAP handles the internal 3 pages, then snapping resumes after.
+// All snap targets in page order.
+// hero + how-it-works are also passthrough zones — wheel events pass through naturally
+// so the video expansion and GSAP animations play undisturbed.
 const SNAP_IDS = [
   'hero',
-  'video-section',
+  'see-it-live',
   'how-it-works',
   'in-store',
   'web-embed',
@@ -15,22 +16,26 @@ const SNAP_IDS = [
   'cta',
 ];
 
-const SNAP_COOLDOWN = 1100;      // ms: lock after a snap fires
-const EXIT_HIW_COOLDOWN = 1600;  // ms: grace period after leaving HowItWorks
+// Sections with complex internal scroll — natural scroll, no snap intercept.
+const PASSTHROUGH_IDS = ['hero', 'how-it-works'];
+
+const SNAP_COOLDOWN    = 1100;
+const EXIT_PT_COOLDOWN = 1600;
 
 export default function ScrollSnapper() {
-  const isSnapping   = useRef(false);
-  const wasInHIW     = useRef(false);
-  const exitCooldown = useRef(false);
+  const isSnapping       = useRef(false);
+  const wasInPassthrough = useRef(false);
+  const exitCooldown     = useRef(false);
 
   useEffect(() => {
-    function inHowItWorks(): boolean {
-      const el = document.getElementById('how-it-works');
-      if (!el) return false;
-      const { top, bottom } = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // Inside if the viewport midpoint is within the element
-      return top < vh * 0.5 && bottom > vh * 0.5;
+    function inPassthroughZone(): boolean {
+      return PASSTHROUGH_IDS.some(id => {
+        const el = document.getElementById(id);
+        if (!el) return false;
+        const { top, bottom } = el.getBoundingClientRect();
+        const vh = window.innerHeight;
+        return top < vh * 0.5 && bottom > vh * 0.5;
+      });
     }
 
     function getSnapEls(): HTMLElement[] {
@@ -52,14 +57,12 @@ export default function ScrollSnapper() {
       isSnapping.current = true;
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-      // Primary: listen for scrollend (Chrome 109+, Firefox 109+)
       const onScrollEnd = () => {
         isSnapping.current = false;
         window.removeEventListener('scrollend', onScrollEnd);
       };
       window.addEventListener('scrollend', onScrollEnd, { once: true });
 
-      // Fallback: always release after SNAP_COOLDOWN regardless
       setTimeout(() => {
         isSnapping.current = false;
         window.removeEventListener('scrollend', onScrollEnd);
@@ -69,25 +72,25 @@ export default function ScrollSnapper() {
     let exitTimer: ReturnType<typeof setTimeout> | null = null;
 
     function onWheel(e: WheelEvent) {
-      const nowInHIW = inHowItWorks();
+      const nowInPT = inPassthroughZone();
 
-      // Track enter / exit transitions
-      if (!wasInHIW.current && nowInHIW) {
-        wasInHIW.current = true;
+      // Track enter / exit transitions for passthrough zones
+      if (!wasInPassthrough.current && nowInPT) {
+        wasInPassthrough.current = true;
         exitCooldown.current = false;
         if (exitTimer) { clearTimeout(exitTimer); exitTimer = null; }
-      } else if (wasInHIW.current && !nowInHIW) {
-        wasInHIW.current = false;
-        isSnapping.current = false;   // clear any stale lock from before HIW
+      } else if (wasInPassthrough.current && !nowInPT) {
+        wasInPassthrough.current = false;
+        isSnapping.current = false;
         exitCooldown.current = true;
         if (exitTimer) clearTimeout(exitTimer);
-        exitTimer = setTimeout(() => { exitCooldown.current = false; }, EXIT_HIW_COOLDOWN);
+        exitTimer = setTimeout(() => { exitCooldown.current = false; }, EXIT_PT_COOLDOWN);
       }
 
-      // Let GSAP / natural scroll handle HowItWorks and the grace period after it
-      if (nowInHIW || exitCooldown.current) return;
+      // In passthrough zone or cooling down after exit: let natural scroll happen
+      if (nowInPT || exitCooldown.current) return;
 
-      // Block during an active snap
+      // Block scroll during active snap animation
       if (isSnapping.current) { e.preventDefault(); return; }
 
       const els = getSnapEls();

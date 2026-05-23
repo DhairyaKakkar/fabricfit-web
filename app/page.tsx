@@ -1,6 +1,7 @@
 import Navbar from '@/components/nav/Navbar';
-import HeroSection from '@/components/hero/HeroSection';
 import VideoSection from '@/components/VideoSection';
+import MarqueeDivider from '@/components/MarqueeDivider';
+import SeeItLiveSection from '@/components/SeeItLiveSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import FeaturesSection from '@/components/features/FeaturesSection';
 import TractionSection from '@/components/TractionSection';
@@ -12,9 +13,11 @@ export default function Home() {
     <>
       <ScrollSnapper />
       <Navbar />
-      <HeroSection />
       <VideoSection />
+      <MarqueeDivider />
+      <SeeItLiveSection />
       <HowItWorksSection />
+      <MarqueeDivider />
       <FeaturesSection />
       <TractionSection />
       <CtaSection />

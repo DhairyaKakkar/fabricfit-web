@@ -22,6 +22,8 @@ export default function MarqueeDivider() {
         alignItems: 'center',
         borderTop: '1px solid rgba(0,0,0,0.045)',
         borderBottom: '1px solid rgba(0,0,0,0.045)',
+        maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
       }}
     >
       <motion.div

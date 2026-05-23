@@ -124,10 +124,12 @@ function ScatterArc() {
 interface FlowSectionProps {
   children: React.ReactNode;
   bg?: string;
+  light?: boolean;
   'aria-label'?: string;
 }
 
-function FlowSection({ children, bg = '#09090b', 'aria-label': ariaLabel }: FlowSectionProps) {
+function FlowSection({ children, bg = '#09090b', light = false, 'aria-label': ariaLabel }: FlowSectionProps) {
+  const gridColor = light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.022)';
   return (
     <section
       data-flow-section
@@ -148,8 +150,7 @@ function FlowSection({ children, bg = '#09090b', 'aria-label': ariaLabel }: Flow
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px)',
+            backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`,
             backgroundSize: '60px 60px',
           }}
         />
@@ -558,7 +559,7 @@ export default function HowItWorksSection() {
       </FlowSection>
 
       {/* Step 02 ─ Fabric */}
-      <FlowSection aria-label="Step 2: Select fabric and style" bg="#0c0c10">
+      <FlowSection aria-label="Step 2: Select fabric and style" bg="#28282f">
         <StepLabel num="02" />
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{ flex: 1 }}>
@@ -587,9 +588,22 @@ export default function HowItWorksSection() {
         <StepDots active="02" />
       </FlowSection>
 
-      {/* Step 03 ─ Result */}
-      <FlowSection aria-label="Step 3: Customer sees the look" bg="#0f0f18">
-        <StepLabel num="03" />
+      {/* Step 03 ─ Result (cream/white card) */}
+      <FlowSection aria-label="Step 3: Customer sees the look" bg="#f5f4f0" light>
+        {/* Light step label */}
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: 'rgba(0,0,0,0.35)' }}>03</span>
+            </div>
+            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: 'rgba(0,0,0,0.2)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+              How It Works
+            </span>
+          </div>
+          <span style={{ fontFamily: 'var(--font-playfair)', fontSize: 12, fontStyle: 'italic', color: 'rgba(0,0,0,0.12)' }}>
+            Step 03 / 03
+          </span>
+        </div>
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{ flex: 1 }}>
           {/* Text */}
@@ -597,22 +611,22 @@ export default function HowItWorksSection() {
             <h2 style={{
               fontFamily: 'var(--font-playfair)',
               fontSize: 'clamp(2.2rem, 5vw, 5rem)',
-              fontWeight: 700, color: '#ffffff', lineHeight: 1.06, marginBottom: '1.2rem',
+              fontWeight: 700, color: '#09090b', lineHeight: 1.06, marginBottom: '1.2rem',
             }}>
               See it in{' '}
-              <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.3)' }}>30 seconds.</span>
+              <span style={{ fontStyle: 'italic', color: 'rgba(0,0,0,0.3)' }}>30 seconds.</span>
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(255,255,255,0.38)', lineHeight: 1.75, maxWidth: 380, marginBottom: '2rem' }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(0,0,0,0.48)', lineHeight: 1.75, maxWidth: 380, marginBottom: '2rem' }}>
               The customer sees themselves in the look before a single thread is cut. Confident purchase. Fewer returns. More conversions.
             </p>
             {/* Mini stats */}
             <div style={{ display: 'flex', gap: 32 }}>
               {[{ num: '30s', label: 'Try-on time' }, { num: '50+', label: 'Looks / session' }].map((s) => (
                 <div key={s.label}>
-                  <p style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.8rem)', fontWeight: 700, color: '#ffffff', lineHeight: 1 }}>
+                  <p style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.8rem)', fontWeight: 700, color: '#09090b', lineHeight: 1 }}>
                     {s.num}
                   </p>
-                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: 5 }}>
+                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(0,0,0,0.3)', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: 5 }}>
                     {s.label}
                   </p>
                 </div>
@@ -625,7 +639,12 @@ export default function HowItWorksSection() {
           </div>
         </div>
 
-        <StepDots active="03" />
+        {/* Light step dots */}
+        <div className="relative z-10 flex items-center gap-2">
+          {(['01', '02', '03'] as const).map((s) => (
+            <div key={s} style={{ width: s === '03' ? 28 : 6, height: 6, borderRadius: 3, background: s === '03' ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.12)', transition: 'width 0.3s ease' }} />
+          ))}
+        </div>
       </FlowSection>
 
     </FlowArt>

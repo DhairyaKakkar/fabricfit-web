@@ -5,7 +5,13 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919999999999';
 
-const WORDS = ['The', 'future', 'of', 'fabric', 'retail.'];
+const WORDS = ['The', 'future', 'of', 'fabric'];
+
+const STAT_PILLS = [
+  { value: '30s', label: 'Try-on time' },
+  { value: '50+', label: 'Looks/session' },
+  { value: '0', label: 'Extra hardware' },
+];
 
 function WhatsAppIcon() {
   return (
@@ -23,12 +29,16 @@ export default function VideoSection() {
     offset: ['start start', 'end start'],
   });
 
-  const rawTop    = useTransform(scrollYProgress, [0, 0.45], [32, 0]);
-  const rawLeft   = useTransform(scrollYProgress, [0, 0.45], [32, 0]);
-  const rawRight  = useTransform(scrollYProgress, [0, 0.45], [32, 0]);
-  const rawBottom = useTransform(scrollYProgress, [0, 0.45], [32, 0]);
-  const rawRadius = useTransform(scrollYProgress, [0, 0.45], [24, 0]);
+  // Video card expansion: inset 32px → full-bleed over first 65% of scroll
+  const rawTop    = useTransform(scrollYProgress, [0, 0.65], [32, 0]);
+  const rawLeft   = useTransform(scrollYProgress, [0, 0.65], [32, 0]);
+  const rawRight  = useTransform(scrollYProgress, [0, 0.65], [32, 0]);
+  const rawBottom = useTransform(scrollYProgress, [0, 0.65], [32, 0]);
+  const rawRadius = useTransform(scrollYProgress, [0, 0.65], [24, 0]);
+
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
+  const statsOpacity     = useTransform(scrollYProgress, [0.55, 0.78], [0, 1]);
+  const statsY           = useTransform(scrollYProgress, [0.55, 0.78], [24, 0]);
 
   const cfg = { stiffness: 80, damping: 20 };
   const top    = useSpring(rawTop,    cfg);
@@ -41,9 +51,9 @@ export default function VideoSection() {
     <div
       id="hero"
       ref={sectionRef}
-      style={{ height: '200vh', position: 'relative', backgroundColor: '#faf9f6' }}
+      style={{ height: '145vh', position: 'relative', backgroundColor: '#faf9f6' }}
     >
-      {/* Sticky inner: everything pins for 200vh of scroll */}
+      {/* Sticky viewport-height inner */}
       <div style={{ position: 'sticky', top: 0, height: '100vh' }}>
 
         {/* Ambient blobs */}
@@ -51,7 +61,7 @@ export default function VideoSection() {
         <div className="blob-2" aria-hidden="true" />
         <div className="blob-3" aria-hidden="true" />
 
-        {/* Video card — expands from inset to full screen */}
+        {/* Video card — inset → full-bleed */}
         <motion.div
           style={{
             position: 'absolute',
@@ -66,18 +76,17 @@ export default function VideoSection() {
             autoPlay loop muted playsInline
             style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
           />
-          {/* Gradient scrim for text legibility */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to bottom, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.08) 55%, rgba(0,0,0,0.35) 100%)',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.38) 100%)',
               pointerEvents: 'none',
             }}
           />
         </motion.div>
 
-        {/* Headline + subtitle — above video */}
+        {/* Headline + subtitle */}
         <div
           style={{
             position: 'absolute',
@@ -87,7 +96,7 @@ export default function VideoSection() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 16,
+            gap: 14,
             textAlign: 'center',
             padding: '0 24px',
             pointerEvents: 'none',
@@ -99,10 +108,10 @@ export default function VideoSection() {
               fontSize: 'clamp(48px, 6.5vw, 88px)',
               fontWeight: 700,
               color: '#ffffff',
-              lineHeight: 1.1,
+              lineHeight: 1.08,
               letterSpacing: '-0.01em',
               margin: 0,
-              textShadow: '0 2px 32px rgba(0,0,0,0.5)',
+              textShadow: '0 2px 40px rgba(0,0,0,0.45)',
             }}
           >
             {WORDS.map((word, i) => (
@@ -111,11 +120,26 @@ export default function VideoSection() {
                 initial={{ opacity: 0, filter: 'blur(4px)', y: 12 }}
                 animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
                 transition={{ duration: 0.35, delay: i * 0.08, ease: 'easeOut' }}
-                style={{ display: 'inline-block', marginRight: '0.25em' }}
+                style={{ display: 'inline-block', marginRight: '0.28em' }}
               >
                 {word}
               </motion.span>
             ))}
+            {/* Last word with amber gradient */}
+            <motion.span
+              initial={{ opacity: 0, filter: 'blur(4px)', y: 12 }}
+              animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+              transition={{ duration: 0.35, delay: WORDS.length * 0.08, ease: 'easeOut' }}
+              style={{
+                display: 'inline-block',
+                background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 45%, #fcd34d 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              retail.
+            </motion.span>
           </h1>
 
           <motion.p
@@ -125,14 +149,13 @@ export default function VideoSection() {
             style={{
               fontFamily: 'var(--font-inter)',
               fontSize: 12,
-              color: 'rgba(255,255,255,0.75)',
-              letterSpacing: '0.18em',
+              color: 'rgba(255,255,255,0.72)',
+              letterSpacing: '0.2em',
               textTransform: 'uppercase',
-              textShadow: '0 1px 12px rgba(0,0,0,0.3)',
               margin: 0,
             }}
           >
-            TrialRoomStudio — Powered by AI
+            TrialRoomStudio · Powered by AI
           </motion.p>
         </div>
 
@@ -144,7 +167,7 @@ export default function VideoSection() {
           className="hidden md:flex"
           style={{
             position: 'absolute',
-            bottom: 64,
+            bottom: 96,
             left: 0,
             right: 0,
             justifyContent: 'center',
@@ -160,15 +183,15 @@ export default function VideoSection() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '12px 24px',
-              borderRadius: 12,
+              padding: '13px 28px',
+              borderRadius: 100,
               backgroundColor: '#25d366',
               color: '#ffffff',
               fontFamily: 'var(--font-inter)',
               fontSize: 14,
               fontWeight: 600,
               textDecoration: 'none',
-              boxShadow: '0 4px 20px rgba(37,211,102,0.3)',
+              boxShadow: '0 4px 24px rgba(37,211,102,0.35)',
               whiteSpace: 'nowrap',
             }}
           >
@@ -181,12 +204,12 @@ export default function VideoSection() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '12px 24px',
-              borderRadius: 12,
-              backgroundColor: 'rgba(255,255,255,0.15)',
+              padding: '13px 28px',
+              borderRadius: 100,
+              backgroundColor: 'rgba(255,255,255,0.12)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
-              border: '1.5px solid rgba(255,255,255,0.3)',
+              border: '1px solid rgba(255,255,255,0.28)',
               color: '#ffffff',
               fontFamily: 'var(--font-inter)',
               fontSize: 14,
@@ -199,17 +222,60 @@ export default function VideoSection() {
           </a>
         </motion.div>
 
+        {/* Floating stat pills — appear as video finishes expanding */}
+        <motion.div
+          style={{
+            position: 'absolute',
+            bottom: 36,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 10,
+            zIndex: 3,
+            opacity: statsOpacity,
+            y: statsY,
+            pointerEvents: 'none',
+          }}
+          className="hidden md:flex"
+        >
+          {STAT_PILLS.map((pill) => (
+            <div
+              key={pill.value}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                padding: '10px 20px',
+                borderRadius: 100,
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255,255,255,0.18)',
+              }}
+            >
+              <span style={{ fontFamily: 'var(--font-playfair)', fontSize: 20, fontWeight: 700, color: '#ffffff', lineHeight: 1 }}>
+                {pill.value}
+              </span>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                {pill.label}
+              </span>
+            </div>
+          ))}
+        </motion.div>
+
         {/* Scroll indicator */}
         <motion.div
           style={{
             position: 'absolute',
-            bottom: 24,
+            bottom: 20,
             left: '50%',
             x: '-50%',
             zIndex: 3,
             opacity: indicatorOpacity,
-            color: 'rgba(255,255,255,0.55)',
-            fontSize: 18,
+            color: 'rgba(255,255,255,0.45)',
+            fontSize: 16,
             pointerEvents: 'none',
             userSelect: 'none',
           }}

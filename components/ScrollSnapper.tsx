@@ -17,7 +17,9 @@ const SNAP_IDS = [
 ];
 
 // Sections with complex internal scroll — natural scroll, no snap intercept.
-const PASSTHROUGH_IDS = ['hero', 'how-it-works'];
+// see-it-live contains the DnD canvas; any wheel over it would otherwise immediately
+// snap the user away before they can interact with the demo.
+const PASSTHROUGH_IDS = ['hero', 'see-it-live', 'how-it-works'];
 
 const SNAP_COOLDOWN    = 1100;
 const EXIT_PT_COOLDOWN = 1600;
@@ -34,6 +36,11 @@ export default function ScrollSnapper() {
         if (!el) return false;
         const { top, bottom } = el.getBoundingClientRect();
         const vh = window.innerHeight;
+        if (id === 'hero') {
+          // 200vh sticky element — passthrough covers the full scroll range
+          return top <= 0 && bottom > 0;
+        }
+        // Other sections: midpoint check
         return top < vh * 0.5 && bottom > vh * 0.5;
       });
     }

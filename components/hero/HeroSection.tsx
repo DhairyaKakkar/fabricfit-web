@@ -231,7 +231,6 @@ export default function HeroSection() {
       onDragEnd={handleDragEnd}
     >
       <section
-        id="hero"
         className="snap-start relative w-full overflow-hidden"
         style={{ height: '100vh', minHeight: 600, backgroundColor: '#ffffff' }}
       >

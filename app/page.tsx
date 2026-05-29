@@ -16,10 +16,8 @@ export default function Home() {
       <Navbar />
       <VideoSection />
       <MarqueeDivider />
-      <ProductsPageClient />
       <HowItWorksSection />
-      <MarqueeDivider />
-      <TractionSection />
+      <ProductsPageClient />
       <CtaSection />
     </>
   );

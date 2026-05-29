@@ -62,7 +62,7 @@ export default function CtaSection() {
           initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.65, delay: 0.1, type: 'spring', stiffness: 80 }}
         >
           See it on your fabric.<br />
-          <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.55)' }}>In 2 minutes.</span>
+          <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.55)' }}>In 30 seconds.</span>
         </motion.h2>
 
         <motion.p

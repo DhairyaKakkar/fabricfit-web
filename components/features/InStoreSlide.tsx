@@ -1,140 +1,9 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
+import Image from 'next/image';
 import { motion, useInView } from 'framer-motion';
 import FeatureSlide from './FeatureSlide';
-
-// Placeholder fabric/fashion images — swap with real product shots later
-const ORB_IMAGES = [
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=80',
-  'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=200&q=80',
-  'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=200&q=80',
-  'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=200&q=80',
-  'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=200&q=80',
-  'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=200&q=80',
-  'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=200&q=80',
-  'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=200&q=80',
-];
-
-const ORBS = [
-  { angle: 0 },
-  { angle: Math.PI / 4 },
-  { angle: Math.PI / 2 },
-  { angle: (3 * Math.PI) / 4 },
-  { angle: Math.PI },
-  { angle: (5 * Math.PI) / 4 },
-  { angle: (3 * Math.PI) / 2 },
-  { angle: (7 * Math.PI) / 4 },
-];
-
-const BASE_SIZE = 450;
-const BASE_RADIUS = 182;
-const BASE_ORB = 78;
-
-function ExpandingOrbs() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: false, margin: '-100px' });
-  const [size, setSize] = useState(BASE_SIZE);
-
-  useEffect(() => {
-    const measure = () => {
-      const vw = window.innerWidth;
-      // On mobile use almost full width, cap at BASE_SIZE
-      setSize(Math.min(BASE_SIZE, vw < 768 ? vw - 32 : BASE_SIZE));
-    };
-    measure();
-    window.addEventListener('resize', measure, { passive: true });
-    return () => window.removeEventListener('resize', measure);
-  }, []);
-
-  const scale = size / BASE_SIZE;
-  const radius = Math.round(BASE_RADIUS * scale);
-  const orbSize = Math.round(BASE_ORB * scale);
-
-  return (
-    <div
-      ref={ref}
-      style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}
-    >
-      {/* Outer ring */}
-      <motion.div
-        style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid rgba(0,0,0,0.07)' }}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={inView ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 0.6 }}
-      />
-      {/* Inner ring */}
-      <div
-        style={{ position: 'absolute', inset: '11%', borderRadius: '50%', border: '1px solid rgba(0,0,0,0.04)' }}
-      />
-
-      {/* Center gradient circle */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: '27%',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #e4e4e7 0%, #d4d4d8 50%, #e4e4e7 100%)',
-          padding: 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 20,
-        }}
-      >
-        <div style={{
-          width: '100%', height: '100%', borderRadius: '50%', background: '#ffffff',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 3,
-        }}>
-          <p style={{ fontFamily: 'var(--font-playfair)', fontSize: 14, fontWeight: 700, color: '#09090b', lineHeight: 1 }}>Try-On</p>
-          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.12em' }}>In Seconds</p>
-        </div>
-      </div>
-
-      {/* Orbiting image cards */}
-      {ORBS.map((orb, i) => (
-        <motion.div
-          key={i}
-          style={{
-            position: 'absolute',
-            width: orbSize,
-            height: orbSize,
-            top: '50%',
-            left: '50%',
-            marginTop: -orbSize / 2,
-            marginLeft: -orbSize / 2,
-            borderRadius: Math.round(18 * scale),
-            overflow: 'hidden',
-            border: '3px solid white',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
-            zIndex: 10,
-          }}
-          initial={{ x: 0, y: 0, opacity: 0, scale: 0 }}
-          animate={inView ? {
-            x: Math.cos(orb.angle) * radius,
-            y: Math.sin(orb.angle) * radius,
-            opacity: 1,
-            scale: 1,
-          } : {}}
-          transition={{
-            duration: 0.75,
-            delay: 0.1 + i * 0.07,
-            type: 'spring',
-            stiffness: 65,
-            damping: 16,
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={ORB_IMAGES[i]}
-            alt=""
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        </motion.div>
-      ))}
-    </div>
-  );
-}
 
 const STEPS = [
   { num: '01', label: 'Upload customer photo' },
@@ -288,14 +157,21 @@ export default function InStoreSlide() {
           </div>
         </div>
 
-        {/* Right: Expanding orbs — fully responsive via JS measurement */}
+        {/* Right: Feature visual */}
         <motion.div
           className="flex justify-center items-center"
-          initial={{ opacity: 0, scale: 0.85 }}
+          initial={{ opacity: 0, scale: 0.92 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.7, delay: 0.3, type: 'spring', stiffness: 80 }}
         >
-          <ExpandingOrbs />
+          <Image
+            src="/features1.png"
+            alt="In-store virtual try-on"
+            width={480}
+            height={480}
+            className="w-full max-w-[480px] h-auto rounded-2xl"
+            style={{ objectFit: 'contain' }}
+          />
         </motion.div>
       </div>
     </FeatureSlide>

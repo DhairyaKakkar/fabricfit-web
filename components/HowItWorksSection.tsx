@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -13,10 +13,11 @@ interface FlowSectionProps {
   children: React.ReactNode;
   bg?: string;
   light?: boolean;
+  noGrid?: boolean;
   'aria-label'?: string;
 }
 
-function FlowSection({ children, bg = '#09090b', light = false, 'aria-label': ariaLabel }: FlowSectionProps) {
+function FlowSection({ children, bg = '#09090b', light = false, noGrid = false, 'aria-label': ariaLabel }: FlowSectionProps) {
   const gridColor = light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.022)';
   return (
     <section data-flow-section aria-label={ariaLabel} className="relative min-h-screen w-full overflow-hidden">
@@ -30,13 +31,15 @@ function FlowSection({ children, bg = '#09090b', light = false, 'aria-label': ar
           paddingTop: 'clamp(2rem, 8vw, 4rem)',
         }}
       >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
+        {!noGrid && (
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`,
+              backgroundSize: '60px 60px',
+            }}
+          />
+        )}
         {children}
       </div>
     </section>
@@ -168,198 +171,6 @@ function StepDots({ active, light = false }: { active: '01' | '02' | '03'; light
   );
 }
 
-// ─── Mockup: In-store Virtual Try-On ─────────────────────────────────────────
-function TryOnMockup() {
-  return (
-    <div style={{ width: '100%', maxWidth: 460, background: '#141414', borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)', padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}>
-      {/* Chrome */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-        {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
-          <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
-        ))}
-        <div style={{ flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10, display: 'flex', alignItems: 'center', paddingLeft: 10 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>trialroomstudio.com / tryon</span>
-        </div>
-      </div>
-
-      {/* Before / After split */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-        <div style={{ background: '#1a1a1a', borderRadius: 12, border: '1px solid #252525', padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Customer</span>
-          <div style={{ width: '100%', height: 88, background: '#212121', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5">
-              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" />
-            </svg>
-          </div>
-        </div>
-
-        <div style={{ background: '#12121e', borderRadius: 12, border: '1.5px solid rgba(255,255,255,0.12)', padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, position: 'relative', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <motion.div
-              style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }}
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.2, repeat: Infinity }}
-            />
-            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>AI Try-On</span>
-          </div>
-          <motion.div
-            style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 30%, rgba(91,147,153,0.25) 0%, transparent 70%)' }}
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2.5, repeat: Infinity }}
-          />
-          <div style={{ width: '100%', height: 88, background: 'rgba(255,255,255,0.03)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
-            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>[ Styled Look ]</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Speed indicator */}
-      <div style={{ background: 'rgba(91,147,153,0.08)', border: '1px solid rgba(91,147,153,0.2)', borderRadius: 10, padding: '8px 14px', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#5B9399', flexShrink: 0 }} />
-        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(255,255,255,0.38)' }}>Generated in ~3 seconds · Any device</span>
-      </div>
-
-      {/* Actions */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10 }}>
-        <div style={{ padding: '11px 0', background: '#ffffff', borderRadius: 10, textAlign: 'center', cursor: 'pointer' }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: '#09090b' }}>Share with Customer</span>
-        </div>
-        <div style={{ padding: '11px 16px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>Redo</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Mockup: Shopify / WooCommerce embed ──────────────────────────────────────
-function EmbedMockup() {
-  return (
-    <div style={{ width: '100%', maxWidth: 460, background: '#141414', borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)', padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}>
-      {/* Chrome */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-        {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
-          <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
-        ))}
-        <div style={{ flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10, display: 'flex', alignItems: 'center', paddingLeft: 10 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>yourstore.myshopify.com / products / kurta</span>
-        </div>
-      </div>
-
-      {/* Product page with embedded widget */}
-      <div style={{ background: '#1a1a1a', borderRadius: 12, border: '1px solid #252525', padding: 14, marginBottom: 14 }}>
-        <div style={{ display: 'flex', gap: 12 }}>
-          <div style={{ width: 70, height: 90, background: '#252525', borderRadius: 8, flexShrink: 0 }} />
-          <div style={{ flex: 1 }}>
-            <div style={{ height: 8, background: '#2a2a2a', borderRadius: 4, marginBottom: 6, width: '65%' }} />
-            <div style={{ height: 6, background: '#222', borderRadius: 4, marginBottom: 14, width: '40%' }} />
-            {/* Widget */}
-            <div style={{ background: '#0f0f0f', border: '1px solid rgba(189,161,69,0.35)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 22, height: 22, borderRadius: 6, background: 'rgba(189,161,69,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(189,161,69,0.9)" strokeWidth="2">
-                  <path d="M15 10l-4 4l6 6l4-16l-18 7l4 2l2 6z" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(189,161,69,0.85)', fontWeight: 600 }}>Try On Virtually</span>
-              <div style={{ marginLeft: 'auto', background: 'rgba(189,161,69,0.12)', borderRadius: 5, padding: '2px 8px' }}>
-                <span style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(189,161,69,0.5)', fontWeight: 600 }}>FREE</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Code snippet */}
-      <div style={{ background: '#0d0d0d', borderRadius: 12, padding: '12px 16px', marginBottom: 14, border: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>Installation ·</span>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(189,161,69,0.5)' }}>1 line</span>
-        </div>
-        <div style={{ fontFamily: 'monospace', fontSize: 10, lineHeight: 1.8 }}>
-          <span style={{ color: 'rgba(255,255,255,0.2)' }}>&lt;</span>
-          <span style={{ color: '#7dd3fc' }}>script</span>
-          <span style={{ color: '#86efac' }}> src</span>
-          <span style={{ color: 'rgba(255,255,255,0.3)' }}>=</span>
-          <span style={{ color: '#fbbf24' }}>&quot;https://cdn.trs.io/embed.js&quot;</span>
-          <span style={{ color: 'rgba(255,255,255,0.2)' }}>&gt;&lt;/</span>
-          <span style={{ color: '#7dd3fc' }}>script</span>
-          <span style={{ color: 'rgba(255,255,255,0.2)' }}>&gt;</span>
-        </div>
-      </div>
-
-      {/* Platform badges */}
-      <div style={{ display: 'flex', gap: 8 }}>
-        {['Shopify', 'WooCommerce', 'Custom'].map((platform) => (
-          <div key={platform} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '7px 0', flex: 1, textAlign: 'center' }}>
-            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.28)', fontWeight: 600 }}>{platform}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Mockup: Catalogue generator ─────────────────────────────────────────────
-function CatalogueMockup() {
-  const ITEMS = [
-    { label: 'Kurta',    color: '#fef3c7' },
-    { label: 'Sherwani', color: '#ede9fe' },
-    { label: 'Anarkali', color: '#fce7f3' },
-    { label: 'Saree',    color: '#fdf4ff' },
-  ];
-
-  return (
-    <div style={{ width: '100%', maxWidth: 500, background: '#141414', borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)', padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.4)' }}>
-      {/* Chrome */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-        {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
-          <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
-        ))}
-        <div style={{ flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10, display: 'flex', alignItems: 'center', paddingLeft: 10 }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>My Store Catalogue — 10 Garments</span>
-        </div>
-      </div>
-
-      {/* Catalogue header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-          Summer Collection 2025
-        </span>
-        <div style={{ background: '#ffffff', borderRadius: 6, padding: '4px 12px', cursor: 'pointer' }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, fontWeight: 600, color: '#09090b' }}>Export PDF</span>
-        </div>
-      </div>
-
-      {/* Garment grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
-        {ITEMS.map((item) => (
-          <div key={item.label} style={{ background: '#1a1a1a', borderRadius: 10, border: '1px solid #252525', overflow: 'hidden' }}>
-            <div style={{ height: 58, background: item.color, opacity: 0.65, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(0,0,0,0.45)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-                [ {item.label} ]
-              </span>
-            </div>
-            <div style={{ padding: '6px 8px' }}>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.38)', fontWeight: 600 }}>{item.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Status */}
-      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <motion.div
-          style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }}
-          animate={{ opacity: [1, 0.3, 1] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        />
-        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>
-          AI generating · 10 looks ready in ~30 seconds
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // ─── FeaturesSection ──────────────────────────────────────────────────────────
 export default function HowItWorksSection() {
@@ -367,84 +178,160 @@ export default function HowItWorksSection() {
     <FlowArt id="features">
 
       {/* Feature 01 — Virtual Try-On for Stores */}
-      <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#5B9399">
+      <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#E5CBB6" light noGrid>
+        {/* Label + text grouped at top */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
         <StepLabel num="01" />
 
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{ flex: 1 }}>
-          <div>
-            <h2 style={{
-              fontFamily: 'var(--font-playfair)',
-              fontSize: 'clamp(2.2rem, 5vw, 5rem)',
-              fontWeight: 700, color: '#ffffff', lineHeight: 1.06, marginBottom: '1.2rem',
-            }}>
-              Virtual Try-On.
-              <span style={{ display: 'block', fontStyle: 'italic', color: 'rgba(255,255,255,0.3)', fontSize: '0.78em' }}>
-                Right in your store.
-              </span>
-            </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(255,255,255,0.38)', lineHeight: 1.75, maxWidth: 380 }}>
-              Let customers see any garment on themselves before they buy. Staff generates a realistic try-on in seconds using a phone, tablet, or desktop — no special camera, lighting, or setup required.
-            </p>
-          </div>
-          <div className="flex justify-center md:justify-end">
-            <TryOnMockup />
-          </div>
+        <div style={{ maxWidth: 640 }}>
+          <h2 style={{
+            fontFamily: 'var(--font-playfair)',
+            fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
+            fontWeight: 700,
+            color: '#09090b',
+            lineHeight: 0.92,
+            letterSpacing: '-0.02em',
+            marginBottom: '1.2rem',
+          }}>
+            Virtual<br />Try-On.
+          </h2>
+          <p style={{
+            fontFamily: 'var(--font-inter)',
+            fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+            color: 'rgba(0,0,0,0.4)',
+            letterSpacing: '0.04em',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+          }}>
+            Right in your store — no setup required.
+          </p>
+        </div>
+        </div>
+
+        {/* Image — bottom right, bleeding in */}
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          width: '68%',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}>
+          <Image
+            src="/features1.png"
+            alt="Virtual try-on in store"
+            width={1400}
+            height={1400}
+            unoptimized
+            className="w-full h-auto"
+            style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }}
+          />
         </div>
 
         <StepDots active="01" />
       </FlowSection>
 
       {/* Feature 02 — Web Embed */}
-      <FlowSection aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#BDA145">
+      <FlowSection aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314" noGrid>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
         <StepLabel num="02" />
 
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{ flex: 1 }}>
-          <div className="flex justify-center md:justify-start">
-            <EmbedMockup />
-          </div>
-          <div>
-            <h2 style={{
-              fontFamily: 'var(--font-playfair)',
-              fontSize: 'clamp(2.2rem, 5vw, 5rem)',
-              fontWeight: 700, color: '#ffffff', lineHeight: 1.06, marginBottom: '1.2rem',
-            }}>
-              Embed on any storefront.
-              <span style={{ display: 'block', fontStyle: 'italic', color: 'rgba(255,255,255,0.3)', fontSize: '0.78em' }}>
-                One line of code.
-              </span>
-            </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(255,255,255,0.38)', lineHeight: 1.75, maxWidth: 380 }}>
-              Drop a single snippet into your Shopify or WooCommerce store. Your customers try on garments directly from product pages — zero extra apps, zero friction, zero configuration.
-            </p>
-          </div>
+        <div style={{ maxWidth: 640 }}>
+          <h2 style={{
+            fontFamily: 'var(--font-playfair)',
+            fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
+            fontWeight: 700,
+            color: '#ffffff',
+            lineHeight: 0.92,
+            letterSpacing: '-0.02em',
+            marginBottom: '1.2rem',
+          }}>
+            Embed<br />anywhere.
+          </h2>
+          <p style={{
+            fontFamily: 'var(--font-inter)',
+            fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+            color: 'rgba(255,255,255,0.35)',
+            letterSpacing: '0.04em',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+          }}>
+            One line of code — Shopify, WooCommerce, any site.
+          </p>
+        </div>
+        </div>
+
+        {/* Image — bottom right, bleeding in */}
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          width: '68%',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}>
+          <Image
+            src="/features2.png"
+            alt="Web embed virtual try-on"
+            width={1400}
+            height={1400}
+            unoptimized
+            className="w-full h-auto"
+            style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }}
+          />
         </div>
 
         <StepDots active="02" />
       </FlowSection>
 
       {/* Feature 03 — Catalogue */}
-      <FlowSection aria-label="Feature 3: Create a high-polished catalogue" bg="#f5f4f0" light>
+      <FlowSection aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0" light noGrid>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
         <StepLabel num="03" light />
 
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{ flex: 1 }}>
-          <div>
-            <h2 style={{
-              fontFamily: 'var(--font-playfair)',
-              fontSize: 'clamp(2.2rem, 5vw, 5rem)',
-              fontWeight: 700, color: '#09090b', lineHeight: 1.06, marginBottom: '1.2rem',
-            }}>
-              Build your catalogue.
-              <span style={{ display: 'block', fontStyle: 'italic', color: 'rgba(0,0,0,0.22)', fontSize: '0.78em' }}>
-                Automatically.
-              </span>
-            </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(0,0,0,0.45)', lineHeight: 1.75, maxWidth: 380 }}>
-              Upload your garments once. Our AI instantly creates polished, lookbook-quality imagery of every piece worn on a model — ready to share with customers, print, or export as a PDF catalogue.
-            </p>
-          </div>
-          <div className="flex justify-center md:justify-end">
-            <CatalogueMockup />
-          </div>
+        <div style={{ maxWidth: 640 }}>
+          <h2 style={{
+            fontFamily: 'var(--font-playfair)',
+            fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
+            fontWeight: 700,
+            color: '#09090b',
+            lineHeight: 0.92,
+            letterSpacing: '-0.02em',
+            marginBottom: '1.2rem',
+          }}>
+            Build your<br />catalogue.
+          </h2>
+          <p style={{
+            fontFamily: 'var(--font-inter)',
+            fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+            color: 'rgba(0,0,0,0.35)',
+            letterSpacing: '0.04em',
+            textTransform: 'uppercase',
+            fontWeight: 500,
+          }}>
+            No shoot. No agency. Export same day.
+          </p>
+        </div>
+        </div>
+
+        {/* Image — bottom right, bleeding in */}
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          width: '68%',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}>
+          <Image
+            src="/features3.png"
+            alt="Catalogue builder"
+            width={1400}
+            height={1400}
+            unoptimized
+            className="w-full h-auto"
+            style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }}
+          />
         </div>
 
         <StepDots active="03" light />

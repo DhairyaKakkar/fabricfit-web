@@ -18,7 +18,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-3">
-            <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} className="h-12 w-auto" />
+            <Image src="/logo.png" alt="TrialRoomStudio" width={80} height={80} className="h-20 w-auto block" />
           </div>
           <p className="text-sm text-zinc-400 mt-1" style={{ fontFamily: 'var(--font-inter)' }}>
             Sign in to your account

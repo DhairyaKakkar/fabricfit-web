@@ -42,8 +42,8 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/90 transition-all duration-200 ${
-        scrolled ? 'border-b border-zinc-200/80 shadow-sm' : ''
+      className={`fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-200 ${
+        scrolled ? 'border-b border-zinc-200/80 shadow-sm' : 'border-b border-zinc-100'
       }`}
     >
       {/* Top bar */}
@@ -51,9 +51,9 @@ export default function Navbar() {
         {/* Logo */}
         <a
           href="/"
-          className="select-none hover:opacity-70 transition-opacity shrink-0"
+          className="select-none hover:opacity-70 transition-opacity shrink-0 flex items-center"
         >
-          <Image src="/logo.png" alt="TrialRoomStudio" width={32} height={32} className="h-8 w-auto" />
+          <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} className="h-12 w-auto block" />
         </a>
 
         {/* Desktop links */}

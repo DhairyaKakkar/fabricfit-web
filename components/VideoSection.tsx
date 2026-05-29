@@ -38,15 +38,11 @@ export default function VideoSection() {
       <div className="blob-2" aria-hidden="true" />
       <div className="blob-3" aria-hidden="true" />
 
-      {/* Video card — permanent inset with rounded corners */}
+      {/* Video — full screen */}
       <div
         style={{
           position: 'absolute',
-          top: 72,
-          left: 32,
-          right: 32,
-          bottom: 32,
-          borderRadius: 24,
+          inset: 0,
           overflow: 'hidden',
           zIndex: 1,
         }}

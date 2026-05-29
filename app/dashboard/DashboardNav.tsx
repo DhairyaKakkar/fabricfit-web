@@ -27,8 +27,8 @@ export default function DashboardNav({ businessName, isTrial }: Props) {
     <header className="bg-white border-b border-zinc-200 sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link href="/dashboard" className="shrink-0">
-          <Image src="/logo.png" alt="TrialRoomStudio" width={32} height={32} className="h-8 w-auto" />
+        <Link href="/dashboard" className="shrink-0 flex items-center">
+          <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} className="h-12 w-auto block" />
         </Link>
 
         {/* Desktop nav */}

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="bg-[#fef9f0] text-gray-900 antialiased">
+      <body className="bg-[#fef9f0] text-gray-900 antialiased" suppressHydrationWarning>
         {/* SVG filter for LiquidButton liquid-glass distortion — rendered once globally */}
         <svg aria-hidden style={{ display: 'none', position: 'absolute' }}>
           <defs>

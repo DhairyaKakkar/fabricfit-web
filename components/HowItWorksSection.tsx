@@ -1,126 +1,14 @@
 'use client';
 
-import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { motion, useInView } from 'framer-motion';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-function cx(...parts: Array<string | undefined | false | null>): string {
-  return parts.filter(Boolean).join(' ');
-}
-
-// ─── ScatterArc: scatter → line → circle animation ──────────────────────────
-const SCATTER_IMAGES = [
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=80',
-  'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=200&q=80',
-  'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=200&q=80',
-  'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=200&q=80',
-  'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=200&q=80',
-  'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=200&q=80',
-  'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=200&q=80',
-  'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=200&q=80',
-];
-
-type ArcPhase = 'scatter' | 'line' | 'circle';
-
-function ScatterArc() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: false, margin: '-80px' });
-  const [phase, setPhase] = useState<ArcPhase>('scatter');
-  const [containerSize, setContainerSize] = useState(320);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  useEffect(() => {
-    const measure = () => {
-      const vw = window.innerWidth;
-      setContainerSize(Math.min(360, vw < 768 ? vw - 48 : 360));
-    };
-    measure();
-    window.addEventListener('resize', measure, { passive: true });
-    return () => window.removeEventListener('resize', measure);
-  }, []);
-
-  useEffect(() => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
-    if (inView) {
-      setPhase('scatter');
-      timers.current.push(setTimeout(() => setPhase('line'), 350));
-      timers.current.push(setTimeout(() => setPhase('circle'), 1600));
-    } else {
-      setPhase('scatter');
-    }
-    return () => timers.current.forEach(clearTimeout);
-  }, [inView]);
-
-  const scatterPositions = useMemo(() =>
-    SCATTER_IMAGES.map(() => ({
-      x: (Math.random() - 0.5) * containerSize * 0.7,
-      y: (Math.random() - 0.5) * containerSize * 0.7,
-      rotation: (Math.random() - 0.5) * 120,
-    })), [containerSize]);
-
-  const getTarget = (i: number) => {
-    if (phase === 'scatter') return {
-      x: scatterPositions[i].x, y: scatterPositions[i].y,
-      rotate: scatterPositions[i].rotation, opacity: 0, scale: 0.4,
-    };
-    if (phase === 'line') {
-      const spacing = Math.min(52, (containerSize * 0.82) / (SCATTER_IMAGES.length - 1));
-      const total = (SCATTER_IMAGES.length - 1) * spacing;
-      return { x: i * spacing - total / 2, y: 0, rotate: 0, opacity: 1, scale: 0.8 };
-    }
-    const angle = (i / SCATTER_IMAGES.length) * 360 - 90;
-    const rad = (angle * Math.PI) / 180;
-    const circleRadius = containerSize * 0.36;
-    return { x: Math.cos(rad) * circleRadius, y: Math.sin(rad) * circleRadius, rotate: 0, opacity: 1, scale: 1 };
-  };
-
-  return (
-    <div ref={ref} className="relative flex items-center justify-center scatter-arc-container" style={{ width: containerSize, height: containerSize }}>
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{ border: '1px solid rgba(255,255,255,0.08)' }}
-        animate={{ opacity: phase === 'circle' ? 1 : 0, scale: phase === 'circle' ? 1 : 0.85 }}
-        transition={{ duration: 0.6 }}
-      />
-      {SCATTER_IMAGES.map((src, i) => {
-        const t = getTarget(i);
-        return (
-          <motion.div
-            key={i}
-            animate={{ x: t.x, y: t.y, rotate: t.rotate, scale: t.scale, opacity: t.opacity }}
-            transition={{ type: 'spring', stiffness: 42, damping: 16 }}
-            style={{ position: 'absolute', width: 54, height: 70, borderRadius: 10, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.5)' }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </motion.div>
-        );
-      })}
-      <motion.div
-        style={{ position: 'relative', zIndex: 10 }}
-        animate={phase === 'circle' ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        <div style={{
-          width: 72, height: 72, borderRadius: '50%',
-          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 2,
-        }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.14em', textAlign: 'center', lineHeight: 1.5 }}>
-            Any<br />Photo
-          </span>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-// ─── FlowSection ────────────────────────────────────────────────────────────
+// ─── FlowSection ─────────────────────────────────────────────────────────────
 interface FlowSectionProps {
   children: React.ReactNode;
   bg?: string;
@@ -131,11 +19,7 @@ interface FlowSectionProps {
 function FlowSection({ children, bg = '#09090b', light = false, 'aria-label': ariaLabel }: FlowSectionProps) {
   const gridColor = light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.022)';
   return (
-    <section
-      data-flow-section
-      aria-label={ariaLabel}
-      className="relative min-h-screen w-full overflow-hidden"
-    >
+    <section data-flow-section aria-label={ariaLabel} className="relative min-h-screen w-full overflow-hidden">
       <div
         data-flow-inner
         className="flow-art-container relative flex min-h-screen w-full flex-col justify-between will-change-transform"
@@ -146,7 +30,6 @@ function FlowSection({ children, bg = '#09090b', light = false, 'aria-label': ar
           paddingTop: 'clamp(2rem, 8vw, 4rem)',
         }}
       >
-        {/* Grid overlay */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -160,7 +43,7 @@ function FlowSection({ children, bg = '#09090b', light = false, 'aria-label': ar
   );
 }
 
-// ─── FlowArt orchestrator ───────────────────────────────────────────────────
+// ─── FlowArt orchestrator ─────────────────────────────────────────────────────
 function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -241,33 +124,32 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
   );
 }
 
-// ─── Step header / footer ───────────────────────────────────────────────────
-function StepLabel({ num }: { num: '01' | '02' | '03' }) {
+// ─── Step label ───────────────────────────────────────────────────────────────
+function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: boolean }) {
+  const dot     = light ? 'rgba(0,0,0,0.06)'  : 'rgba(255,255,255,0.05)';
+  const border  = light ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.1)';
+  const numClr  = light ? 'rgba(0,0,0,0.35)'  : 'rgba(255,255,255,0.4)';
+  const labelC  = light ? 'rgba(0,0,0,0.22)'  : 'rgba(255,255,255,0.22)';
+  const stepC   = light ? 'rgba(0,0,0,0.12)'  : 'rgba(255,255,255,0.12)';
+
   return (
     <div className="relative z-10 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div
-          style={{
-            width: 34, height: 34, borderRadius: '50%',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.4)' }}>{num}</span>
+        <div style={{ width: 34, height: 34, borderRadius: '50%', background: dot, border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: numClr }}>{num}</span>
         </div>
-        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-          How It Works
+        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: labelC, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+          Features
         </span>
       </div>
-      <span style={{ fontFamily: 'var(--font-playfair)', fontSize: 12, fontStyle: 'italic', color: 'rgba(255,255,255,0.12)' }}>
-        Step {num} / 03
+      <span style={{ fontFamily: 'var(--font-playfair)', fontSize: 12, fontStyle: 'italic', color: stepC }}>
+        Feature {num} / 03
       </span>
     </div>
   );
 }
 
-function StepDots({ active }: { active: '01' | '02' | '03' }) {
+function StepDots({ active, light = false }: { active: '01' | '02' | '03'; light?: boolean }) {
   return (
     <div className="relative z-10 flex items-center gap-2">
       {(['01', '02', '03'] as const).map((s) => (
@@ -275,7 +157,9 @@ function StepDots({ active }: { active: '01' | '02' | '03' }) {
           key={s}
           style={{
             width: s === active ? 28 : 6, height: 6, borderRadius: 3,
-            background: s === active ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.1)',
+            background: s === active
+              ? (light ? 'rgba(0,0,0,0.4)'  : 'rgba(255,255,255,0.55)')
+              : (light ? 'rgba(0,0,0,0.1)'  : 'rgba(255,255,255,0.1)'),
             transition: 'width 0.3s ease',
           }}
         />
@@ -284,238 +168,63 @@ function StepDots({ active }: { active: '01' | '02' | '03' }) {
   );
 }
 
-// ─── Mockup: Upload interface ────────────────────────────────────────────────
-function UploadMockup() {
+// ─── Mockup: In-store Virtual Try-On ─────────────────────────────────────────
+function TryOnMockup() {
   return (
-    <div
-      style={{
-        width: '100%', maxWidth: 460,
-        background: '#141414', borderRadius: 20,
-        border: '1px solid rgba(255,255,255,0.08)',
-        padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-      }}
-    >
-      {/* Browser chrome */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-        {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
-          <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
-        ))}
-        <div style={{
-          flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10,
-          display: 'flex', alignItems: 'center', paddingLeft: 10,
-        }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>
-            fabricfit.app / tryon
-          </span>
-        </div>
-      </div>
-
-      {/* Upload zone */}
-      <div style={{
-        border: '1.5px dashed rgba(255,255,255,0.13)', borderRadius: 14,
-        padding: '28px 20px', textAlign: 'center', marginBottom: 14,
-        background: 'rgba(255,255,255,0.015)',
-      }}>
-        <div style={{
-          width: 52, height: 52, borderRadius: 12,
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
-          margin: '0 auto 12px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1.5">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: 'rgba(255,255,255,0.22)', marginBottom: 5 }}>
-          [ Customer Photo — Placeholder ]
-        </p>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.1)' }}>
-          JPG · PNG · Any phone or device
-        </p>
-      </div>
-
-      {/* Buttons */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-        <div style={{
-          padding: '11px 0', background: '#ffffff',
-          borderRadius: 10, textAlign: 'center', cursor: 'pointer',
-        }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: '#09090b' }}>
-            Upload Photo
-          </span>
-        </div>
-        <div style={{
-          padding: '11px 0', borderRadius: 10, textAlign: 'center', cursor: 'pointer',
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
-        }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>
-            Take Photo
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Mockup: Fabric selector ─────────────────────────────────────────────────
-function FabricMockup() {
-  const FABRICS = [
-    { name: 'Silk', color: '#e2e8f0', price: '₹4,200', active: true },
-    { name: 'Cotton', color: '#d1fae5', price: '₹1,800', active: false },
-    { name: 'Chiffon', color: '#fce7f3', price: '₹3,100', active: false },
-    { name: 'Linen', color: '#f3f4f6', price: '₹2,400', active: false },
-    { name: 'Velvet', color: '#ede9fe', price: '₹6,500', active: false },
-    { name: 'Satin', color: '#fef9c3', price: '₹3,800', active: false },
-  ];
-
-  return (
-    <div
-      style={{
-        width: '100%', maxWidth: 460,
-        background: '#141414', borderRadius: 20,
-        border: '1px solid rgba(255,255,255,0.08)',
-        padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-      }}
-    >
+    <div style={{ width: '100%', maxWidth: 460, background: '#141414', borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)', padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}>
       {/* Chrome */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
         {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
           <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
         ))}
-        <div style={{ flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10 }} />
+        <div style={{ flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10, display: 'flex', alignItems: 'center', paddingLeft: 10 }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>trialroomstudio.com / tryon</span>
+        </div>
       </div>
 
-      <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 14 }}>
-        Select Fabric
-      </p>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 14 }}>
-        {FABRICS.map((fab) => (
-          <motion.div
-            key={fab.name}
-            whileHover={{ scale: 1.03 }}
-            style={{
-              borderRadius: 12, background: '#1a1a1a', cursor: 'pointer',
-              border: fab.active ? '1.5px solid rgba(255,255,255,0.3)' : '1.5px solid #2a2a2a',
-              padding: '10px 8px',
-            }}
-          >
-            <div style={{
-              width: '100%', height: 38, borderRadius: 7, background: fab.color,
-              marginBottom: 7, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 6.5, color: 'rgba(0,0,0,0.3)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                [ {fab.name} ]
-              </span>
-            </div>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: fab.active ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.28)', textAlign: 'center' }}>
-              {fab.name}
-            </p>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.18)', textAlign: 'center' }}>
-              {fab.price}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-
-      <motion.div
-        whileHover={{ scale: 1.01 }}
-        style={{ padding: '11px 0', background: '#ffffff', borderRadius: 10, textAlign: 'center', cursor: 'pointer' }}
-      >
-        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: '#09090b' }}>
-          Generate Try-On →
-        </span>
-      </motion.div>
-    </div>
-  );
-}
-
-// ─── Mockup: Before / After result ──────────────────────────────────────────
-function ResultMockup() {
-  return (
-    <div
-      style={{
-        width: '100%', maxWidth: 500,
-        background: '#141414', borderRadius: 20,
-        border: '1px solid rgba(255,255,255,0.08)',
-        padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-      }}
-    >
-      {/* Chrome */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
-        {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
-          <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
-        ))}
-        <div style={{ flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10 }} />
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
-        {/* Before */}
-        <div style={{ borderRadius: 14, background: '#1a1a1a', border: '1px solid #252525', overflow: 'hidden' }}>
-          <div style={{ padding: '7px 12px', borderBottom: '1px solid #252525' }}>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              Before
-            </p>
-          </div>
-          <div style={{
-            height: 148, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            background: '#161616', gap: 8,
-          }}>
-            <div style={{
-              width: 38, height: 38, borderRadius: 8, background: '#2a2a2a',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" />
-              </svg>
-            </div>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(255,255,255,0.14)', textAlign: 'center', lineHeight: 1.6 }}>
-              [ Customer<br />Photo ]
-            </p>
+      {/* Before / After split */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+        <div style={{ background: '#1a1a1a', borderRadius: 12, border: '1px solid #252525', padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Customer</span>
+          <div style={{ width: '100%', height: 88, background: '#212121', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" />
+            </svg>
           </div>
         </div>
 
-        {/* After */}
-        <div style={{ borderRadius: 14, background: '#1a1a1a', border: '1px solid #252525', overflow: 'hidden' }}>
-          <div style={{ padding: '7px 12px', borderBottom: '1px solid #252525', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              After
-            </p>
+        <div style={{ background: '#12121e', borderRadius: 12, border: '1.5px solid rgba(255,255,255,0.12)', padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <motion.div
-              style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e' }}
+              style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }}
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.2, repeat: Infinity }}
             />
+            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>AI Try-On</span>
           </div>
-          <div style={{
-            height: 148, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            background: '#12121e', gap: 8, position: 'relative', overflow: 'hidden',
-          }}>
-            <motion.div
-              style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 30%, rgba(99,102,241,0.2) 0%, transparent 70%)' }}
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2.5, repeat: Infinity }}
-            />
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(255,255,255,0.28)', textAlign: 'center', lineHeight: 1.6, position: 'relative', zIndex: 1 }}>
-              [ AI Result —<br />Styled Look ]
-            </p>
-            <motion.div
-              style={{ width: 30, height: 60, background: 'linear-gradient(180deg, #818cf8 0%, #6366f1 100%)', borderRadius: 8, position: 'relative', zIndex: 1 }}
-              animate={{ y: [2, -2, 2] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            />
+          <motion.div
+            style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 50% 30%, rgba(91,147,153,0.25) 0%, transparent 70%)' }}
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2.5, repeat: Infinity }}
+          />
+          <div style={{ width: '100%', height: 88, background: 'rgba(255,255,255,0.03)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
+            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>[ Styled Look ]</span>
           </div>
         </div>
+      </div>
+
+      {/* Speed indicator */}
+      <div style={{ background: 'rgba(91,147,153,0.08)', border: '1px solid rgba(91,147,153,0.2)', borderRadius: 10, padding: '8px 14px', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#5B9399', flexShrink: 0 }} />
+        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(255,255,255,0.38)' }}>Generated in ~3 seconds · Any device</span>
       </div>
 
       {/* Actions */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10 }}>
-        <div style={{ padding: '10px 0', background: '#ffffff', borderRadius: 10, textAlign: 'center', cursor: 'pointer' }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#09090b' }}>
-            Share with Customer
-          </span>
+        <div style={{ padding: '11px 0', background: '#ffffff', borderRadius: 10, textAlign: 'center', cursor: 'pointer' }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: '#09090b' }}>Share with Customer</span>
         </div>
-        <div style={{ padding: '10px 16px', borderRadius: 10, cursor: 'pointer', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}>
+        <div style={{ padding: '11px 16px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}>
           <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>Redo</span>
         </div>
       </div>
@@ -523,64 +232,189 @@ function ResultMockup() {
   );
 }
 
-// ─── HowItWorksSection ───────────────────────────────────────────────────────
+// ─── Mockup: Shopify / WooCommerce embed ──────────────────────────────────────
+function EmbedMockup() {
+  return (
+    <div style={{ width: '100%', maxWidth: 460, background: '#141414', borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)', padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}>
+      {/* Chrome */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
+        {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
+          <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
+        ))}
+        <div style={{ flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10, display: 'flex', alignItems: 'center', paddingLeft: 10 }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>yourstore.myshopify.com / products / kurta</span>
+        </div>
+      </div>
+
+      {/* Product page with embedded widget */}
+      <div style={{ background: '#1a1a1a', borderRadius: 12, border: '1px solid #252525', padding: 14, marginBottom: 14 }}>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ width: 70, height: 90, background: '#252525', borderRadius: 8, flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <div style={{ height: 8, background: '#2a2a2a', borderRadius: 4, marginBottom: 6, width: '65%' }} />
+            <div style={{ height: 6, background: '#222', borderRadius: 4, marginBottom: 14, width: '40%' }} />
+            {/* Widget */}
+            <div style={{ background: '#0f0f0f', border: '1px solid rgba(189,161,69,0.35)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 22, height: 22, borderRadius: 6, background: 'rgba(189,161,69,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(189,161,69,0.9)" strokeWidth="2">
+                  <path d="M15 10l-4 4l6 6l4-16l-18 7l4 2l2 6z" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(189,161,69,0.85)', fontWeight: 600 }}>Try On Virtually</span>
+              <div style={{ marginLeft: 'auto', background: 'rgba(189,161,69,0.12)', borderRadius: 5, padding: '2px 8px' }}>
+                <span style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(189,161,69,0.5)', fontWeight: 600 }}>FREE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Code snippet */}
+      <div style={{ background: '#0d0d0d', borderRadius: 12, padding: '12px 16px', marginBottom: 14, border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>Installation ·</span>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(189,161,69,0.5)' }}>1 line</span>
+        </div>
+        <div style={{ fontFamily: 'monospace', fontSize: 10, lineHeight: 1.8 }}>
+          <span style={{ color: 'rgba(255,255,255,0.2)' }}>&lt;</span>
+          <span style={{ color: '#7dd3fc' }}>script</span>
+          <span style={{ color: '#86efac' }}> src</span>
+          <span style={{ color: 'rgba(255,255,255,0.3)' }}>=</span>
+          <span style={{ color: '#fbbf24' }}>&quot;https://cdn.trs.io/embed.js&quot;</span>
+          <span style={{ color: 'rgba(255,255,255,0.2)' }}>&gt;&lt;/</span>
+          <span style={{ color: '#7dd3fc' }}>script</span>
+          <span style={{ color: 'rgba(255,255,255,0.2)' }}>&gt;</span>
+        </div>
+      </div>
+
+      {/* Platform badges */}
+      <div style={{ display: 'flex', gap: 8 }}>
+        {['Shopify', 'WooCommerce', 'Custom'].map((platform) => (
+          <div key={platform} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '7px 0', flex: 1, textAlign: 'center' }}>
+            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.28)', fontWeight: 600 }}>{platform}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Mockup: Catalogue generator ─────────────────────────────────────────────
+function CatalogueMockup() {
+  const ITEMS = [
+    { label: 'Kurta',    color: '#fef3c7' },
+    { label: 'Sherwani', color: '#ede9fe' },
+    { label: 'Anarkali', color: '#fce7f3' },
+    { label: 'Saree',    color: '#fdf4ff' },
+  ];
+
+  return (
+    <div style={{ width: '100%', maxWidth: 500, background: '#141414', borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)', padding: 22, boxShadow: '0 24px 64px rgba(0,0,0,0.4)' }}>
+      {/* Chrome */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 16 }}>
+        {['#ef4444', '#f59e0b', '#22c55e'].map((c) => (
+          <div key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
+        ))}
+        <div style={{ flex: 1, background: '#1e1e1e', borderRadius: 5, height: 22, marginLeft: 10, display: 'flex', alignItems: 'center', paddingLeft: 10 }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>My Store Catalogue — 10 Garments</span>
+        </div>
+      </div>
+
+      {/* Catalogue header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+          Summer Collection 2025
+        </span>
+        <div style={{ background: '#ffffff', borderRadius: 6, padding: '4px 12px', cursor: 'pointer' }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 9, fontWeight: 600, color: '#09090b' }}>Export PDF</span>
+        </div>
+      </div>
+
+      {/* Garment grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 14 }}>
+        {ITEMS.map((item) => (
+          <div key={item.label} style={{ background: '#1a1a1a', borderRadius: 10, border: '1px solid #252525', overflow: 'hidden' }}>
+            <div style={{ height: 58, background: item.color, opacity: 0.65, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 8, color: 'rgba(0,0,0,0.45)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                [ {item.label} ]
+              </span>
+            </div>
+            <div style={{ padding: '6px 8px' }}>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, color: 'rgba(255,255,255,0.38)', fontWeight: 600 }}>{item.label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Status */}
+      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <motion.div
+          style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }}
+          animate={{ opacity: [1, 0.3, 1] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+        />
+        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>
+          AI generating · 10 looks ready in ~30 seconds
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ─── FeaturesSection ──────────────────────────────────────────────────────────
 export default function HowItWorksSection() {
   return (
-    <FlowArt id="how-it-works">
+    <FlowArt id="features">
 
-      {/* Step 01 ─ Upload */}
-      <FlowSection aria-label="Step 1: Upload a photo" bg="#09090b">
+      {/* Feature 01 — Virtual Try-On for Stores */}
+      <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#5B9399">
         <StepLabel num="01" />
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{ flex: 1 }}>
-          {/* Text */}
           <div>
             <h2 style={{
               fontFamily: 'var(--font-playfair)',
               fontSize: 'clamp(2.2rem, 5vw, 5rem)',
               fontWeight: 700, color: '#ffffff', lineHeight: 1.06, marginBottom: '1.2rem',
             }}>
-              Upload a photo.
+              Virtual Try-On.
               <span style={{ display: 'block', fontStyle: 'italic', color: 'rgba(255,255,255,0.3)', fontSize: '0.78em' }}>
-                Any device.
+                Right in your store.
               </span>
             </h2>
             <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(255,255,255,0.38)', lineHeight: 1.75, maxWidth: 380 }}>
-              Staff takes or uploads a customer photo on any device — phone, tablet, or desktop. No special camera, lighting, or setup required.
+              Let customers see any garment on themselves before they buy. Staff generates a realistic try-on in seconds using a phone, tablet, or desktop — no special camera, lighting, or setup required.
             </p>
           </div>
-          {/* Visual */}
           <div className="flex justify-center md:justify-end">
-            <ScatterArc />
+            <TryOnMockup />
           </div>
         </div>
 
         <StepDots active="01" />
       </FlowSection>
 
-      {/* Step 02 ─ Fabric */}
-      <FlowSection aria-label="Step 2: Select fabric and style" bg="#28282f">
+      {/* Feature 02 — Web Embed */}
+      <FlowSection aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#BDA145">
         <StepLabel num="02" />
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{ flex: 1 }}>
-          {/* Visual first on this step */}
           <div className="flex justify-center md:justify-start">
-            <FabricMockup />
+            <EmbedMockup />
           </div>
-          {/* Text */}
           <div>
             <h2 style={{
               fontFamily: 'var(--font-playfair)',
               fontSize: 'clamp(2.2rem, 5vw, 5rem)',
               fontWeight: 700, color: '#ffffff', lineHeight: 1.06, marginBottom: '1.2rem',
             }}>
-              Pick a fabric.
+              Embed on any storefront.
               <span style={{ display: 'block', fontStyle: 'italic', color: 'rgba(255,255,255,0.3)', fontSize: '0.78em' }}>
-                AI drapes it.
+                One line of code.
               </span>
             </h2>
             <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(255,255,255,0.38)', lineHeight: 1.75, maxWidth: 380 }}>
-              Browse your catalog. Select the fabric, outfit, and fit. FabricFit drapes it realistically — shadows, lighting, texture, all automatic.
+              Drop a single snippet into your Shopify or WooCommerce store. Your customers try on garments directly from product pages — zero extra apps, zero friction, zero configuration.
             </p>
           </div>
         </div>
@@ -588,63 +422,32 @@ export default function HowItWorksSection() {
         <StepDots active="02" />
       </FlowSection>
 
-      {/* Step 03 ─ Result (cream/white card) */}
-      <FlowSection aria-label="Step 3: Customer sees the look" bg="#f5f4f0" light>
-        {/* Light step label */}
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: 'rgba(0,0,0,0.35)' }}>03</span>
-            </div>
-            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: 'rgba(0,0,0,0.2)', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-              How It Works
-            </span>
-          </div>
-          <span style={{ fontFamily: 'var(--font-playfair)', fontSize: 12, fontStyle: 'italic', color: 'rgba(0,0,0,0.12)' }}>
-            Step 03 / 03
-          </span>
-        </div>
+      {/* Feature 03 — Catalogue */}
+      <FlowSection aria-label="Feature 3: Create a high-polished catalogue" bg="#f5f4f0" light>
+        <StepLabel num="03" light />
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center" style={{ flex: 1 }}>
-          {/* Text */}
           <div>
             <h2 style={{
               fontFamily: 'var(--font-playfair)',
               fontSize: 'clamp(2.2rem, 5vw, 5rem)',
               fontWeight: 700, color: '#09090b', lineHeight: 1.06, marginBottom: '1.2rem',
             }}>
-              See it in{' '}
-              <span style={{ fontStyle: 'italic', color: 'rgba(0,0,0,0.3)' }}>30 seconds.</span>
+              Build your catalogue.
+              <span style={{ display: 'block', fontStyle: 'italic', color: 'rgba(0,0,0,0.22)', fontSize: '0.78em' }}>
+                Automatically.
+              </span>
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(0,0,0,0.48)', lineHeight: 1.75, maxWidth: 380, marginBottom: '2rem' }}>
-              The customer sees themselves in the look before a single thread is cut. Confident purchase. Fewer returns. More conversions.
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 15, color: 'rgba(0,0,0,0.45)', lineHeight: 1.75, maxWidth: 380 }}>
+              Upload your garments once. Our AI instantly creates polished, lookbook-quality imagery of every piece worn on a model — ready to share with customers, print, or export as a PDF catalogue.
             </p>
-            {/* Mini stats */}
-            <div style={{ display: 'flex', gap: 32 }}>
-              {[{ num: '30s', label: 'Try-on time' }, { num: '50+', label: 'Looks / session' }].map((s) => (
-                <div key={s.label}>
-                  <p style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.6rem, 3vw, 2.8rem)', fontWeight: 700, color: '#09090b', lineHeight: 1 }}>
-                    {s.num}
-                  </p>
-                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: 'rgba(0,0,0,0.3)', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: 5 }}>
-                    {s.label}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
-          {/* Visual */}
           <div className="flex justify-center md:justify-end">
-            <ResultMockup />
+            <CatalogueMockup />
           </div>
         </div>
 
-        {/* Light step dots */}
-        <div className="relative z-10 flex items-center gap-2">
-          {(['01', '02', '03'] as const).map((s) => (
-            <div key={s} style={{ width: s === '03' ? 28 : 6, height: 6, borderRadius: 3, background: s === '03' ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.12)', transition: 'width 0.3s ease' }} />
-          ))}
-        </div>
+        <StepDots active="03" light />
       </FlowSection>
 
     </FlowArt>

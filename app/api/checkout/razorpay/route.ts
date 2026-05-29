@@ -1,0 +1,43 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { razorpay, RAZORPAY_PLANS } from '@/lib/razorpay';
+import { createClient } from '@/lib/supabase/server';
+
+export async function POST(request: NextRequest) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { planId, billingCycle } = await request.json() as {
+    planId: 'starter' | 'pro' | 'business';
+    billingCycle: 'monthly' | 'annual';
+  };
+
+  const plan = RAZORPAY_PLANS[planId];
+  if (!plan) {
+    return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
+  }
+
+  const amount = billingCycle === 'annual' ? plan.annual : plan.monthly;
+
+  const order = await razorpay.orders.create({
+    amount,
+    currency: 'INR',
+    notes: {
+      user_id: user.id,
+      plan_id: planId,
+      billing_cycle: billingCycle,
+      email: user.email ?? '',
+    },
+  });
+
+  return NextResponse.json({
+    orderId: order.id,
+    amount: order.amount,
+    currency: order.currency,
+    keyId: process.env.RAZORPAY_KEY_ID,
+    userEmail: user.email,
+  });
+}

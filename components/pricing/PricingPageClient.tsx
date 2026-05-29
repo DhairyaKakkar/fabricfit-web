@@ -225,7 +225,7 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
       </ul>
 
       <a
-        href="#"
+        href={`/checkout?plan=${plan.id}&billing=${yearly ? 'annual' : 'monthly'}`}
         className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all duration-150"
         style={{
           fontFamily: 'var(--font-inter)',

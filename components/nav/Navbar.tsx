@@ -6,11 +6,9 @@ import LiquidButton from '@/components/ui/LiquidButton';
 import { slowScrollTo } from '@/lib/scrollTo';
 
 const NAV_LINKS = [
-  { anchor: 'how-it-works', label: 'How it Works' },
   { anchor: 'features', label: 'Features' },
 ] as const;
 const PRICING_LINK = { href: '/pricing', label: 'Pricing' };
-
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -73,19 +71,27 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Desktop CTA — glass button */}
-        <LiquidButton
-          href={`https://wa.me/${waNumber}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          color="#ffffff"
-          bg="rgba(9,9,11,0.92)"
-          padding="9px 20px"
-          fontSize={13}
-          className="hidden md:inline-flex shrink-0"
-        >
-          Book a Demo
-        </LiquidButton>
+        {/* Desktop CTAs */}
+        <div className="hidden md:flex items-center gap-3 shrink-0">
+          <a
+            href="/login"
+            className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+            style={{ fontFamily: 'var(--font-inter)' }}
+          >
+            Sign in
+          </a>
+          <LiquidButton
+            href={`https://wa.me/${waNumber}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="#ffffff"
+            bg="rgba(9,9,11,0.92)"
+            padding="9px 20px"
+            fontSize={13}
+          >
+            Book a Demo
+          </LiquidButton>
+        </div>
 
         {/* Mobile spacer + hamburger */}
         <div className="flex-1 md:hidden" />
@@ -127,10 +133,17 @@ export default function Navbar() {
             </a>
           ))}
           <a
+            href="/login"
+            className="text-sm text-zinc-600 hover:text-zinc-950 transition-colors py-2.5"
+            style={{ fontFamily: 'var(--font-inter)' }}
+          >
+            Sign in
+          </a>
+          <a
             href={`https://wa.me/${waNumber}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 px-4 py-3 rounded-md bg-zinc-950 text-white text-sm font-semibold text-center"
+            className="mt-1 px-4 py-3 rounded-md bg-zinc-950 text-white text-sm font-semibold text-center"
             style={{ fontFamily: 'var(--font-inter)' }}
           >
             Book a Demo

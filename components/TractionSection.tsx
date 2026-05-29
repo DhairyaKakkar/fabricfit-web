@@ -3,12 +3,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 
-const PILOTS = [
-  { name: 'Fabrico', location: 'Chennai', tag: 'Live', color: '#16a34a', bg: 'rgba(22,163,74,0.08)', desc: 'Export house. First paying pilot — live now.' },
-  { name: 'Jain Exports', location: 'India', tag: 'Live', color: '#16a34a', bg: 'rgba(22,163,74,0.08)', desc: 'Export house. Paying pilot running live.' },
-  { name: 'Gaudana', location: '100+ distributors', tag: 'Closing', color: '#d97706', bg: 'rgba(217,119,6,0.08)', desc: 'They came to us. Closing five-figure SGD recurring deal.' },
-];
-
 const STATS = [
   { end: 30, suffix: 's', label: 'Try-on time', duration: 800 },
   { end: 50, suffix: '+', label: 'Looks per session', duration: 1000 },
@@ -130,26 +124,6 @@ export default function TractionSection() {
           ))}
         </motion.div>
 
-        {/* Pilot cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {PILOTS.map((pilot, i) => (
-            <motion.div
-              key={pilot.name}
-              style={{ borderRadius: 16, padding: '18px 20px', background: '#fafafa', border: '1px solid #e4e4e7' }}
-              initial={{ opacity: 0, y: 24 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.45, delay: 0.4 + i * 0.1, type: 'spring', stiffness: 120 }}
-              whileHover={{ y: -4, boxShadow: '0 8px 28px rgba(0,0,0,0.07)' }}
-            >
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.15rem', fontWeight: 700, color: '#09090b' }}>{pilot.name}</h3>
-                <span style={{ fontSize: 11, fontWeight: 600, fontFamily: 'var(--font-inter)', color: pilot.color, background: pilot.bg, padding: '3px 8px', borderRadius: 20, flexShrink: 0 }}>● {pilot.tag}</span>
-              </div>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a1a1aa', marginBottom: 6 }}>{pilot.location}</p>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#71717a', lineHeight: 1.5 }}>{pilot.desc}</p>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
   );

@@ -231,7 +231,10 @@ function PlanCard({ plan, billing, index }: CardProps) {
 
       {/* CTA */}
       <a
-        href="#"
+        href={plan.payg
+          ? `/checkout?plan=${plan.id}&billing=monthly`
+          : `/checkout?plan=${plan.id}&billing=${billing}`
+        }
         className={`block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-colors duration-150 ${
           plan.popular
             ? 'bg-amber-800 text-white hover:bg-amber-900'

@@ -11,13 +11,12 @@ import {
   useSensors,
   DragOverEvent,
   pointerWithin,
+  useDraggable,
 } from '@dnd-kit/core';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GARMENTS, GarmentId, Gender } from '@/lib/garments';
-import FloatingGarment from './FloatingGarment';
 import ModelFigure from './ModelFigure';
 import GarmentDragOverlay from './GarmentDragOverlay';
-import HeroCta from './HeroCta';
 
 const FABRIC_TEXTURE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M0 10 L10 0 M-2 2 L2-2 M18 22 L22 18' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3Cpath d='M10 20 L20 10 M-2 18 L2 22 M18-2 L22 2' stroke='%23000000' stroke-width='0.5' opacity='0.5'/%3E%3C/svg%3E")`;
 
@@ -119,6 +118,69 @@ function MobileGarmentWheel({
   );
 }
 
+// ── Draggable garment card (strip) ───────────────────────────────────────────
+
+function DraggableGarmentCard({
+  garment,
+  index,
+  isSelected,
+  onSelect,
+}: {
+  garment: (typeof GARMENTS)[number];
+  index: number;
+  isSelected: boolean;
+  onSelect: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: garment.id });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -18 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.055, duration: 0.22, ease: 'easeOut' }}
+    >
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        draggable={false}
+        onClick={onSelect}
+        style={{
+          width: 88,
+          height: 96,
+          borderRadius: 14,
+          background: isSelected ? '#09090b' : 'white',
+          border: `2px solid ${isSelected ? '#09090b' : 'rgba(0,0,0,0.09)'}`,
+          boxShadow: isSelected
+            ? '0 8px 28px rgba(0,0,0,0.22)'
+            : '0 2px 12px rgba(0,0,0,0.08)',
+          cursor: isDragging ? 'grabbing' : 'pointer',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          userSelect: 'none',
+          position: 'relative',
+          opacity: isDragging ? 0.2 : 1,
+          transition: 'border-color 0.2s, box-shadow 0.2s, background 0.2s, opacity 0.15s',
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={garment.floatSrc}
+          alt={garment.label}
+          draggable={false}
+          style={{
+            flex: 1,
+            width: '100%',
+            objectFit: 'contain',
+            padding: '8px 8px 4px',
+          }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function HeroSection() {
@@ -132,10 +194,12 @@ export default function HeroSection() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [maleSteps, setMaleSteps] = useState(0);
   const [femaleSteps, setFemaleSteps] = useState(0);
+  const [activeModel, setActiveModel] = useState<Gender>('male');
 
   const maleGarmentRef = useRef<GarmentId | null>(null);
   const femaleGarmentRef = useRef<GarmentId | null>(null);
   const isDraggingRef = useRef(false);
+  const activeModelRef = useRef<Gender>('male');
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -154,6 +218,7 @@ export default function HeroSection() {
 
   useEffect(() => { maleGarmentRef.current = maleGarment; }, [maleGarment]);
   useEffect(() => { femaleGarmentRef.current = femaleGarment; }, [femaleGarment]);
+  useEffect(() => { activeModelRef.current = activeModel; }, [activeModel]);
 
   const applyRandomMale = useCallback(() => {
     const opts = GARMENTS.filter(g => g.gender === 'male' && g.id !== maleGarmentRef.current);
@@ -240,24 +305,136 @@ export default function HeroSection() {
           style={{ backgroundImage: FABRIC_TEXTURE, opacity: 0.04, zIndex: 0 }}
         />
 
-        {/* ── Desktop: models + garments (UNCHANGED) ──────── */}
+        {/* ── Desktop: depth-staged models + garment strip ──────────── */}
         {isMobile === false && (
           <>
+            {/* Garment strip — always visible, cross-fades when gender switches */}
             <div
-              className="absolute flex items-end"
-              style={{ left: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
+              style={{
+                position: 'absolute',
+                right: 'calc(8% + 572px)',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                zIndex: 20,
+              }}
             >
-              <ModelFigure gender="male" garmentId={maleGarment} isShimmering={maleShimmering} isOver={maleOver} width={547} height={791} />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeModel}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
+                >
+                  <div style={{
+                    fontSize: 9,
+                    fontFamily: 'var(--font-inter)',
+                    fontWeight: 700,
+                    letterSpacing: '0.13em',
+                    textTransform: 'uppercase',
+                    color: '#a1a1aa',
+                    marginBottom: 4,
+                    paddingLeft: 2,
+                  }}>
+                    {activeModel === 'male' ? 'Menswear' : 'Womenswear'}
+                  </div>
+                  {GARMENTS.filter((g) => g.gender === activeModel).map((garment, i) => (
+                    <DraggableGarmentCard
+                      key={garment.id}
+                      garment={garment}
+                      index={i}
+                      isSelected={(activeModel === 'male' ? maleGarment : femaleGarment) === garment.id}
+                      onSelect={() => {
+                        if (activeModel === 'male') {
+                          setMaleGarment(garment.id);
+                          setMaleShimmering(true);
+                          setTimeout(() => setMaleShimmering(false), 400);
+                        } else {
+                          setFemaleGarment(garment.id);
+                          setFemaleShimmering(true);
+                          setTimeout(() => setFemaleShimmering(false), 400);
+                        }
+                      }}
+                    />
+                  ))}
+                </motion.div>
+              </AnimatePresence>
             </div>
+
+            {/* Floor spotlight glow — always visible */}
             <div
+              style={{
+                position: 'absolute',
+                right: 'calc(8% - 180px)',
+                bottom: -160,
+                width: 860,
+                height: 560,
+                background: 'radial-gradient(ellipse at 50% 82%, rgba(0,0,0,0.055) 0%, transparent 60%)',
+                borderRadius: '50%',
+                pointerEvents: 'none',
+                zIndex: 7,
+              }}
+            />
+
+            {/* Female model — background depth layer */}
+            <motion.div
               className="absolute flex items-end"
-              style={{ right: 'calc(18% - 30px)', bottom: '-60px', zIndex: 10, pointerEvents: 'none' }}
+              style={{
+                right: '8%',
+                bottom: '-60px',
+                zIndex: activeModel === 'female' ? 10 : 8,
+                cursor: activeModel === 'female' ? 'default' : 'pointer',
+                pointerEvents: activeModel === 'female' ? 'none' : 'auto',
+                transformOrigin: 'bottom center',
+              }}
+              animate={
+                activeModel === 'female'
+                  ? { x: 0, scale: 1.0, opacity: 1, filter: 'blur(0px)' }
+                  : { x: 280, scale: 0.78, opacity: 0.35, filter: 'blur(4px)' }
+              }
+              transition={{ type: 'spring', stiffness: 75, damping: 22 }}
+              onClick={() => setActiveModel('female')}
             >
-              <ModelFigure gender="female" garmentId={femaleGarment} isShimmering={femaleShimmering} isOver={femaleOver} width={553} height={763} />
-            </div>
-            {GARMENTS.map((garment) => (
-              <FloatingGarment key={garment.id} garment={garment} activeDragId={activeDragId} />
-            ))}
+              <ModelFigure
+                gender="female"
+                garmentId={femaleGarment}
+                isShimmering={femaleShimmering}
+                isOver={femaleOver}
+                width={553}
+                height={763}
+              />
+            </motion.div>
+
+            {/* Male model — foreground layer */}
+            <motion.div
+              className="absolute flex items-end"
+              style={{
+                right: '8%',
+                bottom: '-60px',
+                zIndex: activeModel === 'male' ? 10 : 9,
+                cursor: activeModel === 'male' ? 'default' : 'pointer',
+                pointerEvents: activeModel === 'male' ? 'none' : 'auto',
+                transformOrigin: 'bottom center',
+              }}
+              animate={
+                activeModel === 'male'
+                  ? { x: 0, scale: 1.04, opacity: 1, filter: 'blur(0px)' }
+                  : { x: -220, scale: 0.78, opacity: 0.35, filter: 'blur(4px)' }
+              }
+              transition={{ type: 'spring', stiffness: 75, damping: 22 }}
+              onClick={() => setActiveModel('male')}
+            >
+              <ModelFigure
+                gender="male"
+                garmentId={maleGarment}
+                isShimmering={maleShimmering}
+                isOver={maleOver}
+                width={547}
+                height={791}
+              />
+            </motion.div>
+
             <GarmentDragOverlay activeGarment={activeGarment} />
           </>
         )}
@@ -378,8 +555,6 @@ export default function HeroSection() {
 
         {/* Desktop headline/subtitle removed — SeeItLiveSection provides the header overlay */}
 
-        {/* ── CTA buttons — desktop only ──────────────────── */}
-        {isMobile !== true && <HeroCta visible />}
       </section>
     </DndContext>
   );

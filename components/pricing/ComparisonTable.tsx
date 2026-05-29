@@ -43,7 +43,7 @@ const GROUPS: Group[] = [
   {
     heading: 'Appearance',
     rows: [
-      { label: 'FabricFit watermark', values: ['Always on', 'Removable (+S$8/mo)', 'Removed', 'Removed'] },
+      { label: 'TrialRoomStudio watermark', values: ['Always on', 'Removable (+S$8/mo)', 'Removed', 'Removed'] },
     ],
   },
   {

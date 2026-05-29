@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { logout } from '@/app/actions/auth';
 
@@ -26,12 +27,8 @@ export default function DashboardNav({ businessName, isTrial }: Props) {
     <header className="bg-white border-b border-zinc-200 sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link
-          href="/dashboard"
-          className="text-base font-bold text-zinc-900 shrink-0"
-          style={{ fontFamily: 'var(--font-playfair)' }}
-        >
-          FabricFit
+        <Link href="/dashboard" className="shrink-0">
+          <Image src="/logo.png" alt="TrialRoomStudio" width={32} height={32} className="h-8 w-auto" />
         </Link>
 
         {/* Desktop nav */}

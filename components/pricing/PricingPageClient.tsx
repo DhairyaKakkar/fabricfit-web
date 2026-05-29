@@ -20,7 +20,7 @@ const PLAN_META = [
       '1 branch',
       'Session-only storage',
       '15-day try-on history',
-      'FabricFit watermark',
+      'TrialRoomStudio watermark',
       'No catalogue exports',
       'No support',
     ],
@@ -285,7 +285,7 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
           ))}
         </div>
         <p className="text-center text-xs text-zinc-400 mt-6" style={{ fontFamily: 'var(--font-inter)' }}>
-          15-day history · FabricFit watermark · no catalogue exports · 1 branch
+          15-day history · TrialRoomStudio watermark · no catalogue exports · 1 branch
         </p>
       </div>
     </div>
@@ -298,7 +298,7 @@ function AddOnsSection({ currency }: { currency: Currency }) {
   const inView = useInView(ref, { once: true, margin: '-40px' });
   const c = PRICING[currency];
   const addons = [
-    { icon: '✦', name: 'Remove Watermark', desc: 'Strip the FabricFit watermark from all future try-on results. Starter plan only.', price: c.addons.watermark, badge: 'Starter only' },
+    { icon: '✦', name: 'Remove Watermark', desc: 'Strip the TrialRoomStudio watermark from all future try-on results. Starter plan only.', price: c.addons.watermark, badge: 'Starter only' },
     { icon: '⚡', name: 'Credit Top-Up', desc: 'Buy extra credits at the PAYG rate mid-month. Top-up credits never expire.', price: c.addons.topupFrom, badge: 'All plans' },
   ];
 

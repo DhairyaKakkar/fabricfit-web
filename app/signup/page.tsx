@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { signup } from '@/app/actions/auth';
 
@@ -12,12 +13,9 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1
-            className="text-2xl font-bold text-[#09090b]"
-            style={{ fontFamily: 'var(--font-playfair)' }}
-          >
-            FabricFit
-          </h1>
+          <div className="flex justify-center mb-3">
+            <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} className="h-12 w-auto" />
+          </div>
           <p className="text-sm text-zinc-400 mt-1" style={{ fontFamily: 'var(--font-inter)' }}>
             Start your 14-day free trial — no card required
           </p>

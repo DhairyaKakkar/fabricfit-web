@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 const PLAN_LABELS: Record<string, string> = {
@@ -82,7 +83,7 @@ export default function CheckoutClient({ planId, billingCycle, gateway, userEmai
           amount: data.amount,
           currency: data.currency,
           order_id: data.orderId,
-          name: 'FabricFit',
+          name: 'TrialRoomStudio',
           description: `${PLAN_LABELS[planId]} — ${billingCycle}`,
           prefill: { email: userEmail },
           theme: { color: '#09090b' },
@@ -103,12 +104,9 @@ export default function CheckoutClient({ planId, billingCycle, gateway, userEmai
     <div className="min-h-screen flex items-center justify-center bg-[#fafafa] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1
-            className="text-2xl font-bold text-[#09090b]"
-            style={{ fontFamily: 'var(--font-playfair)' }}
-          >
-            FabricFit
-          </h1>
+          <div className="flex justify-center">
+            <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} className="h-12 w-auto" />
+          </div>
           <p className="text-sm text-zinc-400 mt-1" style={{ fontFamily: 'var(--font-inter)' }}>
             Complete your subscription
           </p>

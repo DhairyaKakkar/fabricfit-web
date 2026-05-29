@@ -23,8 +23,8 @@ function CatalogPage({ bg, border }: { bg: string; border: string }) {
       {/* Mock text lines */}
       <rect x="20" y="155" width="60" height="5" rx="2" fill={border} opacity="0.4" />
       <rect x="20" y="165" width="40" height="4" rx="2" fill={border} opacity="0.25" />
-      {/* FabricFit logo mark */}
-      <text x="105" y="20" fontSize="8" fill={border} opacity="0.5" fontFamily="serif">FF</text>
+      {/* TrialRoomStudio logo mark */}
+      <text x="105" y="20" fontSize="8" fill={border} opacity="0.5" fontFamily="serif">TRS</text>
     </svg>
   );
 }

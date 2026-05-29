@@ -80,13 +80,15 @@ export default async function DashboardPage() {
         {/* Get the app CTA */}
         <div className="bg-zinc-900 rounded-2xl p-6 text-white">
           <p className="font-semibold text-sm mb-1">Generate try-ons</p>
-          <p className="text-xs text-zinc-500 mb-4">Try-on generation is available on the mobile app only</p>
-          <Link
-            href="/pricing"
+          <p className="text-xs text-zinc-400 mb-4">Try-on generation happens on the TrialRoomStudio mobile app</p>
+          <a
+            href={process.env.NEXT_PUBLIC_PHONE_APP_URL ?? '#'}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-block text-xs font-semibold bg-white text-zinc-900 px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
           >
-            Get the app →
-          </Link>
+            Open the app →
+          </a>
         </div>
       </div>
     </div>

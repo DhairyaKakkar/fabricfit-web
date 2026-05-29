@@ -63,10 +63,15 @@ export default function GalleryPage() {
         <div className="text-center py-20">
           <p className="text-4xl mb-4">🖼️</p>
           <p className="font-semibold text-zinc-900 mb-2">No try-ons yet</p>
-          <p className="text-sm text-zinc-400 mb-6">Generate try-ons on the FabricFit mobile app — they'll appear here automatically.</p>
-          <div className="inline-block bg-zinc-900 text-white text-sm font-semibold px-5 py-2.5 rounded-xl">
+          <p className="text-sm text-zinc-400 mb-6">Generate try-ons on the TrialRoomStudio mobile app — they'll appear here automatically.</p>
+          <a
+            href={process.env.NEXT_PUBLIC_PHONE_APP_URL ?? '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-zinc-900 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-zinc-800 transition-colors"
+          >
             Download the app to get started
-          </div>
+          </a>
         </div>
       ) : (
         <>

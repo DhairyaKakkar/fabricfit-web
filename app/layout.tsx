@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'FabricFit — Virtual Try-On for Fabric Showrooms',
+  title: 'TrialRoomStudio — Virtual Try-On for Fabric Showrooms',
   description:
     'Let your customers see exactly how your fabric looks on them — before stitching. AI-powered virtual try-on built for Indian fabric showrooms.',
 };

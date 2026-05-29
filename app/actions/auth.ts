@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function login(
   _prevState: { error: string } | undefined,
@@ -51,4 +52,55 @@ export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect('/login');
+}
+
+export async function loginWithAccessCode(
+  _prevState: { error: string } | undefined,
+  formData: FormData
+) {
+  const code = (formData.get('access_code') as string)?.trim().toUpperCase();
+  if (!code) return { error: 'Please enter your access code' };
+
+  const adminClient = createAdminClient();
+  const supabase = await createClient();
+
+  // Look up outlet by access code
+  const { data: outlet, error: outletError } = await adminClient
+    .from('outlets')
+    .select('user_id')
+    .eq('access_code', code)
+    .single();
+
+  if (outletError || !outlet) {
+    return { error: 'Invalid access code. Please check and try again.' };
+  }
+
+  // Get user email via admin API
+  const { data: { user }, error: userError } = await adminClient.auth.admin.getUserById(outlet.user_id);
+
+  if (userError || !user?.email) {
+    return { error: 'Account not found. Please contact support.' };
+  }
+
+  // Generate a one-time magic link token
+  const { data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
+    type: 'magiclink',
+    email: user.email,
+  });
+
+  if (linkError || !linkData.properties?.hashed_token) {
+    return { error: 'Login failed. Please try again.' };
+  }
+
+  // Verify the token server-side to set session cookies
+  const { error: verifyError } = await supabase.auth.verifyOtp({
+    token_hash: linkData.properties.hashed_token,
+    type: 'email',
+  });
+
+  if (verifyError) {
+    return { error: 'Login failed. Please try again.' };
+  }
+
+  redirect('/dashboard');
 }

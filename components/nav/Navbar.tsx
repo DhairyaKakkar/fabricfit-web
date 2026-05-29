@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import LiquidButton from '@/components/ui/LiquidButton';
 import { slowScrollTo } from '@/lib/scrollTo';
 
@@ -50,10 +51,9 @@ export default function Navbar() {
         {/* Logo */}
         <a
           href="/"
-          className="text-lg md:text-xl font-bold text-zinc-950 tracking-wide select-none hover:opacity-70 transition-opacity shrink-0"
-          style={{ fontFamily: 'var(--font-playfair)' }}
+          className="select-none hover:opacity-70 transition-opacity shrink-0"
         >
-          TrialRoomStudio
+          <Image src="/logo.png" alt="TrialRoomStudio" width={32} height={32} className="h-8 w-auto" />
         </a>
 
         {/* Desktop links */}

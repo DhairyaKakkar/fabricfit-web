@@ -221,7 +221,7 @@ export default function InStoreSlide() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            Staff uploads a customer photo. FabricFit overlays outfits in seconds. The customer sees themselves in the look before you stitch a single seam.
+            Staff uploads a customer photo. TrialRoomStudio overlays outfits in seconds. The customer sees themselves in the look before you stitch a single seam.
           </motion.p>
 
           {/* Steps */}

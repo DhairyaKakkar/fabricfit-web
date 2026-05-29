@@ -11,7 +11,7 @@ const PACKS = [
 const LIMITATIONS = [
   'Try-ons only — no catalogue exports',
   '15-day try-on history',
-  'FabricFit watermark on all results',
+  'TrialRoomStudio watermark on all results',
   '1 branch · no fabric library',
 ];
 

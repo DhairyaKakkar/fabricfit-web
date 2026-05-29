@@ -58,7 +58,7 @@ export default function ComingSoonPanel({ inView }: Props) {
           marginBottom: 24,
         }}
       >
-        Launching Q3 2026 — be first to embed FabricFit in your online store.
+        Launching Q3 2026 — be first to embed TrialRoomStudio in your online store.
       </p>
 
       {submitted ? (

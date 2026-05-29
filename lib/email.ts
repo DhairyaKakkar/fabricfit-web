@@ -15,16 +15,16 @@ export async function sendWelcomeEmail({
   const planLabel = { starter: 'Starter', pro: 'Pro', business: 'Business' }[planId] ?? planId;
 
   await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL ?? 'FabricFit <onboarding@resend.dev>',
+    from: process.env.RESEND_FROM_EMAIL ?? 'TrialRoomStudio <onboarding@resend.dev>',
     to,
-    subject: `Welcome to FabricFit ${planLabel} — your access is ready`,
+    subject: `Welcome to TrialRoomStudio ${planLabel} — your access is ready`,
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#09090b;">
         <h1 style="font-size:22px;font-weight:700;margin-bottom:4px;">Welcome, ${companyName}!</h1>
         <p style="color:#71717a;font-size:14px;margin-top:0;">Your <strong>${planLabel}</strong> subscription is now active.</p>
 
         <div style="background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;margin:24px 0;">
-          <p style="margin:0 0 12px;font-size:14px;font-weight:600;">Access your FabricFit app</p>
+          <p style="margin:0 0 12px;font-size:14px;font-weight:600;">Access your TrialRoomStudio app</p>
           <a href="${appUrl}"
              style="display:inline-block;background:#09090b;color:#fff;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;">
             Open the app →

@@ -3,7 +3,7 @@ import Navbar from '@/components/nav/Navbar';
 import PricingPageClient from '@/components/pricing/PricingPageClient';
 
 export const metadata: Metadata = {
-  title: 'Pricing — FabricFit',
+  title: 'Pricing — TrialRoomStudio',
   description:
     'Simple, transparent pricing for AI-powered virtual try-on. Choose from PAYG, Starter, Pro, or Business plans built for Indian fabric showrooms.',
 };

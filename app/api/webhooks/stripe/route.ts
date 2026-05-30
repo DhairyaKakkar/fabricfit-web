@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendWelcomeEmail } from '@/lib/email';
 
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     if (!userId) return NextResponse.json({ ok: true });
 
-    const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+    const subscription = await getStripe().subscriptions.retrieve(session.subscription as string);
     const periodEnd = subscription.items.data[0]?.current_period_end;
 
     await supabase.from('subscriptions').upsert({
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     const subId = typeof subRef === 'string' ? subRef : subRef?.id;
     if (!subId) return NextResponse.json({ ok: true });
 
-    const subscription = await stripe.subscriptions.retrieve(subId);
+    const subscription = await getStripe().subscriptions.retrieve(subId);
     const userId = subscription.metadata?.user_id;
     const planId = subscription.metadata?.plan_id;
 

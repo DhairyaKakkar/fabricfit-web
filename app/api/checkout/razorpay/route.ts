@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getRazorpay, RAZORPAY_PLANS } from "@/lib/razorpay";;
+import { getRazorpay, RAZORPAY_PLANS } from '@/lib/razorpay';
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {

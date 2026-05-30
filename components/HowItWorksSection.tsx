@@ -54,17 +54,17 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => setReducedMotion(mq.matches);
-    update();
-    mq.addEventListener('change', update);
+    const onMotion = () => setReducedMotion(mq.matches);
+    onMotion();
+    mq.addEventListener('change', onMotion);
 
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile, { passive: true });
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    onResize();
+    window.addEventListener('resize', onResize, { passive: true });
 
     return () => {
-      mq.removeEventListener('change', update);
-      window.removeEventListener('resize', checkMobile);
+      mq.removeEventListener('change', onMotion);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
@@ -102,22 +102,24 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
         }
 
         if (i < sections.length - 1 && !mobile) {
-          triggers.push(
-            ScrollTrigger.create({
-              trigger: section,
-              start: 'bottom bottom',
-              end: 'bottom top',
-              pin: true,
-              pinSpacing: false,
-            }),
-          );
+          triggers.push(ScrollTrigger.create({
+            trigger: section,
+            start: 'bottom bottom',
+            end: 'bottom top',
+            pin: true,
+            pinSpacing: false,
+          }));
         }
       });
 
       ScrollTrigger.refresh();
-      return () => triggers.forEach((t) => t.kill());
+
+      return () => {
+        triggers.forEach((t) => t.kill());
+        ScrollTrigger.clearScrollMemory();
+      };
     },
-    { scope: containerRef, dependencies: [React.Children.count(children), reducedMotion, isMobile] },
+    { scope: containerRef, dependencies: [reducedMotion, isMobile] },
   );
 
   return (

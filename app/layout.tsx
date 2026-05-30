@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, Inter } from 'next/font/google';
 import './globals.css';
+import ScrollRestorationControl from '@/components/ScrollRestorationControl';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </filter>
           </defs>
         </svg>
+        <ScrollRestorationControl />
         {children}
       </body>
     </html>

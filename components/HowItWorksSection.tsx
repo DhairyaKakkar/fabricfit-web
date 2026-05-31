@@ -180,7 +180,7 @@ export default function HowItWorksSection() {
     <FlowArt id="features">
 
       {/* Feature 01 — Virtual Try-On for Stores */}
-      <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#E5CBB6" light noGrid>
+      <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0" light noGrid>
         {/* Label + text grouped at top */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
         <StepLabel num="01" />

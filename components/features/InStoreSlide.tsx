@@ -17,7 +17,7 @@ export default function InStoreSlide() {
   const inView = useInView(ref, { once: false, margin: '-80px' });
 
   return (
-    <FeatureSlide id="in-store" background="#fafafa">
+    <FeatureSlide id="in-store" background="#ABB0AF">
       {/* Ghost number */}
       <div
         className="absolute select-none pointer-events-none"

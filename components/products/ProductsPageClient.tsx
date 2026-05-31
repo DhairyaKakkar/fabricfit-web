@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GARMENTS, Gender, GarmentId } from '@/lib/garments';
 
 export default function ProductsPageClient() {
-  const [gender, setGender] = useState<Gender>('male');
-  const [selectedId, setSelectedId] = useState<GarmentId>('kurta');
+  const [gender, setGender] = useState<Gender>('female');
+  const [selectedId, setSelectedId] = useState<GarmentId>('casual-dress');
 
   const garments = GARMENTS.filter(g => g.gender === gender);
   const selected = garments.find(g => g.id === selectedId) ?? garments[0];
@@ -91,28 +91,30 @@ export default function ProductsPageClient() {
           </motion.span>
         </AnimatePresence>
 
-        {/* Gender toggle — bottom center */}
+        {/* Gender toggle — right side, vertical */}
         <div style={{
           position: 'absolute',
-          bottom: 28,
-          left: '50%',
-          transform: 'translateX(-50%)',
+          right: 16,
+          top: '50%',
+          transform: 'translateY(-50%)',
           zIndex: 10,
           display: 'flex',
+          flexDirection: 'column',
           background: 'rgba(255,255,255,0.85)',
           backdropFilter: 'blur(20px)',
           borderRadius: 999,
-          padding: '6px 20px',
+          padding: '6px 0',
           border: '1px solid rgba(0,0,0,0.07)',
+          gap: 0,
         }}>
-          {(['male', 'female'] as Gender[]).map((g, i) => (
+          {(['female', 'male'] as Gender[]).map((g, i) => (
             <button
               key={g}
               onClick={() => switchGender(g)}
               style={{
-                padding: '4px 18px',
+                padding: '10px 14px',
                 border: 'none',
-                borderRight: i === 0 ? '1px solid rgba(0,0,0,0.1)' : 'none',
+                borderBottom: i === 0 ? '1px solid rgba(0,0,0,0.1)' : 'none',
                 background: 'transparent',
                 color: gender === g ? '#09090b' : '#a1a1aa',
                 fontSize: 11,
@@ -122,6 +124,9 @@ export default function ProductsPageClient() {
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
                 transition: 'color 0.2s',
+                writingMode: 'vertical-rl',
+                textOrientation: 'mixed',
+                transform: 'rotate(180deg)',
               }}
             >
               {g === 'male' ? 'Men' : 'Women'}

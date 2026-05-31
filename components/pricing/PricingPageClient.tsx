@@ -29,8 +29,8 @@ const PLAN_META = [
     id: 'starter' as const,
     name: 'Starter',
     description: 'For small showrooms getting started with virtual try-on.',
-    credits: '200 credits / month',
-    tryOns: '60–80 try-ons',
+    credits: '100 try-ons / month',
+    tryOns: '',
     popular: false,
     features: [
       '1 branch',
@@ -45,8 +45,8 @@ const PLAN_META = [
     id: 'pro' as const,
     name: 'Pro',
     description: 'For growing showrooms managing multiple branches.',
-    credits: '400 credits / month',
-    tryOns: '120–160 try-ons',
+    credits: '200 try-ons / month',
+    tryOns: '',
     popular: true,
     features: [
       'Up to 3 branches',
@@ -61,8 +61,8 @@ const PLAN_META = [
     id: 'business' as const,
     name: 'Business',
     description: 'For enterprise retailers needing unlimited scale.',
-    credits: '1,000 credits / month',
-    tryOns: '300–400 try-ons',
+    credits: '500 try-ons / month',
+    tryOns: '',
     popular: false,
     features: [
       'Unlimited branches',
@@ -210,7 +210,7 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
         border: `1px solid ${plan.popular ? 'rgba(255,255,255,0.08)' : '#e4e4e7'}`,
       }}>
         <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 600, color: plan.popular ? '#e4e4e7' : '#18181b' }}>{plan.credits}</p>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: plan.popular ? '#71717a' : '#71717a', marginTop: 2 }}>{plan.tryOns} · {rate} / try-on</p>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#71717a', marginTop: 2 }}>{rate} / try-on</p>
       </div>
 
       <div style={{ height: 1, background: plan.popular ? 'rgba(255,255,255,0.07)' : '#f4f4f5', marginBottom: 16 }} />

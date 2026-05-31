@@ -54,8 +54,8 @@ const PLANS: Plan[] = [
     annual: 400,
     effectiveMonthly: 34,
     packStartsAt: null,
-    credits: '200 credits / month',
-    tryOns: '60–80 fast try-ons',
+    credits: '',
+    tryOns: '100 try-ons / month',
     rate: 'S$0.40 / try-on',
     features: [
       { label: 'Branches', value: '1' },
@@ -74,8 +74,8 @@ const PLANS: Plan[] = [
     annual: 720,
     effectiveMonthly: 60,
     packStartsAt: null,
-    credits: '400 credits / month',
-    tryOns: '120–160 fast try-ons',
+    credits: '',
+    tryOns: '200 try-ons / month',
     rate: 'S$0.36 / try-on',
     features: [
       { label: 'Branches', value: 'Up to 3' },
@@ -95,8 +95,8 @@ const PLANS: Plan[] = [
     annual: 1600,
     effectiveMonthly: 134,
     packStartsAt: null,
-    credits: '1,000 credits / month',
-    tryOns: '300–400 fast try-ons',
+    credits: '',
+    tryOns: '500 try-ons / month',
     rate: 'S$0.32 / try-on',
     features: [
       { label: 'Branches', value: 'Unlimited' },
@@ -196,16 +196,13 @@ function PlanCard({ plan, billing, index }: CardProps) {
         )}
       </div>
 
-      {/* Credits chip */}
+      {/* Try-ons chip */}
       <div className="rounded-xl bg-amber-50 border border-amber-100 px-3 py-2.5 mb-5">
-        <p
-          className="text-xs font-semibold text-amber-800 leading-snug"
-          style={{ fontFamily: 'var(--font-inter)' }}
-        >
-          {plan.credits}
+        <p className="text-xs font-semibold text-amber-800 leading-snug" style={{ fontFamily: 'var(--font-inter)' }}>
+          {plan.tryOns || 'Pack-based'}
         </p>
         <p className="text-xs text-amber-600/70 mt-0.5" style={{ fontFamily: 'var(--font-inter)' }}>
-          {plan.tryOns} · {plan.rate}
+          {plan.rate}
         </p>
       </div>
 

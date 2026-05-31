@@ -155,12 +155,15 @@ export default function LoginPage() {
           )}
         </div>
 
-        <p className="text-center text-xs text-zinc-400 mt-5" style={{ fontFamily: 'var(--font-inter)' }}>
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-zinc-700 font-medium hover:underline">
-            Start free trial
+        <div className="mt-5 flex justify-center">
+          <Link
+            href="/signup"
+            className="w-full max-w-sm block text-center bg-white border border-zinc-200 text-zinc-800 rounded-xl py-2.5 text-sm font-semibold hover:bg-zinc-50 transition-colors shadow-sm"
+            style={{ fontFamily: 'var(--font-inter)' }}
+          >
+            Sign up
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

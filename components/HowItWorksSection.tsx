@@ -1,7 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // ─── FlowSection ─────────────────────────────────────────────────────────────
 interface FlowSectionProps {
@@ -13,13 +18,105 @@ interface FlowSectionProps {
 
 function FlowSection({ children, bg = '#09090b', 'aria-label': ariaLabel }: FlowSectionProps) {
   return (
-    <section
-      aria-label={ariaLabel}
-      className="relative min-h-screen w-full overflow-hidden flex flex-col justify-between"
-      style={{ background: bg, padding: '4vw', paddingTop: 'clamp(2rem, 8vw, 4rem)' }}
-    >
-      {children}
+    <section data-flow-section aria-label={ariaLabel} className="relative min-h-screen w-full overflow-hidden">
+      <div
+        data-flow-inner
+        className="flow-art-container relative flex min-h-screen w-full flex-col justify-between"
+        style={{
+          transformOrigin: 'bottom left',
+          background: bg,
+          padding: '4vw',
+          paddingTop: 'clamp(2rem, 8vw, 4rem)',
+        }}
+      >
+        {children}
+      </div>
     </section>
+  );
+}
+
+// ─── FlowArt orchestrator ─────────────────────────────────────────────────────
+function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onMotion = () => setReducedMotion(mq.matches);
+    onMotion();
+    mq.addEventListener('change', onMotion);
+
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    onResize();
+    window.addEventListener('resize', onResize, { passive: true });
+
+    return () => {
+      mq.removeEventListener('change', onMotion);
+      window.removeEventListener('resize', onResize);
+    };
+  }, []);
+
+  useGSAP(
+    () => {
+      if (!containerRef.current || reducedMotion) return;
+
+      const sections = Array.from(
+        containerRef.current.querySelectorAll<HTMLElement>('[data-flow-section]'),
+      );
+      if (sections.length === 0) return;
+
+      const triggers: ScrollTrigger[] = [];
+      const mobile = window.innerWidth < 768;
+
+      sections.forEach((section, i) => {
+        gsap.set(section, { zIndex: i + 1 });
+
+        const inner = section.querySelector<HTMLElement>('.flow-art-container');
+        if (!inner) return;
+
+        if (i > 0 && !mobile) {
+          gsap.set(inner, { rotation: 30, transformOrigin: 'bottom left' });
+          const tween = gsap.to(inner, {
+            rotation: 0,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top bottom',
+              end: 'top 25%',
+              scrub: true,
+            },
+          });
+          if (tween.scrollTrigger) triggers.push(tween.scrollTrigger);
+        }
+
+        if (i < sections.length - 1 && !mobile) {
+          triggers.push(
+            ScrollTrigger.create({
+              trigger: section,
+              start: 'bottom bottom',
+              end: 'bottom top',
+              pin: true,
+              pinSpacing: false,
+            }),
+          );
+        }
+      });
+
+      ScrollTrigger.refresh();
+
+      return () => {
+        triggers.forEach((t) => t.kill());
+        ScrollTrigger.clearScrollMemory();
+      };
+    },
+    { scope: containerRef, dependencies: [reducedMotion, isMobile] },
+  );
+
+  return (
+    <div id={id} ref={containerRef} className="w-full overflow-x-hidden">
+      {children}
+    </div>
   );
 }
 
@@ -71,7 +168,7 @@ function StepDots({ active, light = false }: { active: '01' | '02' | '03'; light
 // ─── FeaturesSection ──────────────────────────────────────────────────────────
 export default function HowItWorksSection() {
   return (
-    <div id="features" className="w-full">
+    <FlowArt id="features">
 
       {/* Feature 01 — Virtual Try-On for Stores */}
       <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0" light>
@@ -205,6 +302,6 @@ export default function HowItWorksSection() {
         <StepDots active="03" light />
       </FlowSection>
 
-    </div>
+    </FlowArt>
   );
 }

@@ -1,141 +1,35 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
-
-gsap.registerPlugin(ScrollTrigger);
 
 // ─── FlowSection ─────────────────────────────────────────────────────────────
 interface FlowSectionProps {
   children: React.ReactNode;
   bg?: string;
   light?: boolean;
-  noGrid?: boolean;
   'aria-label'?: string;
 }
 
-function FlowSection({ children, bg = '#09090b', light = false, noGrid = false, 'aria-label': ariaLabel }: FlowSectionProps) {
-  const gridColor = light ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.022)';
+function FlowSection({ children, bg = '#09090b', 'aria-label': ariaLabel }: FlowSectionProps) {
   return (
-    <section data-flow-section aria-label={ariaLabel} className="relative min-h-screen w-full overflow-hidden">
-      <div
-        data-flow-inner
-        className="flow-art-container relative flex min-h-screen w-full flex-col justify-between will-change-transform"
-        style={{
-          transformOrigin: 'bottom left',
-          background: bg,
-          padding: '4vw',
-          paddingTop: 'clamp(2rem, 8vw, 4rem)',
-        }}
-      >
-        {!noGrid && (
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`,
-              backgroundSize: '60px 60px',
-            }}
-          />
-        )}
-        {children}
-      </div>
-    </section>
-  );
-}
-
-// ─── FlowArt orchestrator ─────────────────────────────────────────────────────
-function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const onMotion = () => setReducedMotion(mq.matches);
-    onMotion();
-    mq.addEventListener('change', onMotion);
-
-    const onResize = () => setIsMobile(window.innerWidth < 768);
-    onResize();
-    window.addEventListener('resize', onResize, { passive: true });
-
-    return () => {
-      mq.removeEventListener('change', onMotion);
-      window.removeEventListener('resize', onResize);
-    };
-  }, []);
-
-  useGSAP(
-    () => {
-      if (!containerRef.current || reducedMotion) return;
-
-      const sections = Array.from(
-        containerRef.current.querySelectorAll<HTMLElement>('[data-flow-section]'),
-      );
-      if (sections.length === 0) return;
-
-      const triggers: ScrollTrigger[] = [];
-      const mobile = window.innerWidth < 768;
-
-      sections.forEach((section, i) => {
-        gsap.set(section, { zIndex: i + 1 });
-
-        const inner = section.querySelector<HTMLElement>('.flow-art-container');
-        if (!inner) return;
-
-        if (i > 0 && !mobile) {
-          gsap.set(inner, { rotation: 30, transformOrigin: 'bottom left' });
-          const tween = gsap.to(inner, {
-            rotation: 0,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top bottom',
-              end: 'top 25%',
-              scrub: true,
-            },
-          });
-          if (tween.scrollTrigger) triggers.push(tween.scrollTrigger);
-        }
-
-        if (i < sections.length - 1 && !mobile) {
-          triggers.push(ScrollTrigger.create({
-            trigger: section,
-            start: 'bottom bottom',
-            end: 'bottom top',
-            pin: true,
-            pinSpacing: false,
-          }));
-        }
-      });
-
-      ScrollTrigger.refresh();
-
-      return () => {
-        triggers.forEach((t) => t.kill());
-        ScrollTrigger.clearScrollMemory();
-      };
-    },
-    { scope: containerRef, dependencies: [reducedMotion, isMobile] },
-  );
-
-  return (
-    <div id={id} ref={containerRef} className="w-full overflow-x-hidden">
+    <section
+      aria-label={ariaLabel}
+      className="relative min-h-screen w-full overflow-hidden flex flex-col justify-between"
+      style={{ background: bg, padding: '4vw', paddingTop: 'clamp(2rem, 8vw, 4rem)' }}
+    >
       {children}
-    </div>
+    </section>
   );
 }
 
 // ─── Step label ───────────────────────────────────────────────────────────────
 function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: boolean }) {
-  const dot     = light ? 'rgba(0,0,0,0.06)'  : 'rgba(255,255,255,0.05)';
-  const border  = light ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.1)';
-  const numClr  = light ? 'rgba(0,0,0,0.35)'  : 'rgba(255,255,255,0.4)';
-  const labelC  = light ? 'rgba(0,0,0,0.22)'  : 'rgba(255,255,255,0.22)';
-  const stepC   = light ? 'rgba(0,0,0,0.12)'  : 'rgba(255,255,255,0.12)';
+  const dot    = light ? 'rgba(0,0,0,0.06)'  : 'rgba(255,255,255,0.05)';
+  const border = light ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.1)';
+  const numClr = light ? 'rgba(0,0,0,0.35)'  : 'rgba(255,255,255,0.4)';
+  const labelC = light ? 'rgba(0,0,0,0.22)'  : 'rgba(255,255,255,0.22)';
+  const stepC  = light ? 'rgba(0,0,0,0.12)'  : 'rgba(255,255,255,0.12)';
 
   return (
     <div className="relative z-10 flex items-center justify-between">
@@ -161,11 +55,12 @@ function StepDots({ active, light = false }: { active: '01' | '02' | '03'; light
         <div
           key={s}
           style={{
-            width: s === active ? 28 : 6, height: 6, borderRadius: 3,
+            width: s === active ? 28 : 6,
+            height: 6,
+            borderRadius: 3,
             background: s === active
               ? (light ? 'rgba(0,0,0,0.4)'  : 'rgba(255,255,255,0.55)')
               : (light ? 'rgba(0,0,0,0.1)'  : 'rgba(255,255,255,0.1)'),
-            transition: 'width 0.3s ease',
           }}
         />
       ))}
@@ -173,52 +68,41 @@ function StepDots({ active, light = false }: { active: '01' | '02' | '03'; light
   );
 }
 
-
 // ─── FeaturesSection ──────────────────────────────────────────────────────────
 export default function HowItWorksSection() {
   return (
-    <FlowArt id="features">
+    <div id="features" className="w-full">
 
       {/* Feature 01 — Virtual Try-On for Stores */}
-      <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0" light noGrid>
-        {/* Label + text grouped at top */}
+      <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0" light>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
-        <StepLabel num="01" />
-
-        <div style={{ maxWidth: 640 }}>
-          <h2 style={{
-            fontFamily: 'var(--font-playfair)',
-            fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
-            fontWeight: 700,
-            color: '#09090b',
-            lineHeight: 0.92,
-            letterSpacing: '-0.02em',
-            marginBottom: '1.2rem',
-          }}>
-            Virtual<br />Try-On.
-          </h2>
-          <p style={{
-            fontFamily: 'var(--font-inter)',
-            fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
-            color: 'rgba(0,0,0,0.4)',
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            fontWeight: 500,
-          }}>
-            Right in your store — no setup required.
-          </p>
+          <StepLabel num="01" light />
+          <div style={{ maxWidth: 640 }}>
+            <h2 style={{
+              fontFamily: 'var(--font-playfair)',
+              fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
+              fontWeight: 700,
+              color: '#09090b',
+              lineHeight: 0.92,
+              letterSpacing: '-0.02em',
+              marginBottom: '1.2rem',
+            }}>
+              Virtual<br />Try-On.
+            </h2>
+            <p style={{
+              fontFamily: 'var(--font-inter)',
+              fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+              color: 'rgba(0,0,0,0.4)',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+            }}>
+              Right in your store — no setup required.
+            </p>
+          </div>
         </div>
-        </div>
 
-        {/* Image — bottom right, bleeding in */}
-        <div style={{
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          width: '68%',
-          zIndex: 1,
-          pointerEvents: 'none',
-        }}>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
           <Image
             src="/features1.png"
             alt="Virtual try-on in store"
@@ -230,48 +114,39 @@ export default function HowItWorksSection() {
           />
         </div>
 
-        <StepDots active="01" />
+        <StepDots active="01" light />
       </FlowSection>
 
       {/* Feature 02 — Web Embed */}
-      <FlowSection aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314" noGrid>
+      <FlowSection aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
-        <StepLabel num="02" />
-
-        <div style={{ maxWidth: 640 }}>
-          <h2 style={{
-            fontFamily: 'var(--font-playfair)',
-            fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
-            fontWeight: 700,
-            color: '#ffffff',
-            lineHeight: 0.92,
-            letterSpacing: '-0.02em',
-            marginBottom: '1.2rem',
-          }}>
-            Embed<br />anywhere.
-          </h2>
-          <p style={{
-            fontFamily: 'var(--font-inter)',
-            fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
-            color: 'rgba(255,255,255,0.35)',
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            fontWeight: 500,
-          }}>
-            One line of code — Shopify, WooCommerce, any site.
-          </p>
+          <StepLabel num="02" />
+          <div style={{ maxWidth: 640 }}>
+            <h2 style={{
+              fontFamily: 'var(--font-playfair)',
+              fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
+              fontWeight: 700,
+              color: '#ffffff',
+              lineHeight: 0.92,
+              letterSpacing: '-0.02em',
+              marginBottom: '1.2rem',
+            }}>
+              Embed<br />anywhere.
+            </h2>
+            <p style={{
+              fontFamily: 'var(--font-inter)',
+              fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+              color: 'rgba(255,255,255,0.35)',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+            }}>
+              One line of code — Shopify, WooCommerce, any site.
+            </p>
+          </div>
         </div>
-        </div>
 
-        {/* Image — bottom right, bleeding in */}
-        <div style={{
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          width: '68%',
-          zIndex: 1,
-          pointerEvents: 'none',
-        }}>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
           <Image
             src="/features2.png"
             alt="Web embed virtual try-on"
@@ -287,44 +162,35 @@ export default function HowItWorksSection() {
       </FlowSection>
 
       {/* Feature 03 — Catalogue */}
-      <FlowSection aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0" light noGrid>
+      <FlowSection aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0" light>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
-        <StepLabel num="03" light />
-
-        <div style={{ maxWidth: 640 }}>
-          <h2 style={{
-            fontFamily: 'var(--font-playfair)',
-            fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
-            fontWeight: 700,
-            color: '#09090b',
-            lineHeight: 0.92,
-            letterSpacing: '-0.02em',
-            marginBottom: '1.2rem',
-          }}>
-            Build your<br />catalogue.
-          </h2>
-          <p style={{
-            fontFamily: 'var(--font-inter)',
-            fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
-            color: 'rgba(0,0,0,0.35)',
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            fontWeight: 500,
-          }}>
-            No shoot. No agency. Export same day.
-          </p>
+          <StepLabel num="03" light />
+          <div style={{ maxWidth: 640 }}>
+            <h2 style={{
+              fontFamily: 'var(--font-playfair)',
+              fontSize: 'clamp(4rem, 8.5vw, 9.5rem)',
+              fontWeight: 700,
+              color: '#09090b',
+              lineHeight: 0.92,
+              letterSpacing: '-0.02em',
+              marginBottom: '1.2rem',
+            }}>
+              Build your<br />catalogue.
+            </h2>
+            <p style={{
+              fontFamily: 'var(--font-inter)',
+              fontSize: 'clamp(0.85rem, 1.2vw, 1rem)',
+              color: 'rgba(0,0,0,0.35)',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+            }}>
+              No shoot. No agency. Export same day.
+            </p>
+          </div>
         </div>
-        </div>
 
-        {/* Image — bottom right, bleeding in */}
-        <div style={{
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          width: '68%',
-          zIndex: 1,
-          pointerEvents: 'none',
-        }}>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
           <Image
             src="/features3.png"
             alt="Catalogue builder"
@@ -339,6 +205,6 @@ export default function HowItWorksSection() {
         <StepDots active="03" light />
       </FlowSection>
 
-    </FlowArt>
+    </div>
   );
 }

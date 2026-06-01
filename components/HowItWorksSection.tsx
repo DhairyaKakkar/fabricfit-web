@@ -8,33 +8,46 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── FlowSection ─────────────────────────────────────────────────────────────
+// Uses CSS position:sticky for stacking — zero JS DOM manipulation means
+// cleanup is trivial and back/forward navigation never corrupts the layout.
 interface FlowSectionProps {
   children: React.ReactNode;
   bg?: string;
-  light?: boolean;
+  index: number;
   'aria-label'?: string;
 }
 
-function FlowSection({ children, bg = '#09090b', 'aria-label': ariaLabel }: FlowSectionProps) {
+function FlowSection({ children, bg = '#09090b', index, 'aria-label': ariaLabel }: FlowSectionProps) {
   return (
-    <section data-flow-section aria-label={ariaLabel} className="relative min-h-screen w-full overflow-hidden">
-      <div
-        data-flow-inner
-        className="flow-art-container relative flex min-h-screen w-full flex-col justify-between"
-        style={{
-          transformOrigin: 'bottom left',
-          background: bg,
-          padding: '4vw',
-          paddingTop: 'clamp(2rem, 8vw, 4rem)',
-        }}
+    <div
+      data-flow-wrapper
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: index + 1,
+        height: '100vh',
+        overflow: 'hidden',
+      }}
+    >
+      <section
+        aria-label={ariaLabel}
+        className="relative w-full h-full flex flex-col justify-between"
+        style={{ background: bg, padding: '4vw', paddingTop: 'clamp(2rem, 8vw, 4rem)' }}
       >
-        {children}
-      </div>
-    </section>
+        <div
+          className="flow-art-container relative flex w-full h-full flex-col justify-between"
+          style={{ transformOrigin: 'bottom left' }}
+        >
+          {children}
+        </div>
+      </section>
+    </div>
   );
 }
 
 // ─── FlowArt orchestrator ─────────────────────────────────────────────────────
+// GSAP is only used for the rotation tween — no pin:true, no pin spacers,
+// no JS-managed positioning. ctx.revert() cleanly removes just the tweens.
 function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -55,81 +68,52 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
   }, []);
 
   useEffect(() => {
-    if (!containerRef.current || reducedMotion) return;
-
     const container = containerRef.current;
+    if (!container || reducedMotion || isMobile) return;
 
-    // Nuke every stale ScrollTrigger instance before initialising.
-    // GSAP's global registry persists across Next.js SPA navigations — stale
-    // pin/rotation state from the previous mount corrupts layout on remount
-    // (sections collapse, content disappears).
     ScrollTrigger.getAll().forEach(t => t.kill());
-    ScrollTrigger.clearScrollMemory();
 
-    const sections = Array.from(
-      container.querySelectorAll<HTMLElement>('[data-flow-section]'),
+    const wrappers = Array.from(
+      container.querySelectorAll<HTMLElement>('[data-flow-wrapper]'),
     );
-    if (!sections.length) return;
 
-    const mobile = window.innerWidth < 768;
-
-    // Use gsap.context() so revert() cleanly removes pin spacers and
-    // inline styles without relying on useGSAP's implicit cleanup.
     const ctx = gsap.context(() => {
-      sections.forEach((section, i) => {
-        gsap.set(section, { zIndex: i + 1 });
-        const inner = section.querySelector<HTMLElement>('.flow-art-container');
+      wrappers.forEach((wrapper, i) => {
+        if (i === 0) return;
+        const inner = wrapper.querySelector<HTMLElement>('.flow-art-container');
         if (!inner) return;
 
-        if (i > 0 && !mobile) {
-          gsap.set(inner, { rotation: 30, transformOrigin: 'bottom left' });
-          gsap.to(inner, {
-            rotation: 0,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top bottom',
-              end: 'top 25%',
-              scrub: true,
-            },
-          });
-        }
-
-        if (i < sections.length - 1 && !mobile) {
-          ScrollTrigger.create({
-            trigger: section,
-            start: 'bottom bottom',
-            end: 'bottom top',
-            pin: true,
-            pinSpacing: false,
-          });
-        }
+        gsap.set(inner, { rotation: 30, transformOrigin: 'bottom left' });
+        gsap.to(inner, {
+          rotation: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: wrapper,
+            start: 'top bottom',
+            end: 'top top',
+            scrub: true,
+          },
+        });
       });
     }, container);
 
-    // Double-RAF: wait for the browser to finish layout before GSAP measures
-    // element positions. Without this, refresh() can calculate wrong pin
-    // offsets on back-navigation (DOM present but not yet painted).
-    let raf1: number, raf2: number;
-    raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => {
-        ScrollTrigger.refresh();
-      });
+    let r1: number, r2: number;
+    r1 = requestAnimationFrame(() => {
+      r2 = requestAnimationFrame(() => ScrollTrigger.refresh());
     });
 
     return () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-      // ctx.revert() removes all pin spacers and reverts inline styles
+      cancelAnimationFrame(r1);
+      cancelAnimationFrame(r2);
       ctx.revert();
-      // Belt-and-suspenders: kill any instances that survived revert
       ScrollTrigger.getAll().forEach(t => t.kill());
       ScrollTrigger.clearScrollMemory();
     };
   }, [reducedMotion, isMobile]);
 
+  // No overflow-x-hidden here — that breaks position:sticky on children
   return (
-    <div id={id} ref={containerRef} className="w-full overflow-x-hidden">
+    <div id={id} ref={containerRef} className="w-full">
       {children}
     </div>
   );
@@ -171,8 +155,8 @@ function StepDots({ active, light = false }: { active: '01' | '02' | '03'; light
             height: 6,
             borderRadius: 3,
             background: s === active
-              ? (light ? 'rgba(0,0,0,0.4)'  : 'rgba(255,255,255,0.55)')
-              : (light ? 'rgba(0,0,0,0.1)'  : 'rgba(255,255,255,0.1)'),
+              ? (light ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.55)')
+              : (light ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.1)'),
           }}
         />
       ))}
@@ -185,8 +169,7 @@ export default function HowItWorksSection() {
   return (
     <FlowArt id="features">
 
-      {/* Feature 01 — Virtual Try-On for Stores */}
-      <FlowSection aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0" light>
+      <FlowSection index={0} aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
           <StepLabel num="01" light />
           <div style={{ maxWidth: 640 }}>
@@ -215,22 +198,14 @@ export default function HowItWorksSection() {
         </div>
 
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image
-            src="/features1.png"
-            alt="Virtual try-on in store"
-            width={1400}
-            height={1400}
-            unoptimized
-            className="w-full h-auto"
-            style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }}
-          />
+          <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} unoptimized
+            className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
 
         <StepDots active="01" light />
       </FlowSection>
 
-      {/* Feature 02 — Web Embed */}
-      <FlowSection aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314">
+      <FlowSection index={1} aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
           <StepLabel num="02" />
           <div style={{ maxWidth: 640 }}>
@@ -259,22 +234,14 @@ export default function HowItWorksSection() {
         </div>
 
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image
-            src="/features2.png"
-            alt="Web embed virtual try-on"
-            width={1400}
-            height={1400}
-            unoptimized
-            className="w-full h-auto"
-            style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }}
-          />
+          <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} unoptimized
+            className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
 
         <StepDots active="02" />
       </FlowSection>
 
-      {/* Feature 03 — Catalogue */}
-      <FlowSection aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0" light>
+      <FlowSection index={2} aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
           <StepLabel num="03" light />
           <div style={{ maxWidth: 640 }}>
@@ -303,15 +270,8 @@ export default function HowItWorksSection() {
         </div>
 
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image
-            src="/features3.png"
-            alt="Catalogue builder"
-            width={1400}
-            height={1400}
-            unoptimized
-            className="w-full h-auto"
-            style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }}
-          />
+          <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} unoptimized
+            className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
 
         <StepDots active="03" light />

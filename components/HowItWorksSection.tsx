@@ -46,14 +46,23 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
     const onMotion = () => setReducedMotion(mq.matches);
     onMotion();
     mq.addEventListener('change', onMotion);
-
     const onResize = () => setIsMobile(window.innerWidth < 768);
     onResize();
     window.addEventListener('resize', onResize, { passive: true });
-
     return () => {
       mq.removeEventListener('change', onMotion);
       window.removeEventListener('resize', onResize);
+    };
+  }, []);
+
+  // Hard-kill every ScrollTrigger instance when this component unmounts.
+  // This is the critical fix: GSAP's global ScrollTrigger registry persists
+  // across Next.js SPA navigations. Stale pin/rotation instances from a previous
+  // mount corrupt DOM positions on remount (content disappears / collapses).
+  useEffect(() => {
+    return () => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+      ScrollTrigger.clearScrollMemory();
     };
   }, []);
 
@@ -61,12 +70,15 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
     () => {
       if (!containerRef.current || reducedMotion) return;
 
+      // Wipe any survivors from a prior mount before creating fresh triggers.
+      // Handles the case where cleanup ran but GSAP global state wasn't fully cleared.
+      ScrollTrigger.getAll().forEach(t => t.kill());
+
       const sections = Array.from(
         containerRef.current.querySelectorAll<HTMLElement>('[data-flow-section]'),
       );
       if (sections.length === 0) return;
 
-      const triggers: ScrollTrigger[] = [];
       const mobile = window.innerWidth < 768;
 
       sections.forEach((section, i) => {
@@ -77,7 +89,7 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
 
         if (i > 0 && !mobile) {
           gsap.set(inner, { rotation: 30, transformOrigin: 'bottom left' });
-          const tween = gsap.to(inner, {
+          gsap.to(inner, {
             rotation: 0,
             ease: 'none',
             scrollTrigger: {
@@ -87,28 +99,20 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
               scrub: true,
             },
           });
-          if (tween.scrollTrigger) triggers.push(tween.scrollTrigger);
         }
 
         if (i < sections.length - 1 && !mobile) {
-          triggers.push(
-            ScrollTrigger.create({
-              trigger: section,
-              start: 'bottom bottom',
-              end: 'bottom top',
-              pin: true,
-              pinSpacing: false,
-            }),
-          );
+          ScrollTrigger.create({
+            trigger: section,
+            start: 'bottom bottom',
+            end: 'bottom top',
+            pin: true,
+            pinSpacing: false,
+          });
         }
       });
 
       ScrollTrigger.refresh();
-
-      return () => {
-        triggers.forEach((t) => t.kill());
-        ScrollTrigger.clearScrollMemory();
-      };
     },
     { scope: containerRef, dependencies: [reducedMotion, isMobile] },
   );

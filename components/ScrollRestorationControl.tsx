@@ -1,20 +1,22 @@
 'use client';
 
 import { useEffect } from 'react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-/**
- * Sets history.scrollRestoration = 'manual' globally so neither the browser
- * nor Next.js ever auto-restores scroll position on back/forward navigation.
- * This ensures GSAP ScrollTrigger always initialises at scroll=0 on every
- * page visit, preventing broken pin/rotation states on back navigation.
- */
 export default function ScrollRestorationControl() {
   useEffect(() => {
     if (typeof history !== 'undefined') {
       history.scrollRestoration = 'manual';
     }
-    // On every navigation (including back button), scroll to top
-    const onPopState = () => window.scrollTo(0, 0);
+
+    const onPopState = () => {
+      // Kill all GSAP ScrollTrigger instances before resetting scroll position.
+      // This prevents stale pin/rotation states from corrupting the incoming page.
+      ScrollTrigger.getAll().forEach(t => t.kill());
+      ScrollTrigger.clearScrollMemory();
+      window.scrollTo(0, 0);
+    };
+
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);

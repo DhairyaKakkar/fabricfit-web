@@ -4,7 +4,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,35 +54,30 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
     };
   }, []);
 
-  // Hard-kill every ScrollTrigger instance when this component unmounts.
-  // This is the critical fix: GSAP's global ScrollTrigger registry persists
-  // across Next.js SPA navigations. Stale pin/rotation instances from a previous
-  // mount corrupt DOM positions on remount (content disappears / collapses).
   useEffect(() => {
-    return () => {
-      ScrollTrigger.getAll().forEach(t => t.kill());
-      ScrollTrigger.clearScrollMemory();
-    };
-  }, []);
+    if (!containerRef.current || reducedMotion) return;
 
-  useGSAP(
-    () => {
-      if (!containerRef.current || reducedMotion) return;
+    const container = containerRef.current;
 
-      // Wipe any survivors from a prior mount before creating fresh triggers.
-      // Handles the case where cleanup ran but GSAP global state wasn't fully cleared.
-      ScrollTrigger.getAll().forEach(t => t.kill());
+    // Nuke every stale ScrollTrigger instance before initialising.
+    // GSAP's global registry persists across Next.js SPA navigations — stale
+    // pin/rotation state from the previous mount corrupts layout on remount
+    // (sections collapse, content disappears).
+    ScrollTrigger.getAll().forEach(t => t.kill());
+    ScrollTrigger.clearScrollMemory();
 
-      const sections = Array.from(
-        containerRef.current.querySelectorAll<HTMLElement>('[data-flow-section]'),
-      );
-      if (sections.length === 0) return;
+    const sections = Array.from(
+      container.querySelectorAll<HTMLElement>('[data-flow-section]'),
+    );
+    if (!sections.length) return;
 
-      const mobile = window.innerWidth < 768;
+    const mobile = window.innerWidth < 768;
 
+    // Use gsap.context() so revert() cleanly removes pin spacers and
+    // inline styles without relying on useGSAP's implicit cleanup.
+    const ctx = gsap.context(() => {
       sections.forEach((section, i) => {
         gsap.set(section, { zIndex: i + 1 });
-
         const inner = section.querySelector<HTMLElement>('.flow-art-container');
         if (!inner) return;
 
@@ -111,11 +105,28 @@ function FlowArt({ children, id }: { children: React.ReactNode; id?: string }) {
           });
         }
       });
+    }, container);
 
-      ScrollTrigger.refresh();
-    },
-    { scope: containerRef, dependencies: [reducedMotion, isMobile] },
-  );
+    // Double-RAF: wait for the browser to finish layout before GSAP measures
+    // element positions. Without this, refresh() can calculate wrong pin
+    // offsets on back-navigation (DOM present but not yet painted).
+    let raf1: number, raf2: number;
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      // ctx.revert() removes all pin spacers and reverts inline styles
+      ctx.revert();
+      // Belt-and-suspenders: kill any instances that survived revert
+      ScrollTrigger.getAll().forEach(t => t.kill());
+      ScrollTrigger.clearScrollMemory();
+    };
+  }, [reducedMotion, isMobile]);
 
   return (
     <div id={id} ref={containerRef} className="w-full overflow-x-hidden">

@@ -50,15 +50,26 @@ export default function CtaSection() {
 
         <h2 style={{
           fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(2.4rem, 6vw, 5rem)',
+          fontSize: 'clamp(3rem, 7vw, 6rem)',
           fontWeight: 700,
           color: '#ffffff',
-          lineHeight: 1.08,
-          marginBottom: '1.2rem',
+          lineHeight: 1.05,
+          marginBottom: '0.4rem',
         }}>
-          See it on your fabric.<br />
-          <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.55)' }}>In 30 seconds.</span>
+          See it on your fabric.
         </h2>
+
+        <p style={{
+          fontFamily: 'var(--font-playfair)',
+          fontSize: 'clamp(3rem, 7vw, 6rem)',
+          fontWeight: 700,
+          fontStyle: 'italic',
+          color: 'rgba(255,255,255,0.45)',
+          lineHeight: 1.05,
+          marginBottom: '1.8rem',
+        }}>
+          In 30 seconds.
+        </p>
 
         <p className="text-sm leading-relaxed mb-10" style={{
           fontFamily: 'var(--font-inter)',

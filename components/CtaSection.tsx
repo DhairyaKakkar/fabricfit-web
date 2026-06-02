@@ -42,11 +42,22 @@ export default function CtaSection() {
 
       <div className="max-w-2xl mx-auto px-6 md:px-8 text-center relative">
         <span
-          className="inline-block text-xs font-semibold tracking-widest uppercase mb-5"
+          className="inline-block text-xs font-semibold tracking-widest uppercase mb-3"
           style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.22em' }}
         >
           Get Started
         </span>
+
+        <p style={{
+          fontFamily: 'var(--font-inter)',
+          fontSize: 'clamp(1.1rem, 2vw, 1.5rem)',
+          fontWeight: 700,
+          color: '#ffffff',
+          letterSpacing: '-0.01em',
+          marginBottom: '1.5rem',
+        }}>
+          AI virtual trial room
+        </p>
 
         <h2 style={{
           fontFamily: 'var(--font-playfair)',

@@ -1,11 +1,8 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 
-// ─── FlowSection ─────────────────────────────────────────────────────────────
-// Stacking is pure CSS (position:sticky). Animation is a plain scroll listener
-// — no GSAP, no ScrollTrigger, no global state. Cleanup is just removeEventListener.
 interface FlowSectionProps {
   children: React.ReactNode;
   bg?: string;
@@ -14,71 +11,19 @@ interface FlowSectionProps {
 }
 
 function FlowSection({ children, bg = '#09090b', index, 'aria-label': ariaLabel }: FlowSectionProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const innerRef   = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    const inner   = innerRef.current;
-    if (!wrapper || !inner || index === 0) return;
-
-    // Respect prefers-reduced-motion
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const update = () => {
-      const vh  = window.innerHeight;
-      const top = wrapper.getBoundingClientRect().top;
-      // progress 0 → section entering from bottom, progress 1 → section at sticky position
-      const progress = 1 - Math.max(0, Math.min(1, top / vh));
-      inner.style.transform = `rotate(${30 * (1 - progress)}deg)`;
-    };
-
-    // Set initial rotation without a flash — run synchronously before paint
-    inner.style.transformOrigin = 'bottom left';
-    inner.style.transform       = 'rotate(30deg)';
-
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => { update(); ticking = false; });
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    update(); // correct position on mount (handles page-restored scroll)
-
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [index]);
-
   return (
-    <div
-      ref={wrapperRef}
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: index + 1,
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-    >
+    <div style={{ position: 'sticky', top: 0, zIndex: index + 1, height: '100vh', overflow: 'hidden' }}>
       <section
         aria-label={ariaLabel}
         className="relative w-full h-full flex flex-col justify-between"
         style={{ background: bg, padding: '4vw', paddingTop: 'clamp(2rem, 8vw, 4rem)' }}
       >
-        <div
-          ref={innerRef}
-          className="flow-art-container relative flex w-full h-full flex-col justify-between"
-          style={{ transformOrigin: 'bottom left' }}
-        >
-          {children}
-        </div>
+        {children}
       </section>
     </div>
   );
 }
 
-// ─── Step label ───────────────────────────────────────────────────────────────
 function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: boolean }) {
   const dot    = light ? 'rgba(0,0,0,0.06)'  : 'rgba(255,255,255,0.05)';
   const border = light ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.1)';
@@ -91,13 +36,9 @@ function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: bo
         <div style={{ width: 34, height: 34, borderRadius: '50%', background: dot, border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: numClr }}>{num}</span>
         </div>
-        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: labelC, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-          Features
-        </span>
+        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: labelC, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Features</span>
       </div>
-      <span style={{ fontFamily: 'var(--font-playfair)', fontSize: 12, fontStyle: 'italic', color: stepC }}>
-        Feature {num} / 03
-      </span>
+      <span style={{ fontFamily: 'var(--font-playfair)', fontSize: 12, fontStyle: 'italic', color: stepC }}>Feature {num} / 03</span>
     </div>
   );
 }
@@ -109,15 +50,14 @@ function StepDots({ active, light = false }: { active: '01' | '02' | '03'; light
         <div key={s} style={{
           width: s === active ? 28 : 6, height: 6, borderRadius: 3,
           background: s === active
-            ? (light ? 'rgba(0,0,0,0.4)'  : 'rgba(255,255,255,0.55)')
-            : (light ? 'rgba(0,0,0,0.1)'  : 'rgba(255,255,255,0.1)'),
+            ? (light ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.55)')
+            : (light ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)'),
         }} />
       ))}
     </div>
   );
 }
 
-// ─── FeaturesSection ──────────────────────────────────────────────────────────
 export default function HowItWorksSection() {
   return (
     <div id="features" className="w-full">

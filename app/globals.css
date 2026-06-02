@@ -26,6 +26,11 @@ body {
   scroll-snap-stop: always;
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.333%); }
+}
+
 /* Keyframes for the amber glow pulse on model hover */
 @keyframes amber-pulse {
   0%, 100% { opacity: 0.08; transform: scale(1); }

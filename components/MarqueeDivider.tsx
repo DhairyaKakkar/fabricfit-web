@@ -1,16 +1,6 @@
-'use client';
-
-import { motion, useScroll, useVelocity, useTransform, useSpring } from 'framer-motion';
-
 const SEGMENT = 'VIRTUAL TRY-ON · AI POWERED · FABRIC TO LOOK · 30 SECONDS · ';
-const FULL = SEGMENT.repeat(10);
 
 export default function MarqueeDivider() {
-  const { scrollY } = useScroll();
-  const velocity = useVelocity(scrollY);
-  const rawSkew  = useTransform(velocity, [-2000, 0, 2000], [6, 0, -6]);
-  const skewX    = useSpring(rawSkew, { stiffness: 120, damping: 30 });
-
   return (
     <div
       aria-hidden="true"
@@ -26,17 +16,8 @@ export default function MarqueeDivider() {
         WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
       }}
     >
-      <motion.div
-        style={{
-          display: 'flex',
-          whiteSpace: 'nowrap',
-          skewX,
-          willChange: 'transform',
-        }}
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: 28, ease: 'linear', repeat: Infinity }}
-      >
-        {[0, 1].map(k => (
+      <div style={{ display: 'flex', whiteSpace: 'nowrap', animation: 'marquee 28s linear infinite' }}>
+        {[0, 1, 2].map(k => (
           <span
             key={k}
             style={{
@@ -45,12 +26,13 @@ export default function MarqueeDivider() {
               letterSpacing: '0.22em',
               textTransform: 'uppercase',
               color: '#d4d4d4',
+              paddingRight: '2em',
             }}
           >
-            {FULL}
+            {SEGMENT.repeat(6)}
           </span>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }

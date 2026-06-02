@@ -48,16 +48,6 @@ export default function CtaSection() {
           Get Started
         </span>
 
-        <p style={{
-          fontFamily: 'var(--font-inter)',
-          fontSize: 'clamp(1.1rem, 2vw, 1.5rem)',
-          fontWeight: 700,
-          color: '#ffffff',
-          letterSpacing: '-0.01em',
-          marginBottom: '1.5rem',
-        }}>
-          AI virtual trial room
-        </p>
 
         <h2 style={{
           fontFamily: 'var(--font-playfair)',

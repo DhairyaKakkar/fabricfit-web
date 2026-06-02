@@ -55,7 +55,7 @@ export default function VideoSection() {
           textTransform: 'uppercase',
           margin: 0,
         }}>
-          TrialRoomStudio · Powered by AI
+          AI virtual trial room
         </p>
       </div>
 
@@ -64,7 +64,7 @@ export default function VideoSection() {
         position: 'absolute', bottom: 60, left: 0, right: 0,
         display: 'flex', justifyContent: 'center', zIndex: 4,
       }}>
-        <LiquidButton href="#features" color="#ffffff" bg="rgba(255,255,255,0.15)" padding="14px 36px" fontSize={15}>
+        <LiquidButton href="#features" color="#09090b" bg="#ffffff" padding="16px 44px" fontSize={16}>
           View the Demo
         </LiquidButton>
       </div>

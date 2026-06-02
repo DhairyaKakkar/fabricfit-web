@@ -85,7 +85,7 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             color="#ffffff"
-            bg="rgba(9,9,11,0.92)"
+            bg="#2563eb"
             padding="9px 20px"
             fontSize={13}
           >

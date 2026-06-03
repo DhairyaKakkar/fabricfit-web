@@ -23,7 +23,7 @@ export default function GalleryClient({ initialTryons }: { initialTryons: TryOn[
     setDeleting(null);
   }
 
-  const label = (t: TryOn) => t.fabrics?.name ?? t.outfits?.name ?? t.garment_type;
+  const label = (t: TryOn) => t.fabrics?.name ?? t.outfits?.name ?? t.garment_type ?? 'Try-on';
 
   return (
     <div>
@@ -60,7 +60,7 @@ export default function GalleryClient({ initialTryons }: { initialTryons: TryOn[
                   </button>
                   <div>
                     <p className="text-white text-xs font-semibold truncate">{label(t)}</p>
-                    <p className="text-white/60 text-[10px] capitalize">{t.garment_type.replace('_', ' ')}</p>
+                    <p className="text-white/60 text-[10px] capitalize">{(t.garment_type ?? '').replace('_', ' ')}</p>
                   </div>
                 </div>
               </div>

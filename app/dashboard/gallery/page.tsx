@@ -36,7 +36,7 @@ export default async function GalleryPage() {
 
     urlMap = new Map(
       (signedUrls ?? [])
-        .filter(s => s.path && s.signedUrl)
+        .filter((s): s is { path: string; signedUrl: string } => !!s.path && !!s.signedUrl)
         .map(s => [s.path, s.signedUrl])
     );
   } catch {

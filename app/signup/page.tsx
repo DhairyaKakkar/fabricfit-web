@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { Suspense, useActionState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ const PLAN_LABELS: Record<string, string> = {
   business: 'Business',
 };
 
-export default function SignupPage() {
+function SignupForm() {
   const [state, action, pending] = useActionState(signup, undefined);
   const params = useSearchParams();
   const planId = params.get('plan') ?? null;
@@ -109,5 +109,13 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
   );
 }

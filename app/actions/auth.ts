@@ -4,6 +4,16 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+function generateAccessCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) {
+    if (i === 4) code += '-';
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
 export async function login(
   _prevState: { error: string } | undefined,
   formData: FormData
@@ -42,6 +52,7 @@ export async function signup(
       business_name: businessName,
       is_trial: true,
       preview_limit: 100,
+      access_code: generateAccessCode(),
     });
   }
 

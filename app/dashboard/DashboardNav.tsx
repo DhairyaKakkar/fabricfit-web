@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: '/dashboard/inventory', label: 'Inventory' },
   { href: '/dashboard/outfits', label: 'Outfits' },
   { href: '/dashboard/catalogues', label: 'Catalogues' },
+  { href: '/dashboard/subscription', label: 'Subscription' },
   { href: '/dashboard/settings', label: 'Settings' },
 ];
 

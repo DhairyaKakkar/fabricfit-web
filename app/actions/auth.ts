@@ -75,19 +75,40 @@ export async function loginWithAccessCode(
   const adminClient = createAdminClient();
   const supabase = await createClient();
 
-  // Look up outlet by access code
-  const { data: outlet, error: outletError } = await adminClient
+  // Look up by outlets.access_code first, then fall back to trial_codes
+  let userId: string | null = null;
+
+  const { data: outletByCode } = await adminClient
     .from('outlets')
     .select('user_id')
     .eq('access_code', code)
-    .single();
+    .maybeSingle();
 
-  if (outletError || !outlet) {
+  if (outletByCode) {
+    userId = outletByCode.user_id;
+  } else {
+    const { data: trialCode } = await adminClient
+      .from('trial_codes')
+      .select('outlet_id')
+      .eq('code', code)
+      .maybeSingle();
+
+    if (trialCode) {
+      const { data: outlet } = await adminClient
+        .from('outlets')
+        .select('user_id')
+        .eq('id', trialCode.outlet_id)
+        .maybeSingle();
+      if (outlet) userId = outlet.user_id;
+    }
+  }
+
+  if (!userId) {
     return { error: 'Invalid access code. Please check and try again.' };
   }
 
   // Get user email via admin API
-  const { data: { user }, error: userError } = await adminClient.auth.admin.getUserById(outlet.user_id);
+  const { data: { user }, error: userError } = await adminClient.auth.admin.getUserById(userId);
 
   if (userError || !user?.email) {
     return { error: 'Account not found. Please contact support.' };

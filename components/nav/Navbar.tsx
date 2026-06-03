@@ -5,14 +5,18 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import LiquidButton from '@/components/ui/LiquidButton';
 import { slowScrollTo } from '@/lib/scrollTo';
+import { createClient } from '@/lib/supabase/client';
 
 const NAV_LINKS = [
   { anchor: 'features', label: 'Features' },
 ] as const;
 const PRICING_LINK = { href: '/pricing', label: 'Pricing' };
+const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919884744296';
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
 
@@ -30,6 +34,17 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data }) => {
+      setLoggedIn(!!data.session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setLoggedIn(!!session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#')) {
       e.preventDefault();
@@ -38,7 +53,7 @@ export default function Navbar() {
     }
   };
 
-  const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919999999999';
+  const accountLink = loggedIn ? { href: '/dashboard', label: 'Go to account' } : { href: '/login', label: 'Sign in' };
 
   return (
     <header
@@ -49,10 +64,7 @@ export default function Navbar() {
       {/* Top bar */}
       <div className="h-14 flex items-center px-5 md:px-8">
         {/* Logo */}
-        <a
-          href="/"
-          className="select-none hover:opacity-70 transition-opacity shrink-0 flex items-center"
-        >
+        <a href="/" className="select-none hover:opacity-70 transition-opacity shrink-0 flex items-center">
           <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} className="h-12 w-auto block" />
         </a>
 
@@ -74,14 +86,14 @@ export default function Navbar() {
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3 shrink-0">
           <a
-            href="/login"
+            href={accountLink.href}
             className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
             style={{ fontFamily: 'var(--font-inter)' }}
           >
-            Sign in
+            {accountLink.label}
           </a>
           <LiquidButton
-            href={`https://wa.me/${waNumber}`}
+            href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
             target="_blank"
             rel="noopener noreferrer"
             color="#ffffff"
@@ -93,33 +105,21 @@ export default function Navbar() {
           </LiquidButton>
         </div>
 
-        {/* Mobile spacer + hamburger */}
+        {/* Mobile hamburger */}
         <div className="flex-1 md:hidden" />
         <button
           onClick={() => setOpen((v) => !v)}
           className="md:hidden flex flex-col justify-center gap-[5px] w-9 h-9 -mr-1"
           aria-label="Toggle menu"
         >
-          <span
-            className="block h-[2px] w-5 bg-zinc-950 rounded-full transition-all duration-200 origin-center"
-            style={{ transform: open ? 'translateY(7px) rotate(45deg)' : 'none' }}
-          />
-          <span
-            className="block h-[2px] w-5 bg-zinc-950 rounded-full transition-all duration-200"
-            style={{ opacity: open ? 0 : 1 }}
-          />
-          <span
-            className="block h-[2px] w-5 bg-zinc-950 rounded-full transition-all duration-200 origin-center"
-            style={{ transform: open ? 'translateY(-7px) rotate(-45deg)' : 'none' }}
-          />
+          <span className="block h-[2px] w-5 bg-zinc-950 rounded-full transition-all duration-200 origin-center" style={{ transform: open ? 'translateY(7px) rotate(45deg)' : 'none' }} />
+          <span className="block h-[2px] w-5 bg-zinc-950 rounded-full transition-all duration-200" style={{ opacity: open ? 0 : 1 }} />
+          <span className="block h-[2px] w-5 bg-zinc-950 rounded-full transition-all duration-200 origin-center" style={{ transform: open ? 'translateY(-7px) rotate(-45deg)' : 'none' }} />
         </button>
       </div>
 
       {/* Mobile dropdown */}
-      <div
-        className="md:hidden overflow-hidden transition-all duration-300"
-        style={{ maxHeight: open ? 280 : 0 }}
-      >
+      <div className="md:hidden overflow-hidden transition-all duration-300" style={{ maxHeight: open ? 300 : 0 }}>
         <div className="border-t border-zinc-100 bg-white/95 backdrop-blur-md px-5 py-5 flex flex-col gap-1">
           {links.map((l) => (
             <a
@@ -133,14 +133,14 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="/login"
+            href={accountLink.href}
             className="text-sm text-zinc-600 hover:text-zinc-950 transition-colors py-2.5"
             style={{ fontFamily: 'var(--font-inter)' }}
           >
-            Sign in
+            {accountLink.label}
           </a>
           <a
-            href={`https://wa.me/${waNumber}`}
+            href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-1 px-4 py-3 rounded-md bg-zinc-950 text-white text-sm font-semibold text-center"

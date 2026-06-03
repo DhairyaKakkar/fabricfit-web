@@ -4,6 +4,7 @@ import MarqueeDivider from '@/components/MarqueeDivider';
 import ProductsPageClient from '@/components/products/ProductsPageClient';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import CtaSection from '@/components/CtaSection';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <HowItWorksSection />
       <ProductsPageClient />
       <CtaSection />
+      <Footer />
     </>
   );
 }

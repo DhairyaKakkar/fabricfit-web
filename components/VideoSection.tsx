@@ -2,6 +2,7 @@
 
 import LiquidButton from '@/components/ui/LiquidButton';
 
+const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919884744296';
 
 export default function VideoSection() {
   return (
@@ -12,8 +13,13 @@ export default function VideoSection() {
       {/* Video */}
       <video
         src="/videos/hero-video.mp4"
-        autoPlay loop muted playsInline
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }}
+        autoPlay loop muted playsInline preload="auto"
+        style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover', zIndex: 1,
+          imageRendering: 'auto',
+          transform: 'translateZ(0)',
+        }}
       />
 
       {/* Gradient overlay */}
@@ -59,13 +65,25 @@ export default function VideoSection() {
         </p>
       </div>
 
-      {/* Single CTA button */}
+      {/* CTA buttons */}
       <div style={{
         position: 'absolute', bottom: 60, left: 0, right: 0,
-        display: 'flex', justifyContent: 'center', zIndex: 4,
+        display: 'flex', justifyContent: 'center', gap: 12, zIndex: 4,
+        flexWrap: 'wrap', padding: '0 24px',
       }}>
-        <LiquidButton href="#features" color="#09090b" bg="#ffffff" padding="16px 44px" fontSize={16}>
-          View the Demo
+        <LiquidButton
+          href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
+          target="_blank"
+          rel="noopener noreferrer"
+          color="#09090b"
+          bg="#ffffff"
+          padding="16px 44px"
+          fontSize={16}
+        >
+          Book a Demo
+        </LiquidButton>
+        <LiquidButton href="/pricing" color="#ffffff" bg="rgba(255,255,255,0.12)" padding="16px 44px" fontSize={16}>
+          View Plans
         </LiquidButton>
       </div>
     </section>

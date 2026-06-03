@@ -99,15 +99,9 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <div className="mt-4 pt-4 border-t border-zinc-100">
-            <a
-              href={`mailto:hqnudge@gmail.com?subject=Free%20Credits%20Request%20-%20TrialRoomStudio&body=Hi%20TrialRoomStudio%20Team%2C%0A%0AI%20would%20like%20to%20request%20free%20credits%20for%20my%20account.%20Here%20are%20my%20details%3A%0A%0AName%3A%20%0AEmail%3A%20%0APhone%20Number%3A%20%0ACompany%20Name%3A%20%0A%0AThank%20you!`}
-              className="w-full block text-center bg-zinc-50 border border-zinc-200 text-zinc-700 rounded-xl py-2.5 text-sm font-semibold hover:bg-zinc-100 transition-colors"
-              style={{ fontFamily: 'var(--font-inter)' }}
-            >
-              Click here to get free credits
-            </a>
-          </div>
+          <p className="text-center text-xs text-zinc-400 mt-4" style={{ fontFamily: 'var(--font-inter)' }}>
+            Includes 40 free credits · No card required
+          </p>
         </div>
 
         <p className="text-center text-xs text-zinc-400 mt-5" style={{ fontFamily: 'var(--font-inter)' }}>

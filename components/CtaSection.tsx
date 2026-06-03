@@ -2,6 +2,8 @@
 
 import LiquidButton from '@/components/ui/LiquidButton';
 
+const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919884744296';
+
 function WhatsAppIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -11,95 +13,138 @@ function WhatsAppIcon() {
 }
 
 export default function CtaSection() {
-  const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919999999999';
-
   return (
     <section
       id="cta"
       className="relative flex flex-col items-center justify-center"
       style={{
-        height: '100vh',
+        minHeight: '100vh',
         background: 'linear-gradient(135deg, #09090b 0%, #18181b 50%, #09090b 100%)',
         overflow: 'hidden',
       }}
     >
+      {/* Glow orbs */}
+      <div style={{
+        position: 'absolute', top: '20%', left: '15%',
+        width: 400, height: 400, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(120,53,15,0.18) 0%, transparent 70%)',
+        filter: 'blur(40px)', pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute', bottom: '20%', right: '15%',
+        width: 500, height: 500, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(146,64,14,0.12) 0%, transparent 70%)',
+        filter: 'blur(60px)', pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute', top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 700, height: 700, borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(255,255,255,0.015) 0%, transparent 60%)',
+        pointerEvents: 'none',
+      }} />
+
       {/* Watermark */}
-      <div
-        className="absolute select-none pointer-events-none"
-        style={{
-          fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(100px, 20vw, 220px)',
-          fontWeight: 700,
-          color: 'rgba(255,255,255,0.03)',
-          top: '50%', left: '50%',
-          transform: 'translate(-50%, -50%)',
-          lineHeight: 1,
-          whiteSpace: 'nowrap',
-        }}
-      >
+      <div className="absolute select-none pointer-events-none" style={{
+        fontFamily: 'var(--font-playfair)',
+        fontSize: 'clamp(100px, 20vw, 220px)',
+        fontWeight: 700,
+        color: 'rgba(255,255,255,0.025)',
+        top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        lineHeight: 1, whiteSpace: 'nowrap',
+      }}>
         2 min
       </div>
 
-      <div className="max-w-2xl mx-auto px-6 md:px-8 text-center relative">
-        <span
-          className="inline-block text-xs font-semibold tracking-widest uppercase mb-3"
-          style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.22em' }}
-        >
-          Get Started
-        </span>
+      {/* Top border glow */}
+      <div style={{
+        position: 'absolute', top: 0, left: '10%', right: '10%', height: 1,
+        background: 'linear-gradient(90deg, transparent, rgba(146,64,14,0.5), rgba(201,168,76,0.6), rgba(146,64,14,0.5), transparent)',
+      }} />
 
+      <div className="max-w-2xl mx-auto px-6 md:px-8 text-center relative">
+        <span className="inline-block text-xs font-semibold tracking-widest uppercase mb-6" style={{
+          fontFamily: 'var(--font-inter)',
+          color: 'rgba(201,168,76,0.8)',
+          letterSpacing: '0.22em',
+          border: '1px solid rgba(201,168,76,0.2)',
+          padding: '4px 16px', borderRadius: 999,
+        }}>
+          Start Free Today
+        </span>
 
         <h2 style={{
           fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(3rem, 7vw, 6rem)',
+          fontSize: 'clamp(2.8rem, 7vw, 5.5rem)',
           fontWeight: 700,
           color: '#ffffff',
           lineHeight: 1.05,
           marginBottom: '0.4rem',
+          letterSpacing: '-0.02em',
         }}>
-          See it on your fabric.
+          Your customers deserve
         </h2>
-
         <p style={{
           fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(3rem, 7vw, 6rem)',
+          fontSize: 'clamp(2.8rem, 7vw, 5.5rem)',
           fontWeight: 700,
           fontStyle: 'italic',
-          color: 'rgba(255,255,255,0.45)',
+          background: 'linear-gradient(135deg, #c9a84c, #f0d080, #c9a84c)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
           lineHeight: 1.05,
-          marginBottom: '1.8rem',
+          marginBottom: '2rem',
+          letterSpacing: '-0.02em',
         }}>
-          In 30 seconds.
+          to see it first.
         </p>
 
         <p className="text-sm leading-relaxed mb-10" style={{
           fontFamily: 'var(--font-inter)',
-          color: 'rgba(255,255,255,0.5)',
-          maxWidth: 420,
+          color: 'rgba(255,255,255,0.45)',
+          maxWidth: 440,
           margin: '0 auto 2.5rem',
+          lineHeight: 1.8,
         }}>
-          No setup. No contract. We&apos;ll run a live demo with your own fabric photos on a WhatsApp call — so you see exactly what your customers would see.
+          No setup. No contract. Book a live WhatsApp demo — we&apos;ll run a try-on with your own fabric photos in under 2 minutes.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <LiquidButton
-            href={`https://wa.me/${waNumber}`}
+            href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
             target="_blank"
             rel="noopener noreferrer"
             color="#09090b"
-            bg="rgba(255,255,255,0.94)"
+            bg="rgba(255,255,255,0.95)"
             padding="16px 36px"
           >
             <WhatsAppIcon />
-            Chat on WhatsApp
+            Book a Demo
           </LiquidButton>
-          <LiquidButton href="/pricing" color="rgba(255,255,255,0.85)" bg="rgba(255,255,255,0.06)" padding="16px 36px">
-            See Pricing →
+          <LiquidButton
+            href="/pricing"
+            color="rgba(255,255,255,0.85)"
+            bg="rgba(255,255,255,0.06)"
+            padding="16px 36px"
+          >
+            View Plans →
           </LiquidButton>
         </div>
 
-        <p className="mt-10 text-xs" style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.25)' }}>
-          Backed by Nanyang Technological University, Singapore · No commitment required
+        <div className="flex flex-wrap items-center justify-center gap-6 mt-12">
+          {['40 free credits', 'No card required', '2-min setup'].map((item) => (
+            <div key={item} className="flex items-center gap-1.5">
+              <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'rgba(201,168,76,0.6)' }} />
+              <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.04em' }}>
+                {item}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-8 text-xs" style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.18)' }}>
+          Backed by Nanyang Technological University, Singapore
         </p>
       </div>
     </section>

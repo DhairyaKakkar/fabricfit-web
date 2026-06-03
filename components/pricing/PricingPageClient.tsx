@@ -278,7 +278,7 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
               <p className="text-3xl font-bold text-zinc-900 mb-1" style={{ fontFamily: 'var(--font-inter)' }}>{fmtPrice(pack.price, currency)}</p>
               <p className="text-xs text-zinc-400 mb-1" style={{ fontFamily: 'var(--font-inter)' }}>{pack.credits} credits</p>
               <p className="text-xs text-zinc-400 mb-5" style={{ fontFamily: 'var(--font-inter)' }}>{pack.tryOns}</p>
-              <a href="#" className="w-full block text-center py-2 rounded-xl text-sm font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition-colors" style={{ fontFamily: 'var(--font-inter)', cursor: 'pointer' }}>
+              <a href={`/checkout?plan=payg&pack=${pack.name.toLowerCase()}&billing=monthly`} className="w-full block text-center py-2 rounded-xl text-sm font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition-colors" style={{ fontFamily: 'var(--font-inter)', cursor: 'pointer' }}>
                 Buy pack
               </a>
             </motion.div>
@@ -471,7 +471,7 @@ function FooterSection() {
         </div>
         <p className="text-xs text-zinc-400" style={{ fontFamily: 'var(--font-inter)' }}>
           Questions?{' '}
-          <a href="#" className="underline text-zinc-500 hover:text-zinc-700 transition-colors">Chat with us on WhatsApp</a>
+          <a href="https://wa.me/919884744296?text=Hi%2C%20I%20have%20a%20question%20about%20TrialRoomStudio%20pricing" target="_blank" rel="noopener noreferrer" className="underline text-zinc-500 hover:text-zinc-700 transition-colors">Chat with us on WhatsApp</a>
         </p>
       </div>
     </div>
@@ -573,6 +573,25 @@ export default function PricingPageClient() {
       <CreditPacksSection currency={currency} />
       <AddOnsSection currency={currency} />
       <ComparisonSection yearly={yearly} currency={currency} />
+
+      {/* Custom / Enterprise CTA */}
+      <div className="py-16 px-6 border-t border-zinc-100 text-center" style={{ background: '#fafafa' }}>
+        <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}>Enterprise</p>
+        <h2 className="text-2xl font-bold text-zinc-900 mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
+          Want it curated for your business?
+        </h2>
+        <p className="text-sm text-zinc-500 max-w-md mx-auto mb-6" style={{ fontFamily: 'var(--font-inter)', lineHeight: 1.7 }}>
+          Custom credits, white-label branding, dedicated onboarding, and priority support. Talk to us and we&apos;ll build a plan around your showroom.
+        </p>
+        <a
+          href="/contact"
+          className="inline-block px-8 py-3 rounded-xl text-sm font-semibold bg-zinc-900 text-white hover:bg-zinc-800 transition-colors"
+          style={{ fontFamily: 'var(--font-inter)' }}
+        >
+          Contact Us →
+        </a>
+      </div>
+
       <FooterSection />
     </div>
   );

@@ -26,7 +26,7 @@ export default async function GalleryPage() {
   if (!tryons?.length) return <GalleryClient initialTryons={[]} />;
 
   // Generate signed URLs — guard against storage errors
-  let urlMap = new Map<string, string>();
+  const urlMap = new Map<string, string>();
   try {
     const admin = createAdminClient();
     const paths = tryons.map(t => t.result_path as string);
@@ -34,11 +34,9 @@ export default async function GalleryPage() {
       .from('tryon_results')
       .createSignedUrls(paths, 3600);
 
-    urlMap = new Map(
-      (signedUrls ?? [])
-        .filter((s): s is { path: string; signedUrl: string } => !!s.path && !!s.signedUrl)
-        .map(s => [s.path, s.signedUrl])
-    );
+    for (const s of signedUrls ?? []) {
+      if (s.path && s.signedUrl) urlMap.set(s.path, s.signedUrl);
+    }
   } catch {
     // Signed URL generation failed — images won't show but page won't crash
   }

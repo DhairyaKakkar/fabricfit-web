@@ -65,7 +65,7 @@ export default function Navbar() {
       <div className="h-14 flex items-center px-5 md:px-8">
         {/* Logo */}
         <a href="/" className="select-none hover:opacity-70 transition-opacity shrink-0 flex items-center">
-          <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} className="h-12 w-auto block" />
+          <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} priority className="h-12 w-auto block" />
         </a>
 
         {/* Desktop links */}

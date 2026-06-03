@@ -13,11 +13,11 @@ export default function VideoSection() {
       {/* Video */}
       <video
         src="/videos/hero-video.mp4"
-        autoPlay loop muted playsInline preload="auto"
+        autoPlay loop muted playsInline
+        preload="none"
         style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           objectFit: 'cover', zIndex: 1,
-          imageRendering: 'auto',
           transform: 'translateZ(0)',
         }}
       />

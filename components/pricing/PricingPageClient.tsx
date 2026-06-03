@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect, Fragment } from 'react';
 import { motion, useInView } from 'framer-motion';
 import NumberFlow from '@number-flow/react';
 import { PRICING, Currency, countryToCurrency, fmtPrice } from '@/lib/pricing';
+import ExternalPlanCards from './PlanCards';
 
 export type BillingCycle = 'monthly' | 'annual';
 
@@ -562,17 +563,9 @@ export default function PricingPageClient() {
       </div>
 
       {/* Plan Cards */}
-      <div className="px-6 pb-20">
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
-          {PLAN_META.map((plan, i) => (
-            <PlanCard key={plan.id} plan={plan} yearly={yearly} currency={currency} index={i} />
-          ))}
-        </div>
+      <div className="pb-8">
+        <ExternalPlanCards billing={yearly ? 'annual' : 'monthly'} currency={currency} />
       </div>
-
-      <CreditPacksSection currency={currency} />
-      <AddOnsSection currency={currency} />
-      <ComparisonSection yearly={yearly} currency={currency} />
 
       {/* Custom / Enterprise CTA */}
       <div className="py-16 px-6 border-t border-zinc-100 text-center" style={{ background: '#fafafa' }}>

@@ -36,6 +36,7 @@ export async function signup(
 ) {
   const supabase = await createClient();
   const businessName = formData.get('company_name') as string;
+  const planId = (formData.get('plan_id') as string | null)?.trim() || null;
 
   const { data, error } = await supabase.auth.signUp({
     email: formData.get('email') as string,
@@ -54,6 +55,11 @@ export async function signup(
       preview_limit: 100,
       access_code: generateAccessCode(),
     });
+  }
+
+  // If a paid plan was selected, go straight to checkout
+  if (planId && ['starter', 'pro', 'business'].includes(planId)) {
+    redirect(`/checkout?plan=${planId}&billing=monthly`);
   }
 
   redirect('/dashboard');

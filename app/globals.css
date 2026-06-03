@@ -62,6 +62,18 @@ body {
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 
+@keyframes img-spin {
+  to { transform: rotate(360deg); }
+}
+.img-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid rgba(0,0,0,0.10);
+  border-top-color: rgba(0,0,0,0.45);
+  border-radius: 50%;
+  animation: img-spin 0.7s linear infinite;
+}
+
 /* ── Mobile responsive utilities ───────────────────────── */
 
 /* ExpandingOrbs is now fully responsive via JS — no CSS scaling needed */

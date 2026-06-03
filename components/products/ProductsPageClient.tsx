@@ -1,14 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GARMENTS, Gender, GarmentId } from '@/lib/garments';
 
 export default function ProductsPageClient() {
   const [gender, setGender] = useState<Gender>('female');
   const [selectedId, setSelectedId] = useState<GarmentId>('casual-dress');
+  const [compositeLoading, setCompositeLoading] = useState(true);
+  const [loadedThumbs, setLoadedThumbs] = useState<Set<string>>(new Set());
 
   const garments = GARMENTS.filter(g => g.gender === gender);
   const selected = garments.find(g => g.id === selectedId) ?? garments[0];
+
+  useEffect(() => {
+    setCompositeLoading(true);
+  }, [selectedId]);
 
   const switchGender = (g: Gender) => {
     setGender(g);
@@ -21,11 +27,17 @@ export default function ProductsPageClient() {
 
       {/* Left: model viewer */}
       <div style={{ width: '42%', flexShrink: 0, position: 'relative', background: '#F6F5F0', overflow: 'hidden' }}>
+        {compositeLoading && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
+            <div className="img-spinner" />
+          </div>
+        )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={selected.compositeSrc}
           alt={selected.label}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', zIndex: 1 }}
+          onLoad={() => setCompositeLoading(false)}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', zIndex: 1, opacity: compositeLoading ? 0 : 1, transition: 'opacity 0.3s' }}
         />
 
         {/* Bottom fade */}
@@ -104,8 +116,18 @@ export default function ProductsPageClient() {
                   transition: 'background 0.22s, border-color 0.22s',
                 }}
               >
+                {!loadedThumbs.has(garment.id) && (
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
+                    <div className="img-spinner" style={{ borderTopColor: isActive ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.45)', borderColor: isActive ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.10)' }} />
+                  </div>
+                )}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={garment.floatSrc} alt={garment.label} style={{ width: '76%', height: '74%', objectFit: 'contain', position: 'relative', zIndex: 1 }} />
+                <img
+                  src={garment.floatSrc}
+                  alt={garment.label}
+                  onLoad={() => setLoadedThumbs(prev => new Set(prev).add(garment.id))}
+                  style={{ width: '76%', height: '74%', objectFit: 'contain', position: 'relative', zIndex: 1, opacity: loadedThumbs.has(garment.id) ? 1 : 0, transition: 'opacity 0.3s' }}
+                />
                 <span style={{
                   position: 'absolute', bottom: 12,
                   fontFamily: 'var(--font-inter)', fontSize: 9, fontWeight: 700,

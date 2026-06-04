@@ -289,6 +289,116 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
   );
 }
 
+/* ─── Top-Up Packs ───────────────────────────────────────────────────────── */
+function TopupPacksSection({ currency }: { currency: Currency }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+  const c = PRICING[currency];
+
+  const PACKS = [
+    { key: 'fifty' as const, credits: 50, tryOns: '~25 try-ons' },
+    { key: 'hundred' as const, credits: 100, tryOns: '~50 try-ons' },
+    { key: 'twoHundred' as const, credits: 200, tryOns: '~100 try-ons' },
+    { key: 'fiveHundred' as const, credits: 500, tryOns: '~250 try-ons' },
+  ];
+
+  return (
+    <div ref={ref} className="py-20 px-6 border-t border-zinc-100">
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <div className="text-center mb-10">
+          <p
+            className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3"
+            style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}
+          >
+            Top-Up Anytime
+          </p>
+          <h2
+            className="text-2xl font-bold text-zinc-900 mb-2"
+            style={{ fontFamily: 'var(--font-playfair)' }}
+          >
+            Credit Top-Up Packs
+          </h2>
+          <p
+            className="text-sm text-zinc-500 max-w-md mx-auto"
+            style={{ fontFamily: 'var(--font-inter)', lineHeight: 1.7 }}
+          >
+            Running low mid-month? Add credits instantly — they never expire and work alongside any subscription.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {PACKS.map((pack, i) => (
+            <motion.div
+              key={pack.key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: i * 0.07 }}
+              className="relative flex flex-col rounded-2xl p-5 bg-white border border-zinc-200"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+            >
+              <p
+                className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3"
+                style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.12em' }}
+              >
+                {pack.credits} Credits
+              </p>
+
+              <div className="mb-4">
+                <p
+                  className="text-2xl font-extrabold text-zinc-900 tabular-nums"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  {fmtPrice(c.topupPacks[pack.key], currency)}
+                </p>
+                <p
+                  className="text-xs text-zinc-400 mt-0.5"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  {pack.tryOns} · never expire
+                </p>
+              </div>
+
+              {/* Rate chip */}
+              <div
+                className="rounded-lg px-3 py-2 mb-4 flex-1"
+                style={{ background: '#f4f4f5', border: '1px solid #e4e4e7' }}
+              >
+                <p
+                  className="text-xs font-semibold text-zinc-700"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  {c.rates.paygStarter} / try-on
+                </p>
+                <p
+                  className="text-xs text-zinc-400 mt-0.5"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  Works on all plans
+                </p>
+              </div>
+
+              <a
+                href={`/checkout?plan=topup&pack=${pack.credits}&billing=monthly`}
+                className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold border border-zinc-200 text-zinc-800 hover:bg-zinc-50 transition-colors duration-150"
+                style={{ fontFamily: 'var(--font-inter)' }}
+              >
+                Buy {pack.credits} Credits
+              </a>
+            </motion.div>
+          ))}
+        </div>
+
+        <p
+          className="text-center text-xs text-zinc-400 mt-6"
+          style={{ fontFamily: 'var(--font-inter)' }}
+        >
+          Top-up credits stack with subscription credits · Never expire · Instant activation
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Add-Ons ────────────────────────────────────────────────────────────── */
 function AddOnsSection({ currency }: { currency: Currency }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -562,6 +672,9 @@ export default function PricingPageClient() {
       <div className="pb-8">
         <ExternalPlanCards billing={yearly ? 'annual' : 'monthly'} currency={currency} />
       </div>
+
+      {/* Top-Up Packs */}
+      <TopupPacksSection currency={currency} />
 
       {/* Custom / Enterprise CTA */}
       <div className="py-16 px-6 border-t border-zinc-100 text-center" style={{ background: '#fafafa' }}>

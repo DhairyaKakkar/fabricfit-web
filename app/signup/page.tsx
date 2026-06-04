@@ -83,9 +83,29 @@ function SignupForm() {
               </p>
             )}
 
+            {/* T&C + Privacy Policy consent */}
+            <label className="flex items-start gap-2.5 cursor-pointer" style={{ fontFamily: 'var(--font-inter)' }}>
+              <input
+                type="checkbox"
+                name="agreed_tnc"
+                required
+                className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 shrink-0"
+              />
+              <span className="text-xs text-zinc-500 leading-relaxed">
+                I have read and agree to the{' '}
+                <Link href="/terms" target="_blank" className="text-zinc-700 font-medium underline underline-offset-2 hover:text-zinc-900">
+                  Terms &amp; Conditions
+                </Link>
+                {' '}and{' '}
+                <Link href="/privacy" target="_blank" className="text-zinc-700 font-medium underline underline-offset-2 hover:text-zinc-900">
+                  Privacy Policy
+                </Link>
+              </span>
+            </label>
+
             <button
               type="submit" disabled={pending}
-              className="w-full bg-[#09090b] text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-zinc-800 disabled:opacity-50 transition-colors mt-1"
+              className="w-full bg-[#09090b] text-white rounded-xl py-3 text-sm font-semibold hover:bg-zinc-800 disabled:opacity-50 transition-colors mt-1"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               {pending
@@ -101,12 +121,22 @@ function SignupForm() {
           </p>
         </div>
 
-        <p className="text-center text-xs text-zinc-400 mt-5" style={{ fontFamily: 'var(--font-inter)' }}>
-          Already have an account?{' '}
-          <Link href={planId ? `/login?next=/checkout?plan=${planId}%26billing=monthly` : '/login'} className="text-zinc-700 font-medium hover:underline">
-            Sign in
+        {/* Prominent Sign In section */}
+        <div className="w-full mt-4 bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 text-center">
+          <p className="text-sm font-semibold text-zinc-800 mb-1" style={{ fontFamily: 'var(--font-inter)' }}>
+            Already have an account?
+          </p>
+          <p className="text-xs text-zinc-400 mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
+            Sign in to manage your account or top up credits
+          </p>
+          <Link
+            href={planId ? `/login?next=/checkout?plan=${planId}%26billing=monthly` : '/login'}
+            className="block w-full bg-white border-2 border-zinc-900 text-zinc-900 rounded-xl py-3 text-sm font-bold hover:bg-zinc-900 hover:text-white transition-colors duration-150"
+            style={{ fontFamily: 'var(--font-inter)' }}
+          >
+            Sign In →
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

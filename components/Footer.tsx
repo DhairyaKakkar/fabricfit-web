@@ -6,11 +6,12 @@ const LINKS = {
   Product: [
     { label: 'Features', href: '/#features' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'How it works', href: '/#features' },
   ],
   Company: [
     { label: 'Contact Us', href: '/contact' },
     { label: 'Book a Demo', href: `https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio` },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms & Conditions', href: '/terms' },
   ],
   Account: [
     { label: 'Sign In', href: '/login' },

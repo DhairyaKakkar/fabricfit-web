@@ -1,6 +1,7 @@
 'use client';
 
 import LiquidButton from '@/components/ui/LiquidButton';
+import { openTrialModal } from '@/lib/openTrialModal';
 
 const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919884744296';
 
@@ -58,7 +59,7 @@ export default function CtaSection() {
           border: '1px solid rgba(201,168,76,0.2)',
           padding: '4px 16px', borderRadius: 999,
         }}>
-          Start Free Today
+          Request Access
         </span>
 
         <h2 style={{
@@ -99,23 +100,23 @@ export default function CtaSection() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <LiquidButton
-            href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={openTrialModal}
             color="#09090b"
             bg="rgba(255,255,255,0.95)"
             padding="16px 36px"
           >
-            <WhatsAppIcon />
-            Book a Demo
+            Request Access →
           </LiquidButton>
           <LiquidButton
-            href="/pricing"
+            href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
+            target="_blank"
+            rel="noopener noreferrer"
             color="rgba(255,255,255,0.85)"
             bg="rgba(255,255,255,0.06)"
             padding="16px 36px"
           >
-            View Plans →
+            <WhatsAppIcon />
+            Book a Demo
           </LiquidButton>
         </div>
 

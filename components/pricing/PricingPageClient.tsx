@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect, Fragment } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { openTrialModal } from '@/lib/openTrialModal';
 import NumberFlow from '@number-flow/react';
 import { PRICING, Currency, countryToCurrency, fmtPrice } from '@/lib/pricing';
 import ExternalPlanCards from './PlanCards';
@@ -221,8 +222,8 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
         ))}
       </ul>
 
-      <a
-        href={`/checkout?plan=${plan.id}&billing=${yearly ? 'annual' : 'monthly'}`}
+      <button
+        onClick={openTrialModal}
         className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all duration-150"
         style={{
           fontFamily: 'var(--font-inter)',
@@ -231,11 +232,11 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
           color: plan.popular ? '#09090b' : '#09090b',
           border: plan.popular ? 'none' : '1px solid #d4d4d8',
         }}
-        onMouseEnter={e => { if (!plan.popular) (e.currentTarget as HTMLAnchorElement).style.background = '#f4f4f5'; }}
-        onMouseLeave={e => { if (!plan.popular) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
+        onMouseEnter={e => { if (!plan.popular) (e.currentTarget as HTMLButtonElement).style.background = '#f4f4f5'; }}
+        onMouseLeave={e => { if (!plan.popular) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
       >
-        Get started
-      </a>
+        Request Access
+      </button>
     </motion.div>
   );
 }
@@ -275,9 +276,9 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
               <p className="text-3xl font-bold text-zinc-900 mb-1" style={{ fontFamily: 'var(--font-inter)' }}>{fmtPrice(pack.price, currency)}</p>
               <p className="text-xs text-zinc-400 mb-1" style={{ fontFamily: 'var(--font-inter)' }}>{pack.credits} credits</p>
               <p className="text-xs text-zinc-400 mb-5" style={{ fontFamily: 'var(--font-inter)' }}>{pack.tryOns}</p>
-              <a href={`/checkout?plan=payg&pack=${pack.name.toLowerCase()}&billing=monthly`} className="w-full block text-center py-2 rounded-xl text-sm font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition-colors" style={{ fontFamily: 'var(--font-inter)', cursor: 'pointer' }}>
-                Buy pack
-              </a>
+              <button onClick={openTrialModal} className="w-full block text-center py-2 rounded-xl text-sm font-medium border border-zinc-200 text-zinc-700 hover:bg-zinc-50 transition-colors" style={{ fontFamily: 'var(--font-inter)', cursor: 'pointer' }}>
+                Request Access
+              </button>
             </motion.div>
           ))}
         </div>
@@ -377,13 +378,13 @@ function TopupPacksSection({ currency }: { currency: Currency }) {
                 </p>
               </div>
 
-              <a
-                href={`/checkout?plan=topup&pack=${pack.credits}&billing=monthly`}
+              <button
+                onClick={openTrialModal}
                 className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold border border-zinc-200 text-zinc-800 hover:bg-zinc-50 transition-colors duration-150"
-                style={{ fontFamily: 'var(--font-inter)' }}
+                style={{ fontFamily: 'var(--font-inter)', cursor: 'pointer' }}
               >
-                Buy {pack.credits} Credits
-              </a>
+                Request Access
+              </button>
             </motion.div>
           ))}
         </div>

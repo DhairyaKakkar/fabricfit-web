@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { PRICING, type Currency, fmtPrice } from '@/lib/pricing';
 import type { BillingCycle } from './PricingPageClient';
+import { openTrialModal } from '@/lib/openTrialModal';
 
 interface Feature {
   label: string;
@@ -299,28 +300,25 @@ function PlanCard({ plan, billing, currency, index }: CardProps) {
       </ul>
 
       {/* CTA */}
-      <a
-        href={
-          plan.payg
-            ? `/checkout?plan=${plan.id}&billing=monthly`
-            : `/checkout?plan=${plan.id}&billing=${billing}`
-        }
+      <button
+        onClick={openTrialModal}
         className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all duration-150"
         style={{
           fontFamily: 'var(--font-inter)',
+          cursor: 'pointer',
           background: dark ? '#ffffff' : 'transparent',
           color: dark ? '#09090b' : '#09090b',
           border: dark ? 'none' : '1px solid #d4d4d8',
         }}
         onMouseEnter={(e) => {
-          if (!dark) (e.currentTarget as HTMLAnchorElement).style.background = '#f4f4f5';
+          if (!dark) (e.currentTarget as HTMLButtonElement).style.background = '#f4f4f5';
         }}
         onMouseLeave={(e) => {
-          if (!dark) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+          if (!dark) (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
         }}
       >
-        Get Started
-      </a>
+        Request Access
+      </button>
     </motion.div>
   );
 }

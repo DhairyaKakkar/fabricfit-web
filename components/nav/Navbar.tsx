@@ -37,6 +37,12 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
+    const handler = () => setTrialOpen(true);
+    window.addEventListener('open-trial-modal', handler);
+    return () => window.removeEventListener('open-trial-modal', handler);
+  }, []);
+
+  useEffect(() => {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data }) => {
       setLoggedIn(!!data.session);
@@ -103,7 +109,7 @@ export default function Navbar() {
               padding="9px 20px"
               fontSize={13}
             >
-              Start Free Trial
+              Request Access
             </LiquidButton>
           )}
         </div>
@@ -148,7 +154,7 @@ export default function Navbar() {
               className="mt-1 px-4 py-3 rounded-md bg-zinc-950 text-white text-sm font-semibold text-center w-full"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
-              Start Free Trial
+              Request Access
             </button>
           )}
         </div>

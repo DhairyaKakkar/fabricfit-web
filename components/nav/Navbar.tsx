@@ -92,17 +92,17 @@ export default function Navbar() {
           >
             {accountLink.label}
           </a>
-          <LiquidButton
-            href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
-            target="_blank"
-            rel="noopener noreferrer"
-            color="#ffffff"
-            bg="rgba(9,9,11,0.92)"
-            padding="9px 20px"
-            fontSize={13}
-          >
-            Book a Demo
-          </LiquidButton>
+          {!loggedIn && (
+            <LiquidButton
+              href="/signup"
+              color="#ffffff"
+              bg="rgba(9,9,11,0.92)"
+              padding="9px 20px"
+              fontSize={13}
+            >
+              Start Free Trial
+            </LiquidButton>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -139,15 +139,15 @@ export default function Navbar() {
           >
             {accountLink.label}
           </a>
-          <a
-            href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 px-4 py-3 rounded-md bg-zinc-950 text-white text-sm font-semibold text-center"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            Book a Demo
-          </a>
+          {!loggedIn && (
+            <a
+              href="/signup"
+              className="mt-1 px-4 py-3 rounded-md bg-zinc-950 text-white text-sm font-semibold text-center"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              Start Free Trial
+            </a>
+          )}
         </div>
       </div>
     </header>

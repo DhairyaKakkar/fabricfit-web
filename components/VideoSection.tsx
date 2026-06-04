@@ -56,12 +56,12 @@ export default function VideoSection() {
         <p style={{
           fontFamily: 'var(--font-inter)',
           fontSize: 12,
-          color: 'rgba(255,255,255,0.72)',
-          letterSpacing: '0.2em',
+          color: 'rgba(255,255,255,0.6)',
+          letterSpacing: '0.16em',
           textTransform: 'uppercase',
           margin: 0,
         }}>
-          AI virtual trial room
+          Fewer returns &nbsp;·&nbsp; More walk-in conversions &nbsp;·&nbsp; No studio required
         </p>
       </div>
 

@@ -13,11 +13,11 @@ export default function VideoSection() {
       {/* Video */}
       <video
         src="/videos/hero-video.mp4"
-        autoPlay loop muted playsInline preload="auto"
+        autoPlay loop muted playsInline
+        preload="none"
         style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           objectFit: 'cover', zIndex: 1,
-          imageRendering: 'auto',
           transform: 'translateZ(0)',
         }}
       />
@@ -56,35 +56,46 @@ export default function VideoSection() {
         <p style={{
           fontFamily: 'var(--font-inter)',
           fontSize: 12,
-          color: 'rgba(255,255,255,0.72)',
-          letterSpacing: '0.2em',
+          color: 'rgba(255,255,255,0.6)',
+          letterSpacing: '0.16em',
           textTransform: 'uppercase',
           margin: 0,
         }}>
-          AI virtual trial room
+          Fewer returns &nbsp;·&nbsp; More walk-in conversions &nbsp;·&nbsp; No studio required
         </p>
       </div>
 
       {/* CTA buttons */}
       <div style={{
-        position: 'absolute', bottom: 60, left: 0, right: 0,
-        display: 'flex', justifyContent: 'center', gap: 12, zIndex: 4,
-        flexWrap: 'wrap', padding: '0 24px',
+        position: 'absolute', bottom: 48, left: 0, right: 0,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, zIndex: 4,
+        padding: '0 24px',
       }}>
-        <LiquidButton
-          href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
-          target="_blank"
-          rel="noopener noreferrer"
-          color="#09090b"
-          bg="#ffffff"
-          padding="16px 44px"
-          fontSize={16}
-        >
-          Book a Demo
-        </LiquidButton>
-        <LiquidButton href="/pricing" color="#ffffff" bg="rgba(255,255,255,0.12)" padding="16px 44px" fontSize={16}>
-          View Plans
-        </LiquidButton>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <LiquidButton href="/signup" color="#09090b" bg="#ffffff" padding="16px 44px" fontSize={16}>
+            Start Free Trial
+          </LiquidButton>
+          <LiquidButton
+            href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="#ffffff"
+            bg="rgba(255,255,255,0.12)"
+            padding="16px 44px"
+            fontSize={16}
+          >
+            Book a Demo
+          </LiquidButton>
+        </div>
+        <p style={{
+          fontFamily: 'var(--font-inter)',
+          fontSize: 11,
+          color: 'rgba(255,255,255,0.4)',
+          letterSpacing: '0.08em',
+          margin: 0,
+        }}>
+          40 free credits · No card required · 2-min setup
+        </p>
       </div>
     </section>
   );

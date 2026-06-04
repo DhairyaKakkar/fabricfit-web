@@ -120,7 +120,7 @@ export default function CtaSection() {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-6 mt-12">
-          {['40 free credits', 'No card required', '2-min setup'].map((item) => (
+          {['No contract', 'Works in-store', '2-min setup'].map((item) => (
             <div key={item} className="flex items-center gap-1.5">
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'rgba(201,168,76,0.6)' }} />
               <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.04em' }}>

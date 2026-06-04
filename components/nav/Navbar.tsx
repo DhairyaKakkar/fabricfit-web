@@ -6,6 +6,7 @@ import Image from 'next/image';
 import LiquidButton from '@/components/ui/LiquidButton';
 import { slowScrollTo } from '@/lib/scrollTo';
 import { createClient } from '@/lib/supabase/client';
+import TrialRequestModal from '@/components/TrialRequestModal';
 
 const NAV_LINKS = [
   { anchor: 'features', label: 'Features' },
@@ -17,6 +18,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [trialOpen, setTrialOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
 
@@ -56,6 +58,7 @@ export default function Navbar() {
   const accountLink = loggedIn ? { href: '/dashboard', label: 'Go to account' } : { href: '/login', label: 'Sign in' };
 
   return (
+    <>
     <header
       className={`fixed top-0 left-0 right-0 z-50 bg-white transition-all duration-200 ${
         scrolled ? 'border-b border-zinc-200/80 shadow-sm' : 'border-b border-zinc-100'
@@ -94,7 +97,7 @@ export default function Navbar() {
           </a>
           {!loggedIn && (
             <LiquidButton
-              href="/signup"
+              onClick={() => setTrialOpen(true)}
               color="#ffffff"
               bg="rgba(9,9,11,0.92)"
               padding="9px 20px"
@@ -140,16 +143,19 @@ export default function Navbar() {
             {accountLink.label}
           </a>
           {!loggedIn && (
-            <a
-              href="/signup"
-              className="mt-1 px-4 py-3 rounded-md bg-zinc-950 text-white text-sm font-semibold text-center"
+            <button
+              onClick={() => { setOpen(false); setTrialOpen(true); }}
+              className="mt-1 px-4 py-3 rounded-md bg-zinc-950 text-white text-sm font-semibold text-center w-full"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               Start Free Trial
-            </a>
+            </button>
           )}
         </div>
       </div>
     </header>
+
+    <TrialRequestModal open={trialOpen} onClose={() => setTrialOpen(false)} />
+    </>
   );
 }

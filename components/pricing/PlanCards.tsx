@@ -338,7 +338,7 @@ export default function PlanCards({ billing, currency }: { billing: BillingCycle
         className="text-center text-xs text-zinc-400 mt-6"
         style={{ fontFamily: 'var(--font-inter)' }}
       >
-        All plans include a 14-day free trial · 40 credits · no card required
+        Credits are allocated to your account upon approval
       </p>
     </section>
   );

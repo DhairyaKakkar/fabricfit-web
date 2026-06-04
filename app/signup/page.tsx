@@ -25,13 +25,9 @@ function SignupForm() {
           <div className="flex justify-center mb-3">
             <Image src="/logo.png" alt="TrialRoomStudio" width={80} height={80} className="h-20 w-auto block" />
           </div>
-          {planLabel ? (
+          {planLabel && (
             <p className="text-sm text-zinc-400 mt-1" style={{ fontFamily: 'var(--font-inter)' }}>
               Create your account to get started with the <span className="text-zinc-700 font-medium">{planLabel}</span> plan
-            </p>
-          ) : (
-            <p className="text-sm text-zinc-400 mt-1" style={{ fontFamily: 'var(--font-inter)' }}>
-              Start your 14-day free trial — no card required
             </p>
           )}
         </div>
@@ -112,13 +108,15 @@ function SignupForm() {
                 ? 'Creating account…'
                 : planLabel
                   ? `Create account & continue to payment`
-                  : 'Start free trial'}
+                  : 'Create Account'}
             </button>
           </form>
 
-          <p className="text-center text-xs text-zinc-400 mt-4" style={{ fontFamily: 'var(--font-inter)' }}>
-            {planLabel ? 'You\'ll be taken to payment after account creation.' : 'Includes 40 free credits · No card required'}
-          </p>
+          {planLabel && (
+            <p className="text-center text-xs text-zinc-400 mt-4" style={{ fontFamily: 'var(--font-inter)' }}>
+              You&apos;ll be taken to payment after account creation.
+            </p>
+          )}
         </div>
 
         {/* Prominent Sign In section */}

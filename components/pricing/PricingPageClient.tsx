@@ -550,7 +550,7 @@ function ComparisonSection({ yearly, currency }: { yearly: boolean; currency: Cu
 const RULES = [
   { icon: '↻', title: 'Credits reset on billing date', body: 'Your credits reset on the same day you subscribed — not the 1st of the month.' },
   { icon: '✕', title: "Unused credits don't roll over", body: 'Subscription credits expire at reset. Top-up pack credits never expire.' },
-  { icon: '★', title: '14-day free trial', body: '40 credits, ~20 fast try-ons, no card required. Converts to PAYG or a paid plan at the end.' },
+  { icon: '★', title: 'Credits on approval', body: 'We review every account and allocate starter credits personally. Reach out to get started.' },
 ];
 
 function FooterSection() {
@@ -648,7 +648,7 @@ export default function PricingPageClient() {
           className="text-sm text-zinc-500 max-w-md mx-auto mb-10"
           style={{ fontFamily: 'var(--font-inter)', lineHeight: 1.7 }}
         >
-          All plans include a 14-day free trial — 40 credits, no card required.
+          Credits are allocated to your account upon approval.
         </motion.p>
 
         {/* Controls */}

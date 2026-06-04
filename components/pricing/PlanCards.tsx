@@ -1,9 +1,10 @@
 'use client';
 
+'use client';
+
 import { motion } from 'framer-motion';
 import { PRICING, type Currency, fmtPrice } from '@/lib/pricing';
 import type { BillingCycle } from './PricingPageClient';
-import { openTrialModal } from '@/lib/openTrialModal';
 
 interface Feature {
   label: string;
@@ -300,25 +301,29 @@ function PlanCard({ plan, billing, currency, index }: CardProps) {
       </ul>
 
       {/* CTA */}
-      <button
-        onClick={openTrialModal}
+      <a
+        href={
+          plan.payg
+            ? `/checkout?plan=payg&billing=monthly`
+            : `/checkout?plan=${plan.id}&billing=${billing}`
+        }
         className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all duration-150"
         style={{
           fontFamily: 'var(--font-inter)',
-          cursor: 'pointer',
           background: dark ? '#ffffff' : 'transparent',
           color: dark ? '#09090b' : '#09090b',
           border: dark ? 'none' : '1px solid #d4d4d8',
+          textDecoration: 'none',
         }}
         onMouseEnter={(e) => {
-          if (!dark) (e.currentTarget as HTMLButtonElement).style.background = '#f4f4f5';
+          if (!dark) (e.currentTarget as HTMLAnchorElement).style.background = '#f4f4f5';
         }}
         onMouseLeave={(e) => {
-          if (!dark) (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+          if (!dark) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
         }}
       >
-        Request Access
-      </button>
+        Get Started
+      </a>
     </motion.div>
   );
 }
@@ -336,7 +341,7 @@ export default function PlanCards({ billing, currency }: { billing: BillingCycle
         className="text-center text-xs text-zinc-400 mt-6"
         style={{ fontFamily: 'var(--font-inter)' }}
       >
-        Credits are allocated to your account upon approval
+        Secure payment via Stripe or Razorpay · Cancel anytime
       </p>
     </section>
   );

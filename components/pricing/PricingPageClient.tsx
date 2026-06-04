@@ -114,6 +114,9 @@ function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: bo
       </button>
       <button
         onClick={() => onChange(!yearly)}
+        role="switch"
+        aria-checked={yearly}
+        aria-label="Toggle between monthly and yearly billing"
         className="relative w-10 h-5 rounded-full transition-colors duration-200"
         style={{ background: yearly ? '#09090b' : '#e4e4e7' }}
       >
@@ -128,7 +131,9 @@ function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: bo
         className={`text-sm transition-colors flex items-center gap-1.5 ${yearly ? 'text-zinc-900 font-medium' : 'text-zinc-400'}`}
       >
         Yearly
-        <span className="text-[10px] font-semibold bg-zinc-100 text-zinc-600 rounded px-1.5 py-0.5">2 months free</span>
+        {yearly && (
+          <span className="text-[10px] font-semibold bg-zinc-100 text-zinc-600 rounded px-1.5 py-0.5">2 months free</span>
+        )}
       </button>
     </div>
   );
@@ -292,8 +297,6 @@ function CreditPacksSection({ currency }: { currency: Currency }) {
 
 /* ─── Top-Up Packs ───────────────────────────────────────────────────────── */
 function TopupPacksSection({ currency }: { currency: Currency }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
   const c = PRICING[currency];
 
   const PACKS = [
@@ -304,7 +307,7 @@ function TopupPacksSection({ currency }: { currency: Currency }) {
   ];
 
   return (
-    <div ref={ref} className="py-20 px-6 border-t border-zinc-100">
+    <div className="py-20 px-6 border-t border-zinc-100">
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
         <div className="text-center mb-10">
           <p
@@ -332,7 +335,7 @@ function TopupPacksSection({ currency }: { currency: Currency }) {
             <motion.div
               key={pack.key}
               initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.07 }}
               className="relative flex flex-col rounded-2xl p-5 bg-white border border-zinc-200"
               style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
@@ -649,7 +652,7 @@ export default function PricingPageClient() {
           className="text-sm text-zinc-500 max-w-md mx-auto mb-10"
           style={{ fontFamily: 'var(--font-inter)', lineHeight: 1.7 }}
         >
-          Credits are allocated to your account upon approval.
+          Pay per month or save with yearly. Switch or cancel anytime.
         </motion.p>
 
         {/* Controls */}

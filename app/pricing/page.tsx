@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Navbar from '@/components/nav/Navbar';
+import Footer from '@/components/Footer';
 import PricingPageClient from '@/components/pricing/PricingPageClient';
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function PricingPage() {
       <main className="pt-14">
         <PricingPageClient />
       </main>
+      <Footer />
     </>
   );
 }

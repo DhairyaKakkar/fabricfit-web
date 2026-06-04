@@ -44,19 +44,6 @@ export default function CtaSection() {
         pointerEvents: 'none',
       }} />
 
-      {/* Watermark */}
-      <div className="absolute select-none pointer-events-none" style={{
-        fontFamily: 'var(--font-playfair)',
-        fontSize: 'clamp(100px, 20vw, 220px)',
-        fontWeight: 700,
-        color: 'rgba(255,255,255,0.025)',
-        top: '50%', left: '50%',
-        transform: 'translate(-50%, -50%)',
-        lineHeight: 1, whiteSpace: 'nowrap',
-      }}>
-        2 min
-      </div>
-
       {/* Top border glow */}
       <div style={{
         position: 'absolute', top: 0, left: '10%', right: '10%', height: 1,

@@ -134,9 +134,6 @@ function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: bo
 
 /* ─── Plan Card ──────────────────────────────────────────────────────────── */
 function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]; yearly: boolean; currency: Currency; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
-
   const c = PRICING[currency];
   const isPayg = plan.id === 'payg';
   const planPricing = !isPayg ? c.plans[plan.id as Exclude<PlanId, 'payg'>] : null;
@@ -146,10 +143,9 @@ function PlanCard({ plan, yearly, currency, index }: { plan: typeof PLAN_META[0]
 
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.4, delay: index * 0.06 }}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
       className="relative flex flex-col rounded-2xl p-6"
       style={{
         background: plan.popular ? '#09090b' : '#ffffff',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GARMENTS, Gender, GarmentId } from '@/lib/garments';
 
 export default function ProductsPageClient() {
@@ -9,6 +9,16 @@ export default function ProductsPageClient() {
 
   const garments = GARMENTS.filter(g => g.gender === gender);
   const selected = garments.find(g => g.id === selectedId) ?? garments[0];
+
+  // Preload every model + garment image once on mount so clicks are instant.
+  useEffect(() => {
+    GARMENTS.forEach((g) => {
+      const a = new Image();
+      a.src = g.compositeSrc;
+      const b = new Image();
+      b.src = g.floatSrc;
+    });
+  }, []);
 
   const switchGender = (g: Gender) => {
     setGender(g);
@@ -20,52 +30,77 @@ export default function ProductsPageClient() {
     <div style={{ display: 'flex', height: '100vh', backgroundColor: '#F6F5F0', paddingTop: 56, overflow: 'hidden' }}>
 
       {/* Left: model viewer */}
-      <div style={{ width: '42%', flexShrink: 0, position: 'relative', background: '#F6F5F0', overflow: 'hidden' }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={selected.compositeSrc}
-          alt={selected.label}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', zIndex: 1 }}
-        />
-
-        {/* Bottom fade */}
+      <div style={{
+        width: '42%', flexShrink: 0, position: 'relative',
+        background: 'radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #F1EFE9 55%, #E8E5DC 100%)',
+        overflow: 'hidden',
+      }}>
+        {/* Soft vignette frame */}
         <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, height: 180,
-          background: 'linear-gradient(to top, rgba(246,245,240,0.97) 0%, transparent 100%)',
+          position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none',
+          boxShadow: 'inset 0 0 120px rgba(0,0,0,0.06)',
+        }} />
+
+        {/* Model image — crossfade by key */}
+        {garments.map((g) => (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            key={g.id}
+            src={g.compositeSrc}
+            alt={g.label}
+            style={{
+              position: 'absolute', inset: 0, width: '100%', height: '100%',
+              objectFit: 'cover', objectPosition: 'top center', zIndex: 1,
+              opacity: g.id === selected.id ? 1 : 0,
+              transition: 'opacity 0.45s ease',
+            }}
+          />
+        ))}
+
+        {/* Gentle bottom fade — subtle, not a harsh white wash */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: 120,
+          background: 'linear-gradient(to top, rgba(232,229,220,0.55) 0%, transparent 100%)',
           pointerEvents: 'none', zIndex: 2,
         }} />
 
-        {/* Garment name */}
-        <span style={{
-          position: 'absolute', top: 24, left: 24, zIndex: 10,
-          fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700,
-          letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)',
-        }}>
-          {selected.label}
-        </span>
+        {/* Eyebrow + garment name, bottom-left */}
+        <div style={{ position: 'absolute', bottom: 28, left: 28, zIndex: 10 }}>
+          <p style={{
+            fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700,
+            letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.3)',
+            margin: 0, marginBottom: 4,
+          }}>
+            Live Preview
+          </p>
+          <p style={{
+            fontFamily: 'var(--font-playfair)', fontSize: 26, fontWeight: 700,
+            color: '#09090b', margin: 0, lineHeight: 1,
+          }}>
+            {selected.label}
+          </p>
+        </div>
 
-        {/* Gender toggle — right side, vertical */}
+        {/* Gender toggle — top-right pill */}
         <div style={{
-          position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
-          zIndex: 10, display: 'flex', flexDirection: 'column',
-          background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)',
-          borderRadius: 999, padding: '6px 0', border: '1px solid rgba(0,0,0,0.07)',
+          position: 'absolute', top: 24, right: 24, zIndex: 10,
+          display: 'flex',
+          background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(20px)',
+          borderRadius: 999, padding: 4, border: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
         }}>
-          {(['female', 'male'] as Gender[]).map((g, i) => (
+          {(['female', 'male'] as Gender[]).map((g) => (
             <button
               key={g}
               onClick={() => switchGender(g)}
               style={{
-                padding: '10px 14px', border: 'none',
-                borderBottom: i === 0 ? '1px solid rgba(0,0,0,0.1)' : 'none',
-                background: 'transparent',
-                color: gender === g ? '#09090b' : '#a1a1aa',
-                fontSize: 11, fontWeight: gender === g ? 700 : 500,
+                padding: '6px 16px', border: 'none', borderRadius: 999,
+                background: gender === g ? '#09090b' : 'transparent',
+                color: gender === g ? '#ffffff' : '#71717a',
+                fontSize: 11, fontWeight: 600,
                 cursor: 'pointer', fontFamily: 'var(--font-inter)',
-                letterSpacing: '0.06em', textTransform: 'uppercase',
-                transition: 'color 0.2s',
-                writingMode: 'vertical-rl', textOrientation: 'mixed',
-                transform: 'rotate(180deg)',
+                letterSpacing: '0.04em', textTransform: 'uppercase',
+                transition: 'all 0.2s',
               }}
             >
               {g === 'male' ? 'Men' : 'Women'}
@@ -75,15 +110,28 @@ export default function ProductsPageClient() {
       </div>
 
       {/* Right: catalogue */}
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '32px 48px 40px' }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '44px 48px 40px' }}>
+        <p style={{
+          fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600,
+          letterSpacing: '0.16em', textTransform: 'uppercase',
+          color: 'rgba(0,0,0,0.35)', margin: 0, marginBottom: 12,
+        }}>
+          Browse the collection
+        </p>
         <h2 style={{
           fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(2.8rem, 4vw, 4.5rem)',
-          fontWeight: 700, color: '#09090b', lineHeight: 0.95,
-          letterSpacing: '-0.02em', marginBottom: '1.8rem',
+          fontSize: 'clamp(2.4rem, 3.4vw, 3.6rem)',
+          fontWeight: 700, color: '#09090b', lineHeight: 0.98,
+          letterSpacing: '-0.02em', marginBottom: '0.6rem',
         }}>
-          {selected.label}
+          Tap any style.<br />See it on the model.
         </h2>
+        <p style={{
+          fontFamily: 'var(--font-inter)', fontSize: 13, color: 'rgba(0,0,0,0.45)',
+          marginBottom: '1.8rem', lineHeight: 1.6, maxWidth: 420,
+        }}>
+          This is exactly what your customers experience — instant, photorealistic try-on across your full catalogue.
+        </p>
 
         <div style={{ height: 1, background: '#e5e5e3', marginBottom: 24 }} />
 
@@ -101,8 +149,11 @@ export default function ProductsPageClient() {
                   cursor: 'pointer', overflow: 'hidden', aspectRatio: '4/5',
                   display: 'flex', flexDirection: 'column', alignItems: 'center',
                   justifyContent: 'center', position: 'relative',
-                  transition: 'background 0.22s, border-color 0.22s',
+                  transition: 'background 0.22s, border-color 0.22s, transform 0.15s',
+                  boxShadow: isActive ? '0 6px 20px rgba(0,0,0,0.18)' : 'none',
                 }}
+                onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={garment.floatSrc} alt={garment.label} style={{ width: '76%', height: '74%', objectFit: 'contain', position: 'relative', zIndex: 1 }} />
@@ -110,7 +161,7 @@ export default function ProductsPageClient() {
                   position: 'absolute', bottom: 12,
                   fontFamily: 'var(--font-inter)', fontSize: 9, fontWeight: 700,
                   letterSpacing: '0.1em', textTransform: 'uppercase',
-                  color: isActive ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.3)',
+                  color: isActive ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)',
                   transition: 'color 0.22s', zIndex: 1,
                 }}>
                   {garment.label}

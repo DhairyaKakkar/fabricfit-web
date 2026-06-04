@@ -55,6 +55,22 @@ create policy "own subscription" on public.subscriptions for all using (auth.uid
 create policy "own credits" on public.credits for all using (auth.uid() = user_id);
 create policy "own products" on public.products for all using (auth.uid() = user_id);
 
+-- trial_requests: captures access requests from the website modal
+create table if not exists public.trial_requests (
+  id uuid primary key default gen_random_uuid(),
+  name text,
+  company text,
+  phone text,
+  email text not null,
+  status text not null default 'pending', -- 'pending' | 'approved' | 'rejected'
+  requested_at timestamptz default now()
+);
+
+-- only service role can read/write trial_requests (no user auth required to submit)
+alter table public.trial_requests enable row level security;
+create policy "service role only" on public.trial_requests
+  using (false) with check (false);
+
 -- auto-create profile + credits row when a user signs up
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = ''
@@ -64,7 +80,7 @@ begin
   values (new.id, new.email);
 
   insert into public.credits (user_id, balance, total_allocated)
-  values (new.id, 40, 40); -- 14-day free trial: 40 credits
+  values (new.id, 0, 0); -- credits allocated manually after approval
 
   return new;
 end;

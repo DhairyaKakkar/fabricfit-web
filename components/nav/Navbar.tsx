@@ -17,8 +17,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === '/';
 
-  // pill shows when scrolled OR on any non-home page
-  const showPill = scrolled || !isHome;
+  // pill only when scrolled
+  const showPill = scrolled;
   // white text only when over dark hero (home, not yet scrolled)
   const onDark = isHome && !scrolled;
 

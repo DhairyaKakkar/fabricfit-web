@@ -14,7 +14,6 @@ html {
   padding: 0;
   overflow-x: hidden;
   max-width: 100%;
-  overscroll-behavior-y: none;
 }
 
 body {
@@ -22,8 +21,7 @@ body {
   padding: 0;
   overflow-x: hidden;
   max-width: 100%;
-  overscroll-behavior-y: none;
-  background: #09090b;
+  background: #ffffff;
 }
 
 .snap-start {

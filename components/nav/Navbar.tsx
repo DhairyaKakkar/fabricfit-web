@@ -79,12 +79,12 @@ export default function Navbar() {
     ? { href: '/dashboard', label: 'Dashboard' }
     : { href: '/signup', label: 'Sign up' };
 
-  const linkColor     = onDark ? 'rgba(255,255,255,0.55)' : 'rgba(9,9,11,0.5)';
+  const linkColor     = onDark ? 'rgba(255,255,255,0.85)' : 'rgba(9,9,11,0.55)';
   const linkHover     = onDark ? '#ffffff' : '#09090b';
-  const linkHoverBg   = onDark ? 'rgba(255,255,255,0.08)' : 'rgba(9,9,11,0.05)';
+  const linkHoverBg   = onDark ? 'rgba(255,255,255,0.10)' : 'rgba(9,9,11,0.05)';
   const wordmarkColor = onDark ? '#ffffff' : '#09090b';
-  const wordmarkMuted = onDark ? 'rgba(255,255,255,0.38)' : 'rgba(9,9,11,0.32)';
-  const accountColor  = onDark ? 'rgba(255,255,255,0.5)' : 'rgba(9,9,11,0.45)';
+  const wordmarkMuted = onDark ? 'rgba(255,255,255,0.55)' : 'rgba(9,9,11,0.32)';
+  const accountColor  = onDark ? 'rgba(255,255,255,0.8)' : 'rgba(9,9,11,0.5)';
   const accountHover  = onDark ? '#ffffff' : '#09090b';
 
   return (

@@ -25,8 +25,8 @@ const STEPS = [
   {
     num: '04', title: 'See the Try-On', img: '/howitworks/4.png',
     bg: '#09090b', textDark: false, imgPos: 'center bottom',
-    desc: 'AI renders the fabric on your customer in under 90 seconds. A photorealistic preview they can see before you stitch a single thread.',
-    bullets: ['Results in under 90 seconds', 'Photorealistic, not a cartoon', 'Share on WhatsApp with one tap'],
+    desc: 'AI renders the fabric on your customer in under 15–20 seconds. A photorealistic preview they can see before you stitch a single thread.',
+    bullets: ['Results in under 15–20 seconds', 'Photorealistic, not a cartoon', 'Share on WhatsApp with one tap'],
   },
   {
     num: '05', title: 'Choose & Share', img: '/howitworks/5.png',

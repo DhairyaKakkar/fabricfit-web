@@ -1,4 +1,4 @@
-const SEGMENT = '90-second try-ons · No photoshoot · Works in-store · WhatsApp delivery · Fabric to look · ';
+const SEGMENT = '15–20 second try-ons · No photoshoot · Works in-store · WhatsApp delivery · Fabric to look · ';
 
 export default function MarqueeDivider() {
   return (

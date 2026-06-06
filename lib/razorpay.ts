@@ -25,4 +25,8 @@ export const RAZORPAY_PLANS: Record<string, { monthly: number; annual: number; p
     monthly: 1000000, // ₹10000 in paise
     annual:  10000000, // ₹100000 in paise
   },
+  payg: {
+    monthly: 50000, // ₹500 in paise
+    annual:  50000,
+  },
 };

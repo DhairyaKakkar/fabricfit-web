@@ -13,7 +13,7 @@ const FAQS = [
   },
   {
     q: 'How long does each try-on take?',
-    a: 'About 90 seconds from uploading the fabric photo to seeing the draped result on-screen. Most showrooms run 10–15 try-ons in a single customer visit.',
+    a: 'About 15–20 seconds from uploading the fabric photo to seeing the draped result on-screen. Most showrooms run 10–15 try-ons in a single customer visit.',
   },
   {
     q: 'Are my fabric images safe?',

@@ -22,22 +22,28 @@ export async function POST(request: NextRequest) {
 
   const amount = billingCycle === 'annual' ? plan.annual : plan.monthly;
 
-  const order = await getRazorpay().orders.create({
-    amount,
-    currency: 'INR',
-    notes: {
-      user_id: user.id,
-      plan_id: planId,
-      billing_cycle: billingCycle,
-      email: user.email ?? '',
-    },
-  });
+  try {
+    const order = await getRazorpay().orders.create({
+      amount,
+      currency: 'INR',
+      notes: {
+        user_id: user.id,
+        plan_id: planId,
+        billing_cycle: billingCycle,
+        email: user.email ?? '',
+      },
+    });
 
-  return NextResponse.json({
-    orderId: order.id,
-    amount: order.amount,
-    currency: order.currency,
-    keyId: process.env.RAZORPAY_KEY_ID,
-    userEmail: user.email,
-  });
+    return NextResponse.json({
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: process.env.RAZORPAY_KEY_ID,
+      userEmail: user.email,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to create order';
+    console.error('[razorpay] order creation failed:', message);
+    return NextResponse.json({ error: message }, { status: 502 });
+  }
 }

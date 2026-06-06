@@ -1,11 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GARMENTS, Gender, GarmentId } from '@/lib/garments';
 
 export default function ProductsPageClient() {
   const [gender, setGender] = useState<Gender>('female');
   const [selectedId, setSelectedId] = useState<GarmentId>('casual-dress');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const garments = GARMENTS.filter(g => g.gender === gender);
   const selected = garments.find(g => g.id === selectedId) ?? garments[0];
@@ -15,6 +23,79 @@ export default function ProductsPageClient() {
     const first = GARMENTS.find(item => item.gender === g);
     if (first) setSelectedId(first.id);
   };
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#F6F5F0', paddingTop: 64, overflow: 'hidden' }}>
+
+        {/* Compact header */}
+        <div style={{ padding: '14px 20px 0', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', margin: 0, marginBottom: 4 }}>
+                Browse the collection
+              </p>
+              <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.35rem', fontWeight: 700, color: '#09090b', lineHeight: 1.1, letterSpacing: '-0.02em', margin: 0 }}>
+                Tap any style.
+              </h2>
+            </div>
+            {/* Gender toggle */}
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderRadius: 999, padding: 3, border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', flexShrink: 0 }}>
+              {(['female', 'male'] as Gender[]).map((g) => (
+                <button
+                  key={g}
+                  onClick={() => switchGender(g)}
+                  style={{ padding: '5px 12px', border: 'none', borderRadius: 999, background: gender === g ? '#09090b' : 'transparent', color: gender === g ? '#ffffff' : '#71717a', fontSize: 10, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-inter)', letterSpacing: '0.04em', textTransform: 'uppercase', transition: 'all 0.2s' }}
+                >
+                  {g === 'male' ? 'Men' : 'Women'}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div style={{ height: 1, background: '#e5e5e3', marginTop: 12 }} />
+        </div>
+
+        {/* Model viewer — middle, flex: 1 */}
+        <div style={{ flex: 1, position: 'relative', minHeight: 0, background: 'radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #F1EFE9 55%, #E8E5DC 100%)', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none', boxShadow: 'inset 0 0 60px rgba(0,0,0,0.04)' }} />
+          {garments.map((g) => (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              key={g.id}
+              src={g.compositeSrc}
+              alt={g.label}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', zIndex: 1, opacity: g.id === selected.id ? 1 : 0, transition: 'opacity 0.45s ease' }}
+            />
+          ))}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(to top, rgba(232,229,220,0.55) 0%, transparent 100%)', pointerEvents: 'none', zIndex: 2 }} />
+          <div style={{ position: 'absolute', bottom: 16, left: 20, zIndex: 10 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.3)', margin: 0, marginBottom: 2 }}>Live Preview</p>
+            <p style={{ fontFamily: 'var(--font-playfair)', fontSize: 20, fontWeight: 700, color: '#09090b', margin: 0, lineHeight: 1 }}>{selected.label}</p>
+          </div>
+        </div>
+
+        {/* Outfit grid — bottom */}
+        <div style={{ flexShrink: 0, padding: '10px 14px', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+            {garments.map((garment) => {
+              const isActive = garment.id === selectedId;
+              return (
+                <div
+                  key={garment.id}
+                  onClick={() => setSelectedId(garment.id)}
+                  style={{ borderRadius: 10, background: isActive ? '#09090b' : '#efefed', border: `1.5px solid ${isActive ? '#09090b' : 'transparent'}`, cursor: 'pointer', overflow: 'hidden', aspectRatio: '4/5', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', transition: 'background 0.22s, border-color 0.22s', boxShadow: isActive ? '0 4px 14px rgba(0,0,0,0.18)' : 'none' }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={garment.floatSrc} alt={garment.label} style={{ width: '72%', height: '70%', objectFit: 'contain', position: 'relative', zIndex: 1 }} />
+                  <span style={{ position: 'absolute', bottom: 6, fontFamily: 'var(--font-inter)', fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: isActive ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)', zIndex: 1 }}>{garment.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', height: '100vh', backgroundColor: '#F6F5F0', paddingTop: 56, overflow: 'hidden' }}>
@@ -47,7 +128,7 @@ export default function ProductsPageClient() {
           />
         ))}
 
-        {/* Gentle bottom fade — subtle, not a harsh white wash */}
+        {/* Gentle bottom fade */}
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, height: 120,
           background: 'linear-gradient(to top, rgba(232,229,220,0.55) 0%, transparent 100%)',

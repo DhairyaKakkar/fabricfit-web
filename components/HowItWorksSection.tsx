@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 interface FlowSectionProps {
@@ -12,7 +12,7 @@ interface FlowSectionProps {
 
 function FlowSection({ children, bg = '#09090b', index, 'aria-label': ariaLabel }: FlowSectionProps) {
   return (
-    <div style={{ position: 'sticky', top: 0, zIndex: index + 1, height: '100vh', overflow: 'hidden' }}>
+    <div style={{ position: 'sticky', top: 0, zIndex: index + 1, height: '100dvh', overflow: 'hidden' }}>
       <section
         aria-label={ariaLabel}
         className="relative w-full h-full flex flex-col justify-between"
@@ -50,15 +50,15 @@ function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: bo
   );
 }
 
-function UseCaseChips({ chips, light = false }: { chips: { label: string }[]; light?: boolean }) {
+function UseCaseChips({ chips, light = false, isMobile = false }: { chips: { label: string }[]; light?: boolean; isMobile?: boolean }) {
   const dotClr  = light ? 'rgba(0,0,0,0.3)'   : 'rgba(255,255,255,0.3)';
   const textClr = light ? 'rgba(0,0,0,0.65)'  : 'rgba(255,255,255,0.7)';
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 32 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 8 : 16, marginTop: isMobile ? 12 : 32 }}>
       {chips.map((c) => (
         <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotClr, flexShrink: 0 }} />
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 20, fontWeight: 500, color: textClr, letterSpacing: '-0.01em' }}>{c.label}</span>
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: dotClr, flexShrink: 0 }} />
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? 13 : 20, fontWeight: 500, color: textClr, letterSpacing: '-0.01em' }}>{c.label}</span>
         </div>
       ))}
     </div>
@@ -81,73 +81,94 @@ function StepDots({ active, light = false }: { active: '01' | '02' | '03'; light
 }
 
 export default function HowItWorksSection() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  const textStyle: React.CSSProperties = {
+    display: 'flex', flexDirection: 'column',
+    gap: isMobile ? '0.75rem' : '1.5rem',
+    position: 'relative', zIndex: 2,
+    maxWidth: isMobile ? '100%' : '44%',
+  };
+
+  const headingSize = isMobile ? '2rem' : 'clamp(2.8rem, 4.5vw, 6rem)';
+  const imageStyle: React.CSSProperties = isMobile
+    ? { position: 'absolute', bottom: 0, left: 0, right: 0, width: '100%', zIndex: 1, pointerEvents: 'none' }
+    : { position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' };
+
   return (
     <div id="features" className="w-full">
 
       <FlowSection index={0} aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '44%' }}>
+        <div style={textStyle}>
           <StepLabel num="01" light />
           <div>
-            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.8rem, 4.5vw, 6rem)', fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
+            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Virtual Try-On.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.4)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.72rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.4)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               Right in your store — no setup required.
             </p>
           </div>
-          <UseCaseChips light chips={[
+          <UseCaseChips isMobile={isMobile} light chips={[
             { label: 'Snap a photo in-store' },
-            { label: 'Result in 90 seconds' },
+            { label: 'Result in 15–20 seconds' },
             { label: 'Zero alteration guesswork' },
           ]} />
         </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+        <div style={imageStyle}>
           <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
         <StepDots active="01" light />
       </FlowSection>
 
       <FlowSection index={1} aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '44%' }}>
+        <div style={textStyle}>
           <StepLabel num="02" />
           <div>
-            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.8rem, 4.5vw, 6rem)', fontWeight: 700, color: '#ffffff', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
+            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#ffffff', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Embed anywhere.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.72rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               One line of code — Shopify, WooCommerce, any site.
             </p>
           </div>
-          <UseCaseChips chips={[
+          <UseCaseChips isMobile={isMobile} chips={[
             { label: 'Add to Shopify in 5 min' },
             { label: 'Any website, any platform' },
             { label: 'Mobile-ready, no app needed' },
           ]} />
         </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+        <div style={imageStyle}>
           <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
         <StepDots active="02" />
       </FlowSection>
 
       <FlowSection index={2} aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '44%' }}>
+        <div style={textStyle}>
           <StepLabel num="03" light />
           <div>
-            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.8rem, 4.5vw, 6rem)', fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
+            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Build your catalogue.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.72rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               No shoot. No agency. Export same day.
             </p>
           </div>
-          <UseCaseChips light chips={[
+          <UseCaseChips isMobile={isMobile} light chips={[
             { label: 'Upload fabric — AI generates the look' },
             { label: 'Catalogue-ready photos, no shoot needed' },
             { label: 'Share directly with clients via WhatsApp' },
           ]} />
         </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+        <div style={imageStyle}>
           <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
         <StepDots active="03" light />

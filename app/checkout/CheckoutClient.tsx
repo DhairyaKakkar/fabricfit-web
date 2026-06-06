@@ -18,6 +18,7 @@ const STRIPE_PRICES_DISPLAY: Record<string, { monthly: string; annual: string }>
 };
 
 const RAZORPAY_PRICES_DISPLAY: Record<string, { monthly: string; annual: string }> = {
+  payg:    { monthly: '₹500', annual: '₹500' },
   starter: { monthly: '₹2,500/mo', annual: '₹25,000/yr' },
   pro:     { monthly: '₹4,500/mo', annual: '₹45,000/yr' },
   business:{ monthly: '₹10,000/mo', annual: '₹1,00,000/yr' },
@@ -67,7 +68,7 @@ export default function CheckoutClient({ planId, billingCycle, gateway, userEmai
           body: JSON.stringify({ planId, billingCycle }),
         });
         const data = await res.json();
-        if (data.error) { setError(data.error); return; }
+        if (!res.ok || data.error) { setError(data.error ?? `Error ${res.status}`); return; }
 
         // Load Razorpay checkout script dynamically
         await new Promise<void>((resolve) => {
@@ -87,8 +88,35 @@ export default function CheckoutClient({ planId, billingCycle, gateway, userEmai
           description: `${PLAN_LABELS[planId]} — ${billingCycle}`,
           prefill: { email: userEmail },
           theme: { color: '#09090b' },
-          handler: () => {
-            router.push('/dashboard?payment=success');
+          handler: async (response: {
+            razorpay_payment_id: string;
+            razorpay_order_id: string;
+            razorpay_signature: string;
+          }) => {
+            setLoading(true);
+            try {
+              const verify = await fetch('/api/checkout/razorpay/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              });
+              if (!verify.ok) {
+                setError('Payment verification failed. Please contact support.');
+                setLoading(false);
+                return;
+              }
+              router.push('/dashboard?payment=success');
+            } catch {
+              setError('Payment verification failed. Please contact support.');
+              setLoading(false);
+            }
+          },
+          modal: {
+            ondismiss: () => setLoading(false),
           },
         });
         rzp.open();

@@ -1,6 +1,6 @@
 const ROWS = [
   { label: 'Cost per look',       traditional: '₹800 – ₹2,000',  trs: '₹25',                trsWins: true  },
-  { label: 'Turnaround time',     traditional: '3 – 5 days',      trs: '90 seconds',         trsWins: true  },
+  { label: 'Turnaround time',     traditional: '3 – 5 days',      trs: '15–20 seconds',         trsWins: true  },
   { label: 'Requires a model',    traditional: 'Yes',             trs: 'No',                 trsWins: true  },
   { label: 'Works in-store',      traditional: 'No',              trs: 'Yes',                trsWins: true  },
   { label: 'Setup time',          traditional: 'Days + agency',   trs: 'Under 20 minutes',   trsWins: true  },

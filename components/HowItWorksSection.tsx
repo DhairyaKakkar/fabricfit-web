@@ -140,11 +140,14 @@ export default function HowItWorksSection() {
             <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               No shoot. No agency. Export same day.
             </p>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)', color: 'rgba(0,0,0,0.5)', marginTop: '1rem', lineHeight: 1.65, maxWidth: 360 }}>
+              Use our AI models to generate catalogue-ready, shareable photos — straight from your fabric. No photoshoot, no model booking. Just upload the fabric and share with your clients in minutes.
+            </p>
           </div>
           <UseCaseChips light chips={[
-            { label: 'Upload fabrics once, use forever' },
-            { label: 'Export polished look-book photos' },
-            { label: 'Share via WhatsApp instantly' },
+            { label: 'Generate from fabric directly' },
+            { label: 'Catalogue-ready photos instantly' },
+            { label: 'Share with clients via WhatsApp' },
           ]} />
         </div>
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>

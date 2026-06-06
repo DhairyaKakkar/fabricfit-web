@@ -55,16 +55,6 @@ export default function VideoSection() {
             backgroundClip: 'text',
           }}>fabric showrooms.</span>
         </h1>
-        <p style={{
-          fontFamily: 'var(--font-inter)',
-          fontSize: 12,
-          color: 'rgba(255,255,255,0.6)',
-          letterSpacing: '0.16em',
-          textTransform: 'uppercase',
-          margin: 0,
-        }}>
-          Fewer returns · More walk-in conversions · No studio required
-        </p>
       </div>
 
       {/* CTA buttons */}

@@ -187,11 +187,21 @@ export default function Navbar() {
                       color: '#09090b', background: '#ffffff',
                       border: 'none', borderRadius: 8, padding: '8px 20px',
                       cursor: 'pointer', whiteSpace: 'nowrap', textDecoration: 'none',
-                      transition: 'opacity 0.15s',
+                      transition: 'background 0.18s, color 0.18s, box-shadow 0.18s',
                       display: 'inline-block',
                     }}
-                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.8'}
-                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
+                    onMouseEnter={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.background = '#09090b';
+                      el.style.color = '#ffffff';
+                      el.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)';
+                    }}
+                    onMouseLeave={e => {
+                      const el = e.currentTarget as HTMLElement;
+                      el.style.background = '#ffffff';
+                      el.style.color = '#09090b';
+                      el.style.boxShadow = 'none';
+                    }}
                   >
                     Explore Pricing →
                   </a>

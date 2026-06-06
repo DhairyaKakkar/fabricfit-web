@@ -16,7 +16,7 @@ export interface Fabric {
   name: string;
   color_tag: string | null;
   fabric_type: string | null;
-  image_url: string;
+  image_url: string | null;
   created_at: string;
   fabric_garments: FabricGarment[];
 }
@@ -116,8 +116,12 @@ export default function InventoryClient({ initialFabrics, outletId }: { initialF
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {fabrics.map(fabric => (
             <div key={fabric.id} className="bg-white rounded-2xl border border-zinc-200 overflow-hidden group">
-              <div className="aspect-square relative bg-zinc-100">
-                <Image src={fabric.image_url} alt={fabric.name} fill className="object-cover" sizes="25vw" />
+              <div className="aspect-square relative bg-zinc-100 flex items-center justify-center">
+                {fabric.image_url ? (
+                  <Image src={fabric.image_url} alt={fabric.name} fill className="object-cover" sizes="25vw" />
+                ) : (
+                  <span className="text-3xl opacity-30">🧵</span>
+                )}
               </div>
               <div className="p-3">
                 <p className="font-semibold text-zinc-900 text-sm truncate">{fabric.name}</p>

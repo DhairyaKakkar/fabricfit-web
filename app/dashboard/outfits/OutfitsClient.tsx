@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 export interface Outfit {
   id: string;
   name: string | null;
-  image_url: string;
+  image_url: string | null;
   created_at: string;
 }
 
@@ -90,8 +90,12 @@ export default function OutfitsClient({ initialOutfits, outletId }: { initialOut
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {outfits.map(outfit => (
             <div key={outfit.id} className="bg-white rounded-2xl border border-zinc-200 overflow-hidden group">
-              <div className="aspect-[3/4] relative bg-zinc-100">
-                <Image src={outfit.image_url} alt={outfit.name ?? 'Outfit'} fill className="object-cover" sizes="25vw" />
+              <div className="aspect-[3/4] relative bg-zinc-100 flex items-center justify-center">
+                {outfit.image_url ? (
+                  <Image src={outfit.image_url} alt={outfit.name ?? 'Outfit'} fill className="object-cover" sizes="25vw" />
+                ) : (
+                  <span className="text-3xl opacity-30">👗</span>
+                )}
               </div>
               <div className="p-3 flex items-center justify-between">
                 <p className="font-semibold text-zinc-900 text-sm truncate">{outfit.name ?? 'Unnamed outfit'}</p>

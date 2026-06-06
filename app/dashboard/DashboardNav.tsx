@@ -6,13 +6,82 @@ import { usePathname } from 'next/navigation';
 import { logout } from '@/app/actions/auth';
 
 const NAV_LINKS = [
-  { href: '/dashboard', label: 'Overview' },
-  { href: '/dashboard/gallery', label: 'Gallery' },
-  { href: '/dashboard/inventory', label: 'Inventory' },
-  { href: '/dashboard/outfits', label: 'Outfits' },
-  { href: '/dashboard/catalogues', label: 'Catalogues' },
-  { href: '/dashboard/subscription', label: 'Subscription' },
-  { href: '/dashboard/settings', label: 'Settings' },
+  {
+    href: '/dashboard',
+    label: 'Overview',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".85"/>
+        <rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".85"/>
+        <rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".85"/>
+        <rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".85"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/dashboard/gallery',
+    label: 'Gallery',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M1 9l3.5-3.5L7 8l3-3 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="5" cy="4.5" r="1" fill="currentColor"/>
+        <path d="M4 15h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M8 11v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/dashboard/inventory',
+    label: 'Inventory',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M2 4.5L8 2l6 2.5v5.5L8 14 2 10V4.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+        <path d="M8 2v12M2 4.5l6 3.5 6-3.5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/dashboard/outfits',
+    label: 'Outfits',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M5.5 2C5.5 2 4 3 4 4.5V13.5H12V4.5C12 3 10.5 2 10.5 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M5.5 2C5.5 3.1 6.6 4 8 4C9.4 4 10.5 3.1 10.5 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M2 4.5L5.5 2M14 4.5L10.5 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M2 4.5C2 4.5 2.5 5 4 4.5M14 4.5C14 4.5 13.5 5 12 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/dashboard/catalogues',
+    label: 'Catalogues',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M5 6h6M5 8.5h6M5 11h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/dashboard/subscription',
+    label: 'Subscription',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1.5L10 6h4.5L11 9l1.5 4.5L8 11l-4.5 2.5L5 9 1.5 6H6L8 1.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/dashboard/settings',
+    label: 'Settings',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M8 1v2M8 13v2M1 8h2M13 8h2M2.93 2.93l1.41 1.41M11.66 11.66l1.41 1.41M2.93 13.07l1.41-1.41M11.66 4.34l1.41-1.41" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
 ];
 
 interface Props {
@@ -25,72 +94,59 @@ export default function DashboardNav({ businessName, isTrial }: Props) {
   const pathname = usePathname();
 
   return (
-    <header className="bg-white border-b border-zinc-200 sticky top-0 z-40">
-      <div className="max-w-6xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <Link href="/dashboard" className="shrink-0 flex items-center">
-          <Image src="/logo.png" alt="TrialRoomStudio" width={48} height={48} className="h-12 w-auto block" />
+    <aside className="fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-zinc-200 flex flex-col z-40" style={{ fontFamily: 'var(--font-inter)' }}>
+      {/* Logo */}
+      <div className="h-14 flex items-center px-4 border-b border-zinc-100 shrink-0">
+        <Link href="/dashboard" className="flex items-center gap-2.5">
+          <Image src="/logo.png" alt="TrialRoomStudio" width={32} height={32} className="h-8 w-auto" />
+          <span className="text-sm font-semibold text-zinc-900 leading-tight">TrialRoom<br/>Studio</span>
         </Link>
+      </div>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1 flex-1 px-4">
-          {NAV_LINKS.map(({ href, label }) => {
-            const active = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                  active ? 'bg-zinc-100 text-zinc-900 font-medium' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'
-                }`}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Right side */}
-        <div className="flex items-center gap-3 shrink-0">
-          {isTrial && (
+      {/* Nav links */}
+      <nav className="flex-1 overflow-y-auto py-3 px-2">
+        {NAV_LINKS.map(({ href, label, icon }) => {
+          const active = pathname === href;
+          return (
             <Link
-              href="/pricing"
-              className="hidden sm:block text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full hover:bg-amber-100 transition-colors"
+              key={href}
+              href={href}
+              prefetch={true}
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors ${
+                active
+                  ? 'bg-zinc-100 text-zinc-900 font-medium'
+                  : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'
+              }`}
             >
-              Free trial
+              <span className={active ? 'text-zinc-800' : 'text-zinc-400'}>{icon}</span>
+              {label}
             </Link>
-          )}
-          <span className="text-xs text-zinc-400 hidden md:block truncate max-w-[140px]">{businessName}</span>
+          );
+        })}
+      </nav>
+
+      {/* Bottom: business name + trial badge + sign out */}
+      <div className="shrink-0 border-t border-zinc-100 px-3 py-3 space-y-2">
+        {isTrial && (
+          <Link
+            href="/pricing"
+            className="flex items-center justify-center w-full text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors"
+          >
+            ✦ Upgrade from Free Trial
+          </Link>
+        )}
+        <div className="flex items-center justify-between gap-2 px-1">
+          <span className="text-xs text-zinc-400 truncate flex-1">{businessName}</span>
           <form action={logout}>
             <button
               type="submit"
-              className="text-xs font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 hover:border-zinc-300 px-3 py-1.5 rounded-lg transition-colors"
+              className="text-xs font-medium text-zinc-500 hover:text-zinc-900 transition-colors shrink-0"
             >
               Sign out
             </button>
           </form>
         </div>
       </div>
-
-      {/* Mobile nav */}
-      <div className="md:hidden border-t border-zinc-100 overflow-x-auto">
-        <div className="flex gap-1 px-4 py-2">
-          {NAV_LINKS.map(({ href, label }) => {
-            const active = pathname === href;
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`shrink-0 px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                  active ? 'bg-zinc-100 text-zinc-900 font-medium' : 'text-zinc-500'
-                }`}
-              >
-                {label}
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-    </header>
+    </aside>
   );
 }

@@ -75,7 +75,7 @@ export default function VideoSection() {
       }}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
           <LiquidButton onClick={openTrialModal} color="#09090b" bg="#ffffff" padding="16px 44px" fontSize={16}>
-            Request Access
+            Show More. Sell More. →
           </LiquidButton>
           <LiquidButton
             href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
@@ -86,7 +86,7 @@ export default function VideoSection() {
             padding="16px 44px"
             fontSize={16}
           >
-            Book a Demo
+            📲 Book a WhatsApp Demo
           </LiquidButton>
         </div>
       </div>

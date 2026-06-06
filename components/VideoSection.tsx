@@ -75,28 +75,61 @@ export default function VideoSection() {
         paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
       }}>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <LiquidButton
+          {/* Explore Pricing — white → lifts with shadow on hover */}
+          <a
             href="/pricing"
-            color="#09090b"
-            bg="#ffffff"
-            padding="14px 36px"
-            fontSize={15}
-            style={{ borderRadius: 8, fontWeight: 700, letterSpacing: '0.01em', border: 'none' }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 700,
+              color: '#09090b', background: '#ffffff', textDecoration: 'none',
+              borderRadius: 8, padding: '14px 36px', border: 'none',
+              letterSpacing: '0.01em', whiteSpace: 'nowrap',
+              transition: 'transform 0.18s ease, box-shadow 0.18s ease',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+            }}
+            onMouseEnter={e => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.transform = 'translateY(-2px)';
+              el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.22)';
+            }}
+            onMouseLeave={e => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.transform = 'translateY(0)';
+              el.style.boxShadow = '0 2px 12px rgba(0,0,0,0.12)';
+            }}
           >
             Explore Pricing →
-          </LiquidButton>
-          <LiquidButton
+          </a>
+
+          {/* Book a Demo — ghost → fills white on hover */}
+          <a
             href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
             target="_blank"
             rel="noopener noreferrer"
-            color="#ffffff"
-            bg="transparent"
-            padding="14px 36px"
-            fontSize={15}
-            style={{ borderRadius: 8, fontWeight: 600, letterSpacing: '0.01em', border: '1px solid rgba(255,255,255,0.45)' }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 600,
+              color: '#ffffff', background: 'rgba(255,255,255,0.08)', textDecoration: 'none',
+              borderRadius: 8, padding: '14px 36px',
+              border: '1px solid rgba(255,255,255,0.35)',
+              letterSpacing: '0.01em', whiteSpace: 'nowrap',
+              transition: 'background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease',
+            }}
+            onMouseEnter={e => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.background = 'rgba(255,255,255,0.18)';
+              el.style.borderColor = 'rgba(255,255,255,0.65)';
+              el.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={e => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.background = 'rgba(255,255,255,0.08)';
+              el.style.borderColor = 'rgba(255,255,255,0.35)';
+              el.style.transform = 'translateY(0)';
+            }}
           >
             Book a Demo
-          </LiquidButton>
+          </a>
         </div>
       </div>
     </section>

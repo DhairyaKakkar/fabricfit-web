@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-const STEPS: { num: string; title: string; img: string; bg: string; textDark: boolean; btnColor: string; btnBottom: string }[] = [
-  { num: '01', title: 'Open Showroom',       img: '/howitworks/1.png', bg: '#C9873A', textDark: false, btnColor: 'rgba(255,255,255,0.55)', btnBottom: '13%' },
-  { num: '02', title: 'Pick Fabric & Style', img: '/howitworks/2.png', bg: '#1C1206', textDark: false, btnColor: 'rgba(255,255,255,0.45)', btnBottom: '12%' },
-  { num: '03', title: 'Add a Photo',         img: '/howitworks/3.png', bg: '#F6F5F0', textDark: true,  btnColor: 'rgba(234,179,8,0.65)',   btnBottom: '11%' },
-  { num: '04', title: 'See the Try-On',      img: '/howitworks/4.png', bg: '#09090b', textDark: false, btnColor: 'rgba(255,255,255,0.45)', btnBottom: '13%' },
-  { num: '05', title: 'Choose & Share',      img: '/howitworks/5.png', bg: '#7C3209', textDark: false, btnColor: 'rgba(255,255,255,0.5)',  btnBottom: '11%' },
+const STEPS = [
+  { num: '01', title: 'Open Showroom',       img: '/howitworks/1.png', bg: '#C9873A', textDark: false, ringClr: 'rgba(255,255,255,0.7)' },
+  { num: '02', title: 'Pick Fabric & Style', img: '/howitworks/2.png', bg: '#1C1206', textDark: false, ringClr: 'rgba(255,255,255,0.6)' },
+  { num: '03', title: 'Add a Photo',         img: '/howitworks/3.png', bg: '#F6F5F0', textDark: true,  ringClr: 'rgba(234,179,8,0.75)' },
+  { num: '04', title: 'See the Try-On',      img: '/howitworks/4.png', bg: '#09090b', textDark: false, ringClr: 'rgba(255,255,255,0.6)' },
+  { num: '05', title: 'Choose & Share',      img: '/howitworks/5.png', bg: '#7C3209', textDark: false, ringClr: 'rgba(255,255,255,0.65)' },
 ];
 
 export default function DemoVideoSection() {
@@ -37,7 +37,7 @@ export default function DemoVideoSection() {
       {/* Cards row */}
       <div style={{ overflowX: 'auto', paddingBottom: 8 }}>
         <div
-          style={{ display: 'flex', gap: 10, alignItems: 'stretch', height: 'clamp(480px, 65vh, 680px)', minWidth: 640 }}
+          style={{ display: 'flex', gap: 10, height: 'clamp(500px, 66vh, 700px)', minWidth: 640 }}
           onMouseLeave={() => setHovered(null)}
         >
           {STEPS.map((step, i) => {
@@ -61,12 +61,15 @@ export default function DemoVideoSection() {
                   transition: 'flex 0.45s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s ease',
                   display: 'flex',
                   flexDirection: 'column',
-                  padding: '20px 16px 0',
                   boxShadow: isActive ? '0 28px 70px rgba(0,0,0,0.6)' : 'none',
                 }}
               >
-                {/* Step label */}
-                <div style={{ flexShrink: 0, marginBottom: 8, position: 'relative', zIndex: 2 }}>
+                {/* Step label — top of card */}
+                <div style={{
+                  padding: '20px 18px 12px',
+                  flexShrink: 0,
+                  position: 'relative', zIndex: 2,
+                }}>
                   <span style={{
                     fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 800,
                     color: numClr, letterSpacing: '0.14em', display: 'block', marginBottom: 4,
@@ -75,7 +78,7 @@ export default function DemoVideoSection() {
                     {step.num}
                   </span>
                   <h3 style={{
-                    fontFamily: 'var(--font-playfair)', fontSize: 'clamp(0.9rem, 1.5vw, 1.25rem)',
+                    fontFamily: 'var(--font-playfair)', fontSize: 'clamp(0.9rem, 1.5vw, 1.3rem)',
                     fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: 0,
                     whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                   }}>
@@ -83,52 +86,44 @@ export default function DemoVideoSection() {
                   </h3>
                 </div>
 
-                {/* Image fills the rest of the card */}
-                <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-                  <div style={{
-                    position: 'absolute', inset: 0,
-                    display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-                  }}>
-                    <Image
-                      src={step.img}
-                      alt={step.title}
-                      width={440}
-                      height={900}
-                      loading="lazy"
-                      style={{
-                        width: '120%',
-                        height: 'auto',
-                        display: 'block',
-                        transform: isInactive ? 'scale(0.96)' : 'scale(1)',
-                        transformOrigin: 'bottom center',
-                        transition: 'transform 0.45s cubic-bezier(0.4,0,0.2,1)',
-                      }}
-                    />
-                  </div>
+                {/* Image — fills remaining card, always fully visible */}
+                <div style={{ flex: 1, position: 'relative' }}>
+                  <Image
+                    src={step.img}
+                    alt={step.title}
+                    fill
+                    loading="lazy"
+                    style={{
+                      objectFit: 'contain',
+                      objectPosition: 'bottom center',
+                    }}
+                  />
 
-                  {/* Button pulse overlay — aligned to CTA button when card is expanded */}
+                  {/* Button pulse ring — pinned to CTA button position */}
                   {isActive && (
                     <>
                       <div style={{
                         position: 'absolute',
-                        bottom: '22%',
+                        bottom: '10%',
                         left: '50%',
-                        width: '55%',
-                        height: 40,
+                        transform: 'translateX(-50%)',
+                        width: 200,
+                        height: 44,
                         borderRadius: 12,
-                        border: `2px solid ${step.btnColor}`,
+                        border: `2px solid ${step.ringClr}`,
                         animation: 'btn-ping-2 1.5s ease-out infinite',
                         pointerEvents: 'none',
                         zIndex: 10,
                       }} />
                       <div style={{
                         position: 'absolute',
-                        bottom: '22%',
+                        bottom: '10%',
                         left: '50%',
-                        width: '55%',
-                        height: 40,
+                        transform: 'translateX(-50%)',
+                        width: 200,
+                        height: 44,
                         borderRadius: 12,
-                        border: `2px solid ${step.btnColor}`,
+                        border: `2px solid ${step.ringClr}`,
                         animation: 'btn-ping 1.5s ease-out 0.4s infinite',
                         pointerEvents: 'none',
                         zIndex: 10,

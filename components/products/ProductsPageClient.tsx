@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { GARMENTS, Gender, GarmentId } from '@/lib/garments';
 
 export default function ProductsPageClient() {
@@ -9,16 +9,6 @@ export default function ProductsPageClient() {
 
   const garments = GARMENTS.filter(g => g.gender === gender);
   const selected = garments.find(g => g.id === selectedId) ?? garments[0];
-
-  // Preload every model + garment image once on mount so clicks are instant.
-  useEffect(() => {
-    GARMENTS.forEach((g) => {
-      const a = new Image();
-      a.src = g.compositeSrc;
-      const b = new Image();
-      b.src = g.floatSrc;
-    });
-  }, []);
 
   const switchGender = (g: Gender) => {
     setGender(g);

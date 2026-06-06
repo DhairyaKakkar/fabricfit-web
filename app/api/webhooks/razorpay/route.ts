@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       current_period_end: periodEnd.toISOString(),
     }, { onConflict: 'user_id' });
 
-    const creditsMap: Record<string, number> = { starter: 200, pro: 400, business: 1000 };
+    const creditsMap: Record<string, number> = { payg: 20, starter: 200, pro: 400, business: 1000 };
     const credits = creditsMap[planId] ?? 0;
     if (credits > 0) {
       await supabase.from('credits').upsert({

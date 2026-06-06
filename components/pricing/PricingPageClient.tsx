@@ -199,8 +199,28 @@ export default function PricingPageClient() {
   return (
     <div style={{ background: '#fff', minHeight: '100vh' }}>
 
+      {/* Free Trial Banner */}
+      <div style={{ background: '#09090b', padding: '14px 24px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: 'rgba(255,255,255,0.8)', margin: 0 }}>
+          Not sure yet? Start with <strong style={{ color: '#ffffff' }}>40 free credits</strong> — no payment needed.
+        </p>
+        <button
+          onClick={openTrialModal}
+          style={{
+            fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 700,
+            color: '#09090b', background: '#ffffff',
+            border: 'none', borderRadius: 8, padding: '7px 18px',
+            cursor: 'pointer', whiteSpace: 'nowrap', transition: 'opacity 0.15s',
+          }}
+          onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.85'}
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
+        >
+          Request Free Trial →
+        </button>
+      </div>
+
       {/* Hero */}
-      <div style={{ paddingTop: 112, paddingBottom: 48, paddingLeft: 24, paddingRight: 24, textAlign: 'center' }}>
+      <div style={{ paddingTop: 80, paddingBottom: 48, paddingLeft: 24, paddingRight: 24, textAlign: 'center' }}>
         <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#a1a1aa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 14 }}>
           Pricing
         </p>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { slowScrollTo } from '@/lib/scrollTo';
@@ -14,13 +14,15 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [trialOpen, setTrialOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
   const isHome = pathname === '/';
 
-  // pill only when scrolled
   const showPill = scrolled;
-  // white text only when over dark hero (home, not yet scrolled)
-  const onDark = isHome && !scrolled;
+  // Treat as light when menu is open (background forces white)
+  const onDark = isHome && !scrolled && !menuOpen;
 
   const links = [
     ...NAV_LINKS.map(l => ({ href: isHome ? `#${l.anchor}` : `/#${l.anchor}`, label: l.label })),
@@ -28,9 +30,18 @@ export default function Navbar() {
   ];
 
   useEffect(() => {
-    // Read immediately — handles anchor-jump navigation where scroll fires before listener attaches
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
     setScrolled(window.scrollY > 40);
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      if (window.scrollY > 40) setMenuOpen(false);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -48,7 +59,19 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [menuOpen]);
+
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    setMenuOpen(false);
     if (href.startsWith('#')) { e.preventDefault(); slowScrollTo(href.slice(1)); }
   };
 
@@ -63,8 +86,6 @@ export default function Navbar() {
   const wordmarkMuted = onDark ? 'rgba(255,255,255,0.38)' : 'rgba(9,9,11,0.32)';
   const accountColor  = onDark ? 'rgba(255,255,255,0.5)' : 'rgba(9,9,11,0.45)';
   const accountHover  = onDark ? '#ffffff' : '#09090b';
-  const ctaBg         = onDark ? '#ffffff' : '#09090b';
-  const ctaColor      = onDark ? '#09090b' : '#ffffff';
 
   return (
     <>
@@ -75,23 +96,26 @@ export default function Navbar() {
         padding: showPill ? '12px 20px' : '0',
         transition: 'padding 0.35s cubic-bezier(0.4,0,0.2,1)',
       }}>
-        <header style={{
-          pointerEvents: 'auto',
-          margin: '0 auto',
-          maxWidth: showPill ? 1200 : '100%',
-          borderRadius: showPill ? 14 : 0,
-          background: showPill ? '#ffffff' : isHome ? 'transparent' : '#ffffff',
-          boxShadow: showPill ? '0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)' : 'none',
-          border: showPill
-            ? '1px solid rgba(0,0,0,0.07)'
-            : isHome ? '1px solid transparent' : '1px solid rgba(9,9,11,0.08)',
-          transition: 'max-width 0.35s cubic-bezier(0.4,0,0.2,1), border-radius 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s ease, box-shadow 0.3s ease',
-          overflow: 'hidden',
-        }}>
+        <header
+          ref={headerRef}
+          style={{
+            pointerEvents: 'auto',
+            margin: '0 auto',
+            maxWidth: showPill ? 1200 : '100%',
+            borderRadius: showPill ? 14 : 0,
+            background: (showPill || menuOpen) ? '#ffffff' : isHome ? 'transparent' : '#ffffff',
+            boxShadow: showPill ? '0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)' : 'none',
+            border: showPill
+              ? '1px solid rgba(0,0,0,0.07)'
+              : isHome ? '1px solid transparent' : '1px solid rgba(9,9,11,0.08)',
+            transition: 'max-width 0.35s cubic-bezier(0.4,0,0.2,1), border-radius 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s ease, box-shadow 0.3s ease',
+          }}
+        >
+          {/* Nav bar row */}
           <div style={{
             height: showPill ? 52 : 64,
             display: 'flex', alignItems: 'center',
-            padding: showPill ? '0 20px' : '0 32px',
+            padding: isMobile ? '0 16px' : (showPill ? '0 20px' : '0 32px'),
             transition: 'height 0.35s cubic-bezier(0.4,0,0.2,1), padding 0.35s cubic-bezier(0.4,0,0.2,1)',
           }}>
 
@@ -111,71 +135,162 @@ export default function Navbar() {
               </span>
             </a>
 
-            {/* Nav links — centered */}
-            <nav style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 4, alignItems: 'center' }}>
-              {links.map((l) => (
+            {/* Desktop: Nav links centered */}
+            {!isMobile && (
+              <nav style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 4, alignItems: 'center' }}>
+                {links.map((l) => (
+                  <a
+                    key={l.href} href={l.href}
+                    onClick={(e) => handleAnchorClick(e, l.href)}
+                    style={{
+                      fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
+                      color: linkColor, textDecoration: 'none',
+                      padding: '5px 14px', borderRadius: 6,
+                      letterSpacing: '0.01em',
+                      transition: 'color 0.15s, background 0.15s',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.color = linkHover;
+                      (e.currentTarget as HTMLElement).style.background = linkHoverBg;
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.color = linkColor;
+                      (e.currentTarget as HTMLElement).style.background = 'transparent';
+                    }}
+                  >
+                    {l.label}
+                  </a>
+                ))}
+              </nav>
+            )}
+
+            {/* Desktop: Right CTAs */}
+            {!isMobile && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
                 <a
-                  key={l.href} href={l.href}
-                  onClick={(e) => handleAnchorClick(e, l.href)}
+                  href={accountLink.href}
                   style={{
                     fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
-                    color: linkColor, textDecoration: 'none',
-                    padding: '5px 14px', borderRadius: 6,
-                    letterSpacing: '0.01em',
-                    transition: 'color 0.15s, background 0.15s',
+                    color: accountColor, textDecoration: 'none', padding: '5px 10px',
+                    transition: 'color 0.2s',
                   }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.color = linkHover;
-                    (e.currentTarget as HTMLElement).style.background = linkHoverBg;
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.color = linkColor;
-                    (e.currentTarget as HTMLElement).style.background = 'transparent';
-                  }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = accountHover}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = accountColor}
                 >
-                  {l.label}
+                  {accountLink.label}
                 </a>
-              ))}
-            </nav>
+                {!loggedIn && (
+                  <a
+                    href="/pricing"
+                    style={{
+                      fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 800,
+                      color: '#09090b', background: '#ffffff',
+                      border: 'none', borderRadius: 8, padding: '8px 20px',
+                      cursor: 'pointer', whiteSpace: 'nowrap', textDecoration: 'none',
+                      transition: 'opacity 0.15s',
+                      display: 'inline-block',
+                    }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = '0.8'}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = '1'}
+                  >
+                    Explore Pricing →
+                  </a>
+                )}
+              </div>
+            )}
 
-            {/* Right CTAs */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-              <a
-                href={accountLink.href}
-                style={{
-                  fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
-                  color: accountColor, textDecoration: 'none', padding: '5px 10px',
-                  transition: 'color 0.2s',
-                }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = accountHover}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = accountColor}
-              >
-                {accountLink.label}
-              </a>
-              {!loggedIn && (
+            {/* Mobile: hamburger */}
+            {isMobile && (
+              <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
                 <button
-                  onClick={() => setTrialOpen(true)}
+                  onClick={() => setMenuOpen(o => !o)}
+                  aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                   style={{
-                    fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 800,
-                    color: '#09090b', background: '#ffffff',
-                    border: 'none', borderRadius: 8, padding: '8px 20px',
-                    cursor: 'pointer', whiteSpace: 'nowrap',
-                    transition: 'opacity 0.15s, transform 0.15s, background 0.3s, color 0.3s',
-                  }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLElement).style.opacity = '0.82';
-                    (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)';
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLElement).style.opacity = '1';
-                    (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    padding: '8px', display: 'flex', flexDirection: 'column',
+                    gap: 5, justifyContent: 'center', alignItems: 'center',
+                    width: 40, height: 40,
                   }}
                 >
-                  Request Access →
+                  <span style={{
+                    display: 'block', width: 22, height: 2,
+                    background: wordmarkColor, borderRadius: 2,
+                    transition: 'transform 0.25s ease',
+                    transform: menuOpen ? 'translateY(7px) rotate(45deg)' : 'none',
+                  }} />
+                  <span style={{
+                    display: 'block', width: 22, height: 2,
+                    background: wordmarkColor, borderRadius: 2,
+                    transition: 'opacity 0.2s',
+                    opacity: menuOpen ? 0 : 1,
+                  }} />
+                  <span style={{
+                    display: 'block', width: 22, height: 2,
+                    background: wordmarkColor, borderRadius: 2,
+                    transition: 'transform 0.25s ease',
+                    transform: menuOpen ? 'translateY(-7px) rotate(-45deg)' : 'none',
+                  }} />
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
+
+          {/* Mobile dropdown */}
+          {isMobile && (
+            <div style={{
+              maxHeight: menuOpen ? 320 : 0,
+              overflow: 'hidden',
+              transition: 'max-height 0.3s cubic-bezier(0.4,0,0.2,1)',
+            }}>
+              <div style={{
+                padding: '4px 16px 20px',
+                borderTop: '1px solid rgba(9,9,11,0.07)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+              }}>
+                {links.map((l) => (
+                  <a
+                    key={l.href} href={l.href}
+                    onClick={(e) => handleAnchorClick(e, l.href)}
+                    style={{
+                      fontFamily: 'var(--font-inter)', fontSize: 16, fontWeight: 500,
+                      color: 'rgba(9,9,11,0.65)', textDecoration: 'none',
+                      padding: '11px 12px', borderRadius: 8,
+                      display: 'block',
+                    }}
+                  >
+                    {l.label}
+                  </a>
+                ))}
+                <a
+                  href={accountLink.href}
+                  style={{
+                    fontFamily: 'var(--font-inter)', fontSize: 16, fontWeight: 500,
+                    color: 'rgba(9,9,11,0.65)', textDecoration: 'none',
+                    padding: '11px 12px', borderRadius: 8,
+                    display: 'block',
+                  }}
+                >
+                  {accountLink.label}
+                </a>
+                {!loggedIn && (
+                  <button
+                    onClick={() => { setMenuOpen(false); setTrialOpen(true); }}
+                    style={{
+                      marginTop: 8,
+                      fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 800,
+                      color: '#ffffff', background: '#09090b',
+                      border: 'none', borderRadius: 10, padding: '14px 20px',
+                      cursor: 'pointer', width: '100%', textAlign: 'center',
+                    }}
+                  >
+                    Request Access →
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </header>
       </div>
 

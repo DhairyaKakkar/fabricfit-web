@@ -54,7 +54,7 @@ export default function Navbar() {
 
   const accountLink = loggedIn
     ? { href: '/dashboard', label: 'Dashboard' }
-    : { href: '/login', label: 'Sign in' };
+    : { href: '/signup', label: 'Sign up' };
 
   const linkColor     = onDark ? 'rgba(255,255,255,0.55)' : 'rgba(9,9,11,0.5)';
   const linkHover     = onDark ? '#ffffff' : '#09090b';

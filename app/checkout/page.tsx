@@ -17,9 +17,9 @@ export default async function CheckoutPage({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect('/signup');
-
   const { plan = 'starter', billing = 'monthly' } = await searchParams;
+
+  if (!user) redirect(`/login?next=${encodeURIComponent(`/checkout?plan=${plan}&billing=${billing}`)}`);
   const headersList = await headers();
   const gateway = getGateway(headersList);
 

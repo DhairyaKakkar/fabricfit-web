@@ -27,7 +27,9 @@ export async function login(
 
   if (error) return { error: error.message };
 
-  redirect('/dashboard');
+  // Return to the page that sent the user to login (e.g. checkout), if safe
+  const next = (formData.get('next') as string | null)?.trim();
+  redirect(next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard');
 }
 
 export async function signup(

@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { Suspense, useActionState, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { login, loginWithAccessCode } from '@/app/actions/auth';
@@ -47,10 +48,12 @@ function BrandPanel() {
   );
 }
 
-export default function LoginPage() {
+function LoginForm() {
   const [mode, setMode] = useState<Mode>('email');
   const [emailState, emailAction, emailPending] = useActionState(login, undefined);
   const [codeState, codeAction, codePending] = useActionState(loginWithAccessCode, undefined);
+  const params = useSearchParams();
+  const next = params.get('next') ?? '';
 
   return (
     <div className="min-h-screen flex" style={{ background: '#FEF9F0' }}>
@@ -92,6 +95,7 @@ export default function LoginPage() {
 
             {mode === 'email' ? (
               <form action={emailAction} className="flex flex-col gap-4">
+                {next && <input type="hidden" name="next" value={next} />}
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="email" className={labelCls} style={{ fontFamily: 'var(--font-inter)' }}>Email</label>
                   <input id="email" name="email" type="email" required autoComplete="email" placeholder="you@company.com" className={inputCls} style={{ fontFamily: 'var(--font-inter)' }} />
@@ -131,5 +135,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -62,7 +62,10 @@ export default function DashboardNav({ businessName, isTrial }: Props) {
           )}
           <span className="text-xs text-zinc-400 hidden md:block truncate max-w-[140px]">{businessName}</span>
           <form action={logout}>
-            <button type="submit" className="text-xs text-zinc-400 hover:text-zinc-700 transition-colors">
+            <button
+              type="submit"
+              className="text-xs font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 hover:border-zinc-300 px-3 py-1.5 rounded-lg transition-colors"
+            >
               Sign out
             </button>
           </form>

@@ -147,6 +147,9 @@ export default function HowItWorksSection() {
             { label: 'Share via WhatsApp instantly' },
           ]} />
         </div>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+          <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+        </div>
         <StepDots active="03" light />
       </FlowSection>
 

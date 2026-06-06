@@ -9,7 +9,6 @@ import TrialRequestModal from '@/components/TrialRequestModal';
 
 const NAV_LINKS = [{ anchor: 'features', label: 'Features' }] as const;
 const PRICING_LINK = { href: '/pricing', label: 'Pricing' };
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919884744296';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -18,6 +17,9 @@ export default function Navbar() {
   const [trialOpen, setTrialOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
+
+  // white text when: (a) home + not scrolled (dark video behind), or (b) scrolled (dark blur bg)
+  const onDark = (isHome && !scrolled) || scrolled;
 
   const links = [
     ...NAV_LINKS.map(l => ({ href: isHome ? `#${l.anchor}` : `/#${l.anchor}`, label: l.label })),
@@ -51,64 +53,76 @@ export default function Navbar() {
     ? { href: '/dashboard', label: 'Dashboard' }
     : { href: '/login', label: 'Sign in' };
 
+  // derived colours
+  const linkColor = onDark ? 'rgba(255,255,255,0.55)' : 'rgba(9,9,11,0.5)';
+  const linkHover = onDark ? '#ffffff' : '#09090b';
+  const linkHoverBg = onDark ? 'rgba(255,255,255,0.07)' : 'rgba(9,9,11,0.05)';
+  const wordmarkColor = onDark ? '#ffffff' : '#09090b';
+  const wordmarkMuted = onDark ? 'rgba(255,255,255,0.4)' : 'rgba(9,9,11,0.35)';
+  const accountColor = onDark ? 'rgba(255,255,255,0.5)' : 'rgba(9,9,11,0.45)';
+  const accountHover = onDark ? '#ffffff' : '#09090b';
+  const hamburgerColor = onDark ? '#ffffff' : '#09090b';
+
+  const ctaBg = onDark ? '#ffffff' : '#09090b';
+  const ctaColor = onDark ? '#09090b' : '#ffffff';
+
   return (
     <>
       <header
         style={{
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
           transition: 'background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease',
-          background: scrolled ? 'rgba(9,9,11,0.82)' : 'transparent',
+          background: scrolled
+            ? 'rgba(9,9,11,0.82)'
+            : isHome
+              ? 'transparent'
+              : '#ffffff',
           backdropFilter: scrolled ? 'blur(24px) saturate(180%)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(24px) saturate(180%)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : '1px solid transparent',
+          borderBottom: scrolled
+            ? '1px solid rgba(255,255,255,0.07)'
+            : isHome
+              ? '1px solid transparent'
+              : '1px solid rgba(9,9,11,0.08)',
         }}
       >
         <div style={{
           height: 64, display: 'flex', alignItems: 'center',
-          padding: '0 32px', maxWidth: 1400, margin: '0 auto', gap: 0,
+          padding: '0 32px', maxWidth: 1400, margin: '0 auto',
         }}>
 
           {/* Logo + wordmark */}
           <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0 }}>
             <Image src="/logo.png" alt="TrialRoomStudio" width={36} height={36} priority style={{ height: 36, width: 'auto', display: 'block' }} />
             <span style={{
-              fontFamily: 'var(--font-playfair)',
-              fontSize: 17,
-              fontWeight: 700,
-              color: '#ffffff',
-              letterSpacing: '-0.01em',
-              lineHeight: 1,
+              fontFamily: 'var(--font-playfair)', fontSize: 17, fontWeight: 700,
+              color: wordmarkColor, letterSpacing: '-0.01em', lineHeight: 1,
+              transition: 'color 0.3s',
             }}>
-              TrialRoom<span style={{ color: 'rgba(255,255,255,0.45)', fontWeight: 400 }}>Studio</span>
+              TrialRoom<span style={{ color: wordmarkMuted, fontWeight: 400, transition: 'color 0.3s' }}>Studio</span>
             </span>
           </a>
 
           {/* Desktop nav — centered */}
-          <nav style={{
-            display: 'flex', flex: 1, justifyContent: 'center', gap: 8, alignItems: 'center',
-          }} className="hidden md:flex">
+          <nav className="hidden md:flex" style={{ flex: 1, justifyContent: 'center', gap: 8, alignItems: 'center' }}>
             {links.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={(e) => handleAnchorClick(e, l.href)}
                 style={{
-                  fontFamily: 'var(--font-inter)',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: 'rgba(255,255,255,0.55)',
-                  textDecoration: 'none',
-                  padding: '6px 14px',
-                  borderRadius: 8,
+                  fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500,
+                  color: linkColor, textDecoration: 'none',
+                  padding: '6px 14px', borderRadius: 8,
                   letterSpacing: '0.01em',
                   transition: 'color 0.15s, background 0.15s',
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.color = '#ffffff';
-                  (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.07)';
+                  (e.currentTarget as HTMLElement).style.color = linkHover;
+                  (e.currentTarget as HTMLElement).style.background = linkHoverBg;
                 }}
                 onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.55)';
+                  (e.currentTarget as HTMLElement).style.color = linkColor;
                   (e.currentTarget as HTMLElement).style.background = 'transparent';
                 }}
               >
@@ -118,20 +132,16 @@ export default function Navbar() {
           </nav>
 
           {/* Desktop right CTAs */}
-          <div className="hidden md:flex" style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+          <div className="hidden md:flex" style={{ alignItems: 'center', gap: 12, flexShrink: 0 }}>
             <a
               href={accountLink.href}
               style={{
-                fontFamily: 'var(--font-inter)',
-                fontSize: 13,
-                fontWeight: 500,
-                color: 'rgba(255,255,255,0.5)',
-                textDecoration: 'none',
-                padding: '6px 12px',
-                transition: 'color 0.15s',
+                fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500,
+                color: accountColor, textDecoration: 'none', padding: '6px 12px',
+                transition: 'color 0.3s',
               }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#ffffff'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)'}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = accountHover}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = accountColor}
             >
               {accountLink.label}
             </a>
@@ -140,17 +150,11 @@ export default function Navbar() {
               <button
                 onClick={() => setTrialOpen(true)}
                 style={{
-                  fontFamily: 'var(--font-inter)',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: '#09090b',
-                  background: '#ffffff',
-                  border: 'none',
-                  borderRadius: 10,
-                  padding: '8px 20px',
-                  cursor: 'pointer',
-                  letterSpacing: '0.01em',
-                  transition: 'opacity 0.15s, transform 0.15s',
+                  fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600,
+                  color: ctaColor, background: ctaBg,
+                  border: 'none', borderRadius: 10, padding: '8px 20px',
+                  cursor: 'pointer', letterSpacing: '0.01em',
+                  transition: 'opacity 0.15s, transform 0.15s, background 0.3s, color 0.3s',
                   whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => {
@@ -177,8 +181,9 @@ export default function Navbar() {
           >
             {[0, 1, 2].map(i => (
               <span key={i} style={{
-                display: 'block', height: 2, width: 20, background: '#ffffff', borderRadius: 2,
-                transition: 'all 0.2s',
+                display: 'block', height: 2, width: 20,
+                background: hamburgerColor, borderRadius: 2,
+                transition: 'all 0.2s, background 0.3s',
                 transform: i === 0 && open ? 'translateY(7px) rotate(45deg)' : i === 2 && open ? 'translateY(-7px) rotate(-45deg)' : 'none',
                 opacity: i === 1 && open ? 0 : 1,
               }} />
@@ -200,8 +205,7 @@ export default function Navbar() {
           <div style={{ padding: '16px 24px 24px', display: 'flex', flexDirection: 'column', gap: 4 }}>
             {links.map((l) => (
               <a
-                key={l.href}
-                href={l.href}
+                key={l.href} href={l.href}
                 onClick={(e) => handleAnchorClick(e, l.href)}
                 style={{
                   fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
@@ -228,7 +232,7 @@ export default function Navbar() {
                   marginTop: 8, padding: '14px 20px', borderRadius: 10,
                   background: '#ffffff', color: '#09090b', border: 'none',
                   fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 600,
-                  cursor: 'pointer', textAlign: 'center',
+                  cursor: 'pointer',
                 }}
               >
                 Request Access →

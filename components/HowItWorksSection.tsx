@@ -99,14 +99,16 @@ export default function HowItWorksSection() {
               Right in your store — no setup required.
             </p>
           </div>
+        </div>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+          <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+        </div>
+        <div style={{ position: 'absolute', bottom: 60, right: '5vw', zIndex: 5 }}>
           <UseCaseChips light chips={[
             { label: 'Snap a photo in-store' },
             { label: 'Result in 90 seconds' },
             { label: 'Zero alteration guesswork' },
           ]} />
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
         <StepDots active="01" light />
       </FlowSection>
@@ -122,14 +124,16 @@ export default function HowItWorksSection() {
               One line of code — Shopify, WooCommerce, any site.
             </p>
           </div>
+        </div>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+          <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+        </div>
+        <div style={{ position: 'absolute', bottom: 60, right: '5vw', zIndex: 5 }}>
           <UseCaseChips chips={[
             { label: 'Add to Shopify in 5 min' },
             { label: 'Any website, any platform' },
             { label: 'Mobile-ready, no app needed' },
           ]} />
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
         <StepDots active="02" />
       </FlowSection>
@@ -145,14 +149,16 @@ export default function HowItWorksSection() {
               No shoot. No agency. Export same day.
             </p>
           </div>
+        </div>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+          <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+        </div>
+        <div style={{ position: 'absolute', bottom: 60, right: '5vw', zIndex: 5 }}>
           <UseCaseChips light chips={[
             { label: 'Upload fabrics once, use forever' },
             { label: 'Export polished look-book photos' },
             { label: 'Share via WhatsApp instantly' },
           ]} />
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
         <StepDots active="03" light />
       </FlowSection>

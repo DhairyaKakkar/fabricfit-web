@@ -47,13 +47,13 @@ export default function VideoSection() {
           margin: 0,
           textShadow: '0 2px 40px rgba(0,0,0,0.45)',
         }}>
-          The future of fabric{' '}
+          Stop guessing.{' '}
           <span style={{
             background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 45%, #fcd34d 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-          }}>retail.</span>
+          }}>Let your customers see it on themselves.</span>
         </h1>
         <p style={{
           fontFamily: 'var(--font-inter)',
@@ -75,7 +75,7 @@ export default function VideoSection() {
       }}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
           <LiquidButton onClick={openTrialModal} color="#09090b" bg="#ffffff" padding="16px 44px" fontSize={16}>
-            Show More. Sell More. →
+            Request Access
           </LiquidButton>
           <LiquidButton
             href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
@@ -86,7 +86,7 @@ export default function VideoSection() {
             padding="16px 44px"
             fontSize={16}
           >
-            📲 Book a WhatsApp Demo
+            Book a Demo
           </LiquidButton>
         </div>
       </div>

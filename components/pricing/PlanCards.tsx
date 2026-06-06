@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { PRICING, type Currency, fmtPrice } from '@/lib/pricing';
 import type { BillingCycle } from './PricingPageClient';
 
@@ -89,17 +88,16 @@ interface CardProps {
   plan: Plan;
   billing: BillingCycle;
   currency: Currency;
-  index: number;
 }
 
-function PlanCard({ plan, billing, currency, index }: CardProps) {
+function PlanCard({ plan, billing, currency }: CardProps) {
   const c = PRICING[currency];
   const annual = billing === 'annual' && !plan.payg;
   const planPricing = !plan.payg ? c.plans[plan.id as keyof typeof c.plans] : null;
   const dark = plan.popular;
 
   return (
-    <motion.div
+    <div
       className="relative flex flex-col rounded-2xl p-6"
       style={{
         background: dark ? '#09090b' : '#ffffff',
@@ -108,11 +106,6 @@ function PlanCard({ plan, billing, currency, index }: CardProps) {
           ? '0 0 0 1px rgba(217,160,70,0.35), 0 12px 40px rgba(146,64,14,0.22), 0 2px 8px rgba(0,0,0,0.18)'
           : '0 1px 4px rgba(0,0,0,0.04)',
       }}
-      initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.4, delay: index * 0.07 }}
-      whileHover={{ scale: dark ? 1.02 : 1.015, transition: { duration: 0.2 } }}
     >
       {dark && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
@@ -305,7 +298,7 @@ function PlanCard({ plan, billing, currency, index }: CardProps) {
             ? `/checkout?plan=payg&billing=monthly`
             : `/checkout?plan=${plan.id}&billing=${billing}`
         }
-        className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all duration-150"
+        className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold"
         style={{
           fontFamily: 'var(--font-inter)',
           background: dark ? '#ffffff' : 'transparent',
@@ -313,16 +306,10 @@ function PlanCard({ plan, billing, currency, index }: CardProps) {
           border: dark ? 'none' : '1px solid #d4d4d8',
           textDecoration: 'none',
         }}
-        onMouseEnter={(e) => {
-          if (!dark) (e.currentTarget as HTMLAnchorElement).style.background = '#f4f4f5';
-        }}
-        onMouseLeave={(e) => {
-          if (!dark) (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
-        }}
       >
         Get Started
       </a>
-    </motion.div>
+    </div>
   );
 }
 
@@ -331,7 +318,7 @@ export default function PlanCards({ billing, currency }: { billing: BillingCycle
     <section className="max-w-7xl mx-auto px-4 pb-16">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {PLANS.map((plan, i) => (
-          <PlanCard key={plan.id} plan={plan} billing={billing} currency={currency} index={i} />
+          <PlanCard key={plan.id} plan={plan} billing={billing} currency={currency} />
         ))}
       </div>
 

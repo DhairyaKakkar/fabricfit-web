@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { motion, useInView } from 'framer-motion';
 import { openTrialModal } from '@/lib/openTrialModal';
 import { PRICING, Currency, countryToCurrency, fmtPrice } from '@/lib/pricing';
 import ExternalPlanCards from './PlanCards';
@@ -17,16 +16,18 @@ function CountrySelector({ currency, onChange }: { currency: Currency; onChange:
       <select
         value={currency}
         onChange={(e) => onChange(e.target.value as Currency)}
-        className="appearance-none bg-white border border-zinc-200 rounded-full text-sm font-medium text-zinc-700 cursor-pointer outline-none hover:border-zinc-300 transition-colors"
-        style={{ padding: '6px 28px 6px 12px', fontFamily: 'var(--font-inter)' }}
+        style={{
+          appearance: 'none', background: '#fff', border: '1px solid #e4e4e7',
+          borderRadius: 999, padding: '6px 28px 6px 12px',
+          fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500,
+          color: '#3f3f46', cursor: 'pointer', outline: 'none',
+        }}
       >
         {CURRENCY_ORDER.map((c) => (
-          <option key={c} value={c}>
-            {PRICING[c].flag}  {PRICING[c].label}
-          </option>
+          <option key={c} value={c}>{PRICING[c].flag}  {PRICING[c].label}</option>
         ))}
       </select>
-      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 text-[10px]">▾</span>
+      <span style={{ pointerEvents: 'none', position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: '#a1a1aa', fontSize: 10 }}>▾</span>
     </div>
   );
 }
@@ -34,10 +35,10 @@ function CountrySelector({ currency, onChange }: { currency: Currency; onChange:
 /* ─── Billing Toggle ─────────────────────────────────────────────────────── */
 function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: boolean) => void }) {
   return (
-    <div className="flex items-center gap-3" style={{ fontFamily: 'var(--font-inter)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontFamily: 'var(--font-inter)' }}>
       <button
         onClick={() => onChange(false)}
-        className={`text-sm transition-colors ${!yearly ? 'text-zinc-900 font-medium' : 'text-zinc-400'}`}
+        style={{ fontSize: 13, fontWeight: yearly ? 400 : 600, color: yearly ? '#a1a1aa' : '#09090b', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
       >
         Monthly
       </button>
@@ -46,22 +47,24 @@ function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: bo
         role="switch"
         aria-checked={yearly}
         aria-label="Toggle between monthly and yearly billing"
-        className="relative w-10 h-5 rounded-full transition-colors duration-200"
-        style={{ background: yearly ? '#09090b' : '#e4e4e7' }}
+        style={{
+          position: 'relative', width: 40, height: 20, borderRadius: 999, border: 'none', cursor: 'pointer',
+          background: yearly ? '#09090b' : '#e4e4e7', transition: 'background 0.2s', padding: 0,
+        }}
       >
-        <motion.span
-          className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm"
-          animate={{ left: yearly ? '1.375rem' : '0.125rem' }}
-          transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-        />
+        <span style={{
+          position: 'absolute', top: 2, width: 16, height: 16, borderRadius: '50%',
+          background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+          transition: 'left 0.2s', left: yearly ? 22 : 2,
+        }} />
       </button>
       <button
         onClick={() => onChange(true)}
-        className={`text-sm transition-colors flex items-center gap-1.5 ${yearly ? 'text-zinc-900 font-medium' : 'text-zinc-400'}`}
+        style={{ fontSize: 13, fontWeight: yearly ? 600 : 400, color: yearly ? '#09090b' : '#a1a1aa', background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 6 }}
       >
         Yearly
         {yearly && (
-          <span className="text-[10px] font-semibold bg-zinc-100 text-zinc-600 rounded px-1.5 py-0.5">2 months free</span>
+          <span style={{ fontSize: 10, fontWeight: 600, background: '#f4f4f5', color: '#52525b', borderRadius: 4, padding: '2px 6px' }}>2 months free</span>
         )}
       </button>
     </div>
@@ -71,7 +74,6 @@ function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: bo
 /* ─── Top-Up Packs ───────────────────────────────────────────────────────── */
 function TopupPacksSection({ currency }: { currency: Currency }) {
   const c = PRICING[currency];
-
   const PACKS = [
     { key: 'fifty' as const, credits: 50, tryOns: '~25 try-ons' },
     { key: 'hundred' as const, credits: 100, tryOns: '~50 try-ons' },
@@ -80,61 +82,50 @@ function TopupPacksSection({ currency }: { currency: Currency }) {
   ];
 
   return (
-    <div className="py-20 px-6 border-t border-zinc-100">
+    <div style={{ padding: '64px 24px', borderTop: '1px solid #f4f4f5' }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
-        <div className="text-center mb-10">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}>
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#a1a1aa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 8 }}>
             Top-Up Anytime
           </p>
-          <h2 className="text-2xl font-bold text-zinc-900 mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 24, fontWeight: 700, color: '#09090b', marginBottom: 8 }}>
             Credit Top-Up Packs
           </h2>
-          <p className="text-sm text-zinc-500 max-w-md mx-auto" style={{ fontFamily: 'var(--font-inter)', lineHeight: 1.7 }}>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#71717a', lineHeight: 1.7, maxWidth: 420, margin: '0 auto' }}>
             Running low mid-month? Add credits instantly — they never expire and work alongside any subscription.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {PACKS.map((pack, i) => (
-            <motion.div
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+          {PACKS.map((pack) => (
+            <div
               key={pack.key}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.07 }}
-              className="relative flex flex-col rounded-2xl p-5 bg-white border border-zinc-200"
-              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+              style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: 16, padding: 20, display: 'flex', flexDirection: 'column', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
             >
-              <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.12em' }}>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#a1a1aa', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10 }}>
                 {pack.credits} Credits
               </p>
-              <div className="mb-4">
-                <p className="text-2xl font-extrabold text-zinc-900 tabular-nums" style={{ fontFamily: 'var(--font-inter)' }}>
-                  {fmtPrice(c.topupPacks[pack.key], currency)}
-                </p>
-                <p className="text-xs text-zinc-400 mt-0.5" style={{ fontFamily: 'var(--font-inter)' }}>
-                  {pack.tryOns} · never expire
-                </p>
-              </div>
-              <div className="rounded-lg px-3 py-2 mb-4 flex-1" style={{ background: '#f4f4f5', border: '1px solid #e4e4e7' }}>
-                <p className="text-xs font-semibold text-zinc-700" style={{ fontFamily: 'var(--font-inter)' }}>
-                  {c.rates.paygStarter} / try-on
-                </p>
-                <p className="text-xs text-zinc-400 mt-0.5" style={{ fontFamily: 'var(--font-inter)' }}>
-                  Works on all plans
-                </p>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 22, fontWeight: 800, color: '#09090b', marginBottom: 2 }}>
+                {fmtPrice(c.topupPacks[pack.key], currency)}
+              </p>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a1a1aa', marginBottom: 14 }}>
+                {pack.tryOns} · never expire
+              </p>
+              <div style={{ background: '#f4f4f5', border: '1px solid #e4e4e7', borderRadius: 8, padding: '8px 12px', marginBottom: 14, flex: 1 }}>
+                <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#3f3f46' }}>{c.rates.paygStarter} / try-on</p>
+                <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a1a1aa', marginTop: 2 }}>Works on all plans</p>
               </div>
               <button
                 onClick={openTrialModal}
-                className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold border border-zinc-200 text-zinc-800 hover:bg-zinc-50 transition-colors duration-150"
-                style={{ fontFamily: 'var(--font-inter)', cursor: 'pointer' }}
+                style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, color: '#09090b', background: 'transparent', border: '1px solid #e4e4e7', borderRadius: 10, padding: '10px 0', cursor: 'pointer', width: '100%' }}
               >
                 Request Access
               </button>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <p className="text-center text-xs text-zinc-400 mt-6" style={{ fontFamily: 'var(--font-inter)' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a1a1aa', textAlign: 'center', marginTop: 20 }}>
           Top-up credits stack with subscription credits · Never expire · Instant activation
         </p>
       </div>
@@ -150,32 +141,23 @@ const RULES = [
 ];
 
 function FooterSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
   return (
-    <div ref={ref} className="py-20 px-6 bg-zinc-50 border-t border-zinc-100">
+    <div style={{ padding: '64px 24px', background: '#fafafa', borderTop: '1px solid #f4f4f5' }}>
       <div style={{ maxWidth: 760, margin: '0 auto', textAlign: 'center' }}>
-        <h2 className="text-xl font-bold text-zinc-900 mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>Good to know</h2>
-        <div className="w-8 h-px bg-zinc-200 mx-auto mb-10" />
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          {RULES.map((rule, i) => (
-            <motion.div
-              key={rule.title}
-              initial={{ opacity: 0, y: 12 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.35, delay: i * 0.08 }}
-              className="bg-white rounded-xl border border-zinc-200 p-5 text-left"
-              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
-            >
-              <span className="text-xl text-zinc-300 block mb-3">{rule.icon}</span>
-              <h3 className="text-xs font-semibold text-zinc-900 mb-2" style={{ fontFamily: 'var(--font-inter)' }}>{rule.title}</h3>
-              <p className="text-xs text-zinc-500 leading-relaxed" style={{ fontFamily: 'var(--font-inter)' }}>{rule.body}</p>
-            </motion.div>
+        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 20, fontWeight: 700, color: '#09090b', marginBottom: 8 }}>Good to know</h2>
+        <div style={{ width: 32, height: 1, background: '#e4e4e7', margin: '0 auto 36px' }} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 36 }}>
+          {RULES.map((rule) => (
+            <div key={rule.title} style={{ background: '#fff', border: '1px solid #e4e4e7', borderRadius: 12, padding: 20, textAlign: 'left', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+              <span style={{ fontSize: 18, color: '#d4d4d8', display: 'block', marginBottom: 10 }}>{rule.icon}</span>
+              <h3 style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#09090b', marginBottom: 6 }}>{rule.title}</h3>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#71717a', lineHeight: 1.6 }}>{rule.body}</p>
+            </div>
           ))}
         </div>
-        <p className="text-xs text-zinc-400" style={{ fontFamily: 'var(--font-inter)' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a1a1aa' }}>
           Questions?{' '}
-          <a href="https://wa.me/919884744296?text=Hi%2C%20I%20have%20a%20question%20about%20TrialRoomStudio%20pricing" target="_blank" rel="noopener noreferrer" className="underline text-zinc-500 hover:text-zinc-700 transition-colors">Chat with us on WhatsApp</a>
+          <a href="https://wa.me/919884744296?text=Hi%2C%20I%20have%20a%20question%20about%20TrialRoomStudio%20pricing" target="_blank" rel="noopener noreferrer" style={{ color: '#71717a', textDecoration: 'underline' }}>Chat with us on WhatsApp</a>
         </p>
       </div>
     </div>
@@ -189,10 +171,7 @@ export default function PricingPageClient() {
 
   useEffect(() => {
     const raw = localStorage.getItem('ff_currency');
-    if (raw && raw in PRICING) {
-      setCurrency(raw as Currency);
-      return;
-    }
+    if (raw && raw in PRICING) { setCurrency(raw as Currency); return; }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 2000);
     fetch('https://ipapi.co/json/', { signal: controller.signal })
@@ -204,10 +183,7 @@ export default function PricingPageClient() {
       })
       .catch(() => {})
       .finally(() => clearTimeout(timer));
-    return () => {
-      controller.abort();
-      clearTimeout(timer);
-    };
+    return () => { controller.abort(); clearTimeout(timer); };
   }, []);
 
   const handleCurrencyChange = (c: Currency) => {
@@ -216,57 +192,33 @@ export default function PricingPageClient() {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div style={{ background: '#fff', minHeight: '100vh' }}>
 
       {/* Hero */}
-      <div className="pt-28 pb-16 px-6 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4"
-          style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}
-        >
+      <div style={{ paddingTop: 112, paddingBottom: 48, paddingLeft: 24, paddingRight: 24, textAlign: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#a1a1aa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 14 }}>
           Pricing
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.08 }}
-          className="text-4xl md:text-5xl font-bold text-zinc-900 mb-4 leading-tight"
-          style={{ fontFamily: 'var(--font-playfair)' }}
-        >
+        </p>
+        <h1 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 700, color: '#09090b', marginBottom: 14, lineHeight: 1.1 }}>
           Simple, transparent pricing
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: 0.14 }}
-          className="text-sm text-zinc-500 max-w-md mx-auto mb-10"
-          style={{ fontFamily: 'var(--font-inter)', lineHeight: 1.7 }}
-        >
+        </h1>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: '#71717a', maxWidth: 400, margin: '0 auto 36px', lineHeight: 1.7 }}>
           Pay per month or save with yearly. Switch or cancel anytime.
-        </motion.p>
+        </p>
 
-        {/* Controls */}
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
           <BillingToggle yearly={yearly} onChange={setYearly} />
-          <div className="w-px h-5 bg-zinc-200 hidden sm:block" />
+          <div style={{ width: 1, height: 20, background: '#e4e4e7' }} />
           <CountrySelector currency={currency} onChange={handleCurrencyChange} />
-        </motion.div>
+        </div>
 
-        <p className="text-xs text-zinc-400 mt-3" style={{ fontFamily: 'var(--font-inter)' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: '#a1a1aa', marginTop: 10 }}>
           All prices in {PRICING[currency].label}
         </p>
       </div>
 
       {/* Plan Cards */}
-      <div className="pb-8">
+      <div style={{ paddingBottom: 32 }}>
         <ExternalPlanCards billing={yearly ? 'annual' : 'monthly'} currency={currency} />
       </div>
 
@@ -274,18 +226,17 @@ export default function PricingPageClient() {
       <TopupPacksSection currency={currency} />
 
       {/* Enterprise CTA */}
-      <div className="py-16 px-6 border-t border-zinc-100 text-center" style={{ background: '#fafafa' }}>
-        <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-inter)', letterSpacing: '0.14em' }}>Enterprise</p>
-        <h2 className="text-2xl font-bold text-zinc-900 mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
+      <div style={{ padding: '64px 24px', borderTop: '1px solid #f4f4f5', background: '#fafafa', textAlign: 'center' }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#a1a1aa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>Enterprise</p>
+        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 22, fontWeight: 700, color: '#09090b', marginBottom: 10 }}>
           Want it curated for your business?
         </h2>
-        <p className="text-sm text-zinc-500 max-w-md mx-auto mb-6" style={{ fontFamily: 'var(--font-inter)', lineHeight: 1.7 }}>
-          Custom credits, white-label branding, dedicated onboarding, and priority support. Talk to us and we&apos;ll build a plan around your showroom.
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#71717a', maxWidth: 400, margin: '0 auto 24px', lineHeight: 1.7 }}>
+          Custom credits, white-label branding, dedicated onboarding, and priority support.
         </p>
         <a
           href="/contact"
-          className="inline-block px-8 py-3 rounded-xl text-sm font-semibold bg-zinc-900 text-white hover:bg-zinc-800 transition-colors"
-          style={{ fontFamily: 'var(--font-inter)' }}
+          style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, color: '#fff', background: '#09090b', borderRadius: 10, padding: '12px 32px', textDecoration: 'none', display: 'inline-block' }}
         >
           Contact Us →
         </a>

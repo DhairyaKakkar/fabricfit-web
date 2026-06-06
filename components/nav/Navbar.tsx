@@ -28,6 +28,8 @@ export default function Navbar() {
   ];
 
   useEffect(() => {
+    // Read immediately — handles anchor-jump navigation where scroll fires before listener attaches
+    setScrolled(window.scrollY > 40);
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);

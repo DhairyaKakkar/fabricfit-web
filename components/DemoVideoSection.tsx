@@ -100,7 +100,7 @@ export default function DemoVideoSection() {
                       {step.title}
                     </h3>
                   </div>
-                  <div style={{ position: 'absolute', top: 52, left: 0, right: 0, bottom: 0 }}>
+                  <div style={{ position: 'absolute', top: 52, left: -20, right: -20, bottom: -10 }}>
                     <Image
                       src={step.img}
                       alt={step.title}

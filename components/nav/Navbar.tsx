@@ -89,9 +89,9 @@ export default function Navbar() {
           overflow: 'hidden',
         }}>
           <div style={{
-            height: showPill ? 52 : 64,
+            height: showPill ? 60 : 72,
             display: 'flex', alignItems: 'center',
-            padding: showPill ? '0 20px' : '0 32px',
+            padding: showPill ? '0 24px' : '0 40px',
             transition: 'height 0.35s cubic-bezier(0.4,0,0.2,1), padding 0.35s cubic-bezier(0.4,0,0.2,1)',
           }}>
 
@@ -99,10 +99,10 @@ export default function Navbar() {
             <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none', flexShrink: 0 }}>
               <Image
                 src="/logo.png" alt="TrialRoomStudio" width={32} height={32} priority
-                style={{ height: showPill ? 28 : 34, width: 'auto', display: 'block', transition: 'height 0.35s cubic-bezier(0.4,0,0.2,1)' }}
+                style={{ height: showPill ? 32 : 38, width: 'auto', display: 'block', transition: 'height 0.35s cubic-bezier(0.4,0,0.2,1)' }}
               />
               <span style={{
-                fontFamily: 'var(--font-playfair)', fontSize: showPill ? 15 : 17, fontWeight: 700,
+                fontFamily: 'var(--font-playfair)', fontSize: showPill ? 17 : 19, fontWeight: 700,
                 color: wordmarkColor, letterSpacing: '-0.01em', lineHeight: 1,
                 transition: 'color 0.3s, font-size 0.35s',
               }}>

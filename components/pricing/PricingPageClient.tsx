@@ -207,10 +207,6 @@ export default function PricingPageClient() {
         <h1 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 700, color: '#09090b', marginBottom: 14, lineHeight: 1.1 }}>
           Simple, transparent pricing
         </h1>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: '#71717a', maxWidth: 400, margin: '0 auto 36px', lineHeight: 1.7 }}>
-          Pay per month or save with yearly. Switch or cancel anytime.
-        </p>
-
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
           <BillingToggle yearly={yearly} onChange={setYearly} />
           <div style={{ width: 1, height: 20, background: '#e4e4e7' }} />

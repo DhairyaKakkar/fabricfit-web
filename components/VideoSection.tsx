@@ -74,8 +74,15 @@ export default function VideoSection() {
         padding: '0 24px',
         paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
       }}>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <LiquidButton href="/pricing" color="#09090b" bg="#ffffff" padding="16px 44px" fontSize={16}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <LiquidButton
+            href="/pricing"
+            color="#09090b"
+            bg="#ffffff"
+            padding="14px 36px"
+            fontSize={15}
+            style={{ borderRadius: 8, fontWeight: 700, letterSpacing: '0.01em', border: 'none' }}
+          >
             Explore Pricing →
           </LiquidButton>
           <LiquidButton
@@ -83,9 +90,10 @@ export default function VideoSection() {
             target="_blank"
             rel="noopener noreferrer"
             color="#ffffff"
-            bg="#25D366"
-            padding="16px 44px"
-            fontSize={16}
+            bg="transparent"
+            padding="14px 36px"
+            fontSize={15}
+            style={{ borderRadius: 8, fontWeight: 600, letterSpacing: '0.01em', border: '1px solid rgba(255,255,255,0.45)' }}
           >
             Book a Demo
           </LiquidButton>

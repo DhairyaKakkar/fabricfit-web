@@ -51,7 +51,7 @@ export default function DemoVideoSection() {
                 key={step.num}
                 onMouseEnter={() => setHovered(i)}
                 style={{
-                  flex: isActive ? 2.2 : isInactive ? 0.65 : 1,
+                  flex: isActive ? 1.8 : isInactive ? 0.75 : 1,
                   minWidth: 0,
                   background: step.bg,
                   borderRadius: 20,
@@ -94,7 +94,7 @@ export default function DemoVideoSection() {
                     fill
                     loading="lazy"
                     style={{
-                      objectFit: 'contain',
+                      objectFit: 'cover',
                       objectPosition: 'bottom center',
                     }}
                   />

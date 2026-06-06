@@ -55,7 +55,7 @@ export default function DemoVideoSection() {
       {/* Cards row */}
       <div style={{ overflowX: 'auto', paddingBottom: 8 }}>
         <div
-          style={{ display: 'flex', gap: 10, height: 'clamp(560px, 74vh, 800px)', minWidth: 640 }}
+          style={{ display: 'flex', gap: 10, height: 'clamp(460px, 60vh, 620px)', minWidth: 640 }}
           onMouseLeave={() => setHovered(null)}
         >
           {STEPS.map((step, i) => {
@@ -105,7 +105,7 @@ export default function DemoVideoSection() {
                     alt={step.title}
                     fill
                     loading="lazy"
-                    style={{ objectFit: 'contain', objectPosition: 'bottom center', padding: '48px 0 0' }}
+                    style={{ objectFit: 'cover', objectPosition: step.imgPos }}
                   />
                 </div>
 
@@ -114,7 +114,9 @@ export default function DemoVideoSection() {
                   flex: isActive ? '1' : '0',
                   overflow: 'hidden',
                   opacity: isActive ? 1 : 0,
-                  transition: 'flex 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease',
+                  transition: isActive
+                    ? 'flex 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease 0.42s'
+                    : 'flex 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.1s ease 0s',
                   display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   padding: isActive ? '28px 24px' : '0',
                   minWidth: 0,

@@ -79,8 +79,8 @@ export default function Navbar() {
           style={{
             pointerEvents: 'auto',
             margin: '0 auto',
-            maxWidth: scrolled ? 820 : '100%',
-            borderRadius: scrolled ? 999 : 0,
+            maxWidth: scrolled ? 1200 : '100%',
+            borderRadius: scrolled ? 14 : 0,
             background: scrolled
               ? '#ffffff'
               : isHome ? 'transparent' : '#ffffff',

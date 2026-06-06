@@ -1,6 +1,5 @@
 import Navbar from '@/components/nav/Navbar';
 import VideoSection from '@/components/VideoSection';
-import SocialProofStrip from '@/components/SocialProofStrip';
 import MarqueeDivider from '@/components/MarqueeDivider';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import DemoVideoSection from '@/components/DemoVideoSection';
@@ -15,7 +14,6 @@ export default function Home() {
     <>
       <Navbar />
       <VideoSection />
-      <SocialProofStrip />
       <MarqueeDivider />
       <HowItWorksSection />
       <DemoVideoSection />

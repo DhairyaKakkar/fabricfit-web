@@ -156,3 +156,18 @@ body {
   pointer-events: none;
   z-index: 0;
 }
+
+/* ── Global keyboard focus state (accessibility) ───────────────────────── */
+:focus-visible {
+  outline: 2px solid #D9A046;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

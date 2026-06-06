@@ -131,9 +131,6 @@ export default function CtaSection() {
           ))}
         </div>
 
-        <p className="mt-8 text-xs" style={{ fontFamily: 'var(--font-inter)', color: 'rgba(255,255,255,0.18)' }}>
-          Backed by Nanyang Technological University, Singapore
-        </p>
       </div>
     </section>
   );

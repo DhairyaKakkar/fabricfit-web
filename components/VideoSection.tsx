@@ -14,8 +14,9 @@ export default function VideoSection() {
       {/* Video */}
       <video
         src="/videos/hero-video.mp4"
+        poster="/videos/hero-poster.jpg"
         autoPlay loop muted playsInline
-        preload="none"
+        preload="metadata"
         style={{
           position: 'absolute', inset: 0, width: '100%', height: '100%',
           objectFit: 'cover', zIndex: 1,

@@ -105,9 +105,9 @@ function PlanCard({ plan, billing, currency, index }: CardProps) {
       className="relative flex flex-col rounded-2xl p-6"
       style={{
         background: dark ? '#09090b' : '#ffffff',
-        border: dark ? '1px solid #27272a' : '1px solid #e4e4e7',
+        border: dark ? '1px solid rgba(217,160,70,0.5)' : '1px solid #e4e4e7',
         boxShadow: dark
-          ? '0 8px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12)'
+          ? '0 0 0 1px rgba(217,160,70,0.35), 0 12px 40px rgba(146,64,14,0.22), 0 2px 8px rgba(0,0,0,0.18)'
           : '0 1px 4px rgba(0,0,0,0.04)',
       }}
       initial={{ opacity: 0, y: 28 }}

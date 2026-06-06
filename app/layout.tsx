@@ -15,10 +15,32 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+const SITE_URL = 'https://trialroomstudio.com';
+const SITE_TITLE = 'TrialRoomStudio — Virtual Try-On for Fabric Showrooms';
+const SITE_DESC =
+  'Let your customers see exactly how your fabric looks on them — before stitching. AI-powered virtual try-on built for Indian fabric showrooms.';
+
 export const metadata: Metadata = {
-  title: 'TrialRoomStudio — Virtual Try-On for Fabric Showrooms',
-  description:
-    'Let your customers see exactly how your fabric looks on them — before stitching. AI-powered virtual try-on built for Indian fabric showrooms.',
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESC,
+  keywords: [
+    'virtual try-on', 'fabric showroom', 'AI fashion', 'garment visualization',
+    'TrialRoomStudio', 'kurta try-on', 'saree try-on', 'Indian fabric retail',
+  ],
+  openGraph: {
+    type: 'website',
+    url: SITE_URL,
+    siteName: 'TrialRoomStudio',
+    title: SITE_TITLE,
+    description: SITE_DESC,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_TITLE,
+    description: SITE_DESC,
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -51,17 +51,17 @@ function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: bo
 }
 
 function UseCaseChips({ chips, light = false }: { chips: { label: string }[]; light?: boolean }) {
-  const dotClr  = light ? 'rgba(0,0,0,0.25)'  : 'rgba(255,255,255,0.3)';
-  const textClr = light ? 'rgba(0,0,0,0.55)'  : 'rgba(255,255,255,0.6)';
-  const divClr  = light ? 'rgba(0,0,0,0.10)'  : 'rgba(255,255,255,0.10)';
+  const dotClr  = light ? 'rgba(0,0,0,0.45)'  : 'rgba(255,255,255,0.4)';
+  const textClr = light ? 'rgba(0,0,0,0.72)'  : 'rgba(255,255,255,0.75)';
+  const divClr  = light ? 'rgba(0,0,0,0.15)'  : 'rgba(255,255,255,0.15)';
   return (
-    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0, marginTop: 24, position: 'relative', zIndex: 2 }}>
+    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0, marginTop: 24, position: 'relative', zIndex: 10 }}>
       {chips.map((c, i) => (
         <div key={c.label} style={{ display: 'inline-flex', alignItems: 'center' }}>
           {i > 0 && <span style={{ display: 'inline-block', width: 1, height: 12, background: divClr, margin: '0 14px' }} />}
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
             <span style={{ width: 4, height: 4, borderRadius: '50%', background: dotClr, flexShrink: 0, display: 'inline-block' }} />
-            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 500, color: textClr, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{c.label}</span>
+            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, color: textClr, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{c.label}</span>
           </div>
         </div>
       ))}

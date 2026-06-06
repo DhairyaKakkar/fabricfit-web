@@ -50,20 +50,19 @@ function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: bo
   );
 }
 
-function UseCaseChips({ chips, light = false }: { chips: { icon: string; label: string }[]; light?: boolean }) {
-  const bg      = light ? 'rgba(0,0,0,0.06)'          : 'rgba(255,255,255,0.08)';
-  const border  = light ? 'rgba(0,0,0,0.10)'          : 'rgba(255,255,255,0.10)';
-  const textClr = light ? 'rgba(0,0,0,0.6)'           : 'rgba(255,255,255,0.65)';
+function UseCaseChips({ chips, light = false }: { chips: { label: string }[]; light?: boolean }) {
+  const dotClr  = light ? 'rgba(0,0,0,0.25)'  : 'rgba(255,255,255,0.3)';
+  const textClr = light ? 'rgba(0,0,0,0.55)'  : 'rgba(255,255,255,0.6)';
+  const divClr  = light ? 'rgba(0,0,0,0.10)'  : 'rgba(255,255,255,0.10)';
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 20, position: 'relative', zIndex: 2 }}>
-      {chips.map((c) => (
-        <div key={c.label} style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          background: bg, border: `1px solid ${border}`,
-          borderRadius: 6, padding: '7px 13px',
-        }}>
-          <span style={{ fontSize: 14 }}>{c.icon}</span>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 500, color: textClr, whiteSpace: 'nowrap' }}>{c.label}</span>
+    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0, marginTop: 24, position: 'relative', zIndex: 2 }}>
+      {chips.map((c, i) => (
+        <div key={c.label} style={{ display: 'inline-flex', alignItems: 'center' }}>
+          {i > 0 && <span style={{ display: 'inline-block', width: 1, height: 12, background: divClr, margin: '0 14px' }} />}
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ width: 4, height: 4, borderRadius: '50%', background: dotClr, flexShrink: 0, display: 'inline-block' }} />
+            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 500, color: textClr, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{c.label}</span>
+          </div>
         </div>
       ))}
     </div>
@@ -101,9 +100,9 @@ export default function HowItWorksSection() {
             </p>
           </div>
           <UseCaseChips light chips={[
-            { icon: '📸', label: 'Snap a photo in-store' },
-            { icon: '⚡', label: 'Result in 90 seconds' },
-            { icon: '✂️', label: 'Zero alterations guesswork' },
+            { label: 'Snap a photo in-store' },
+            { label: 'Result in 90 seconds' },
+            { label: 'Zero alteration guesswork' },
           ]} />
         </div>
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
@@ -124,9 +123,9 @@ export default function HowItWorksSection() {
             </p>
           </div>
           <UseCaseChips chips={[
-            { icon: '🛒', label: 'Add to Shopify in 5 min' },
-            { icon: '🌐', label: 'Any website, any platform' },
-            { icon: '📱', label: 'Mobile-ready, no app needed' },
+            { label: 'Add to Shopify in 5 min' },
+            { label: 'Any website, any platform' },
+            { label: 'Mobile-ready, no app needed' },
           ]} />
         </div>
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
@@ -147,9 +146,9 @@ export default function HowItWorksSection() {
             </p>
           </div>
           <UseCaseChips light chips={[
-            { icon: '🗂️', label: 'Upload fabrics once, use forever' },
-            { icon: '🖼️', label: 'Export polished look-book photos' },
-            { icon: '📤', label: 'Share via WhatsApp instantly' },
+            { label: 'Upload fabrics once, use forever' },
+            { label: 'Export polished look-book photos' },
+            { label: 'Share via WhatsApp instantly' },
           ]} />
         </div>
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>

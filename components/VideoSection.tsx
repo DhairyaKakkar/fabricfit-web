@@ -16,40 +16,42 @@ function ShowroomsSpan({ hovered, onEnter, onLeave }: { hovered: boolean; onEnte
         cursor: 'default',
       }}
     >
-      {/* White highlight box — fades in on hover */}
+      {/* Fabric mosaic highlight box */}
       <span style={{
         position: 'absolute',
         top: '-0.08em', bottom: '-0.1em',
         left: '-0.18em', right: '-0.18em',
-        background: '#ffffff',
-        borderRadius: '0.1em',
+        borderRadius: '0.12em',
         opacity: hovered ? 1 : 0,
-        transition: 'opacity 0.15s ease-out',
+        transition: 'opacity 0.2s ease-out',
         zIndex: 0,
+        overflow: 'hidden',
+        display: 'flex',
         pointerEvents: 'none',
-      }} />
-      {/* White text — shown normally */}
+      }}>
+        {[
+          { src: '/garments/kurta.png',    pos: 'center 25%' },
+          { src: '/garments/anarkali.png', pos: 'center 20%' },
+          { src: '/garments/lehenga.png',  pos: 'center 25%' },
+          { src: '/garments/sherwani.png', pos: 'center 20%' },
+          { src: '/garments/saree.png',    pos: 'center 30%' },
+        ].map(({ src, pos }) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <span key={src} style={{ flex: 1, overflow: 'hidden', position: 'relative', display: 'block' }}>
+            <img src={src} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: pos }} />
+          </span>
+        ))}
+        {/* Dark scrim so white text stays legible */}
+        <span style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)' }} />
+      </span>
+      {/* Text — always white, readable on both video and fabric bg */}
       <span style={{
         position: 'relative',
         zIndex: 1,
         color: '#ffffff',
         WebkitTextFillColor: '#ffffff',
-        opacity: hovered ? 0 : 1,
-        transition: 'opacity 0.15s ease-out',
-        textShadow: 'none',
-      }}>fabric showrooms.</span>
-      {/* Dark text — appears on hover so it reads on the white box */}
-      <span style={{
-        position: 'absolute',
-        left: 0, top: 0,
-        zIndex: 2,
-        color: '#09090b',
-        WebkitTextFillColor: '#09090b',
-        whiteSpace: 'nowrap',
-        opacity: hovered ? 1 : 0,
-        transition: 'opacity 0.15s ease-out',
-        pointerEvents: 'none',
-        textShadow: 'none',
+        textShadow: hovered ? 'none' : '0 2px 20px rgba(0,0,0,0.4)',
+        transition: 'text-shadow 0.2s ease-out',
       }}>fabric showrooms.</span>
     </span>
   );

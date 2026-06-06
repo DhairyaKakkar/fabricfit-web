@@ -35,37 +35,42 @@ function CountrySelector({ currency, onChange }: { currency: Currency; onChange:
 /* ─── Billing Toggle ─────────────────────────────────────────────────────── */
 function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: boolean) => void }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontFamily: 'var(--font-inter)' }}>
+    <div style={{
+      display: 'inline-flex', alignItems: 'center',
+      background: '#f4f4f5', borderRadius: 999, padding: 4,
+      fontFamily: 'var(--font-inter)', gap: 2,
+    }}>
       <button
         onClick={() => onChange(false)}
-        style={{ fontSize: 13, fontWeight: yearly ? 400 : 600, color: yearly ? '#a1a1aa' : '#09090b', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        style={{
+          fontSize: 13, fontWeight: 500, cursor: 'pointer', padding: '7px 18px',
+          borderRadius: 999, border: 'none', transition: 'all 0.18s',
+          background: !yearly ? '#ffffff' : 'transparent',
+          color: !yearly ? '#09090b' : '#71717a',
+          boxShadow: !yearly ? '0 1px 4px rgba(0,0,0,0.10)' : 'none',
+        }}
       >
         Monthly
       </button>
       <button
-        onClick={() => onChange(!yearly)}
-        role="switch"
-        aria-checked={yearly}
-        aria-label="Toggle between monthly and yearly billing"
+        onClick={() => onChange(true)}
         style={{
-          position: 'relative', width: 40, height: 20, borderRadius: 999, border: 'none', cursor: 'pointer',
-          background: yearly ? '#09090b' : '#e4e4e7', transition: 'background 0.2s', padding: 0,
+          fontSize: 13, fontWeight: 500, cursor: 'pointer', padding: '7px 18px',
+          borderRadius: 999, border: 'none', transition: 'all 0.18s',
+          display: 'flex', alignItems: 'center', gap: 6,
+          background: yearly ? '#09090b' : 'transparent',
+          color: yearly ? '#ffffff' : '#71717a',
+          boxShadow: yearly ? '0 1px 4px rgba(0,0,0,0.18)' : 'none',
         }}
       >
-        <span style={{
-          position: 'absolute', top: 2, width: 16, height: 16, borderRadius: '50%',
-          background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-          transition: 'left 0.2s', left: yearly ? 22 : 2,
-        }} />
-      </button>
-      <button
-        onClick={() => onChange(true)}
-        style={{ fontSize: 13, fontWeight: yearly ? 600 : 400, color: yearly ? '#09090b' : '#a1a1aa', background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 6 }}
-      >
         Yearly
-        {yearly && (
-          <span style={{ fontSize: 10, fontWeight: 600, background: '#f4f4f5', color: '#52525b', borderRadius: 4, padding: '2px 6px' }}>2 months free</span>
-        )}
+        <span style={{
+          fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 4,
+          background: yearly ? 'rgba(255,255,255,0.18)' : '#e4e4e7',
+          color: yearly ? '#ffffff' : '#71717a',
+        }}>
+          2 months free
+        </span>
       </button>
     </div>
   );

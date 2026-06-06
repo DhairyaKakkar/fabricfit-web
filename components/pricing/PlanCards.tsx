@@ -305,6 +305,18 @@ function PlanCard({ plan, billing, currency }: CardProps) {
           color: dark ? '#09090b' : '#09090b',
           border: dark ? 'none' : '1px solid #d4d4d8',
           textDecoration: 'none',
+          cursor: 'pointer',
+          transition: 'background 0.15s, opacity 0.15s, transform 0.15s',
+        }}
+        onMouseEnter={(e) => {
+          const el = e.currentTarget as HTMLAnchorElement;
+          if (dark) { el.style.opacity = '0.88'; el.style.transform = 'translateY(-1px)'; }
+          else { el.style.background = '#09090b'; el.style.color = '#ffffff'; el.style.border = '1px solid #09090b'; }
+        }}
+        onMouseLeave={(e) => {
+          const el = e.currentTarget as HTMLAnchorElement;
+          if (dark) { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }
+          else { el.style.background = 'transparent'; el.style.color = '#09090b'; el.style.border = '1px solid #d4d4d8'; }
         }}
       >
         Get Started

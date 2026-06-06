@@ -30,11 +30,11 @@ function ShowroomsSpan({ hovered, onEnter, onLeave }: { hovered: boolean; onEnte
         pointerEvents: 'none',
       }}>
         {[
-          { src: '/garments/kurta.png',    pos: 'center 25%' },
-          { src: '/garments/anarkali.png', pos: 'center 20%' },
-          { src: '/garments/lehenga.png',  pos: 'center 25%' },
-          { src: '/garments/sherwani.png', pos: 'center 20%' },
-          { src: '/garments/saree.png',    pos: 'center 30%' },
+          { src: '/garments/kurta.webp',    pos: 'center 25%' },
+          { src: '/garments/anarkali.webp', pos: 'center 20%' },
+          { src: '/garments/lehenga.webp',  pos: 'center 25%' },
+          { src: '/garments/sherwani.webp', pos: 'center 20%' },
+          { src: '/garments/saree.webp',    pos: 'center 30%' },
         ].map(({ src, pos }) => (
           // eslint-disable-next-line @next/next/no-img-element
           <span key={src} style={{ flex: 1, overflow: 'hidden', position: 'relative', display: 'block' }}>

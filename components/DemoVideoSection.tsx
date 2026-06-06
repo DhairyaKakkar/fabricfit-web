@@ -94,7 +94,7 @@ export default function DemoVideoSection() {
                   overflow: 'hidden',
                 }}>
                   <div style={{
-                    width: '90%', maxWidth: 260,
+                    width: '105%', maxWidth: 340,
                     transform: isActive ? 'scale(1.07)' : isInactive ? 'scale(0.93)' : 'scale(1)',
                     transformOrigin: 'bottom center',
                     transition: 'transform 0.45s cubic-bezier(0.4,0,0.2,1)',

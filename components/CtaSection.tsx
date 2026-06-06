@@ -51,7 +51,7 @@ export default function CtaSection() {
         background: 'linear-gradient(90deg, transparent, rgba(146,64,14,0.5), rgba(201,168,76,0.6), rgba(146,64,14,0.5), transparent)',
       }} />
 
-      <div className="max-w-2xl mx-auto px-6 md:px-8 text-center relative">
+      <div className="max-w-5xl mx-auto px-6 md:px-8 text-center relative">
         <span className="inline-block text-xs font-semibold tracking-widest uppercase mb-6" style={{
           fontFamily: 'var(--font-inter)',
           color: 'rgba(201,168,76,0.8)',
@@ -64,29 +64,24 @@ export default function CtaSection() {
 
         <h2 style={{
           fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(2.8rem, 7vw, 5.5rem)',
+          fontSize: 'clamp(2.8rem, 5.5vw, 5.5rem)',
           fontWeight: 700,
-          color: '#ffffff',
-          lineHeight: 1.05,
-          marginBottom: '0.4rem',
-          letterSpacing: '-0.02em',
-        }}>
-          Your customers deserve
-        </h2>
-        <p style={{
-          fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(2.8rem, 7vw, 5.5rem)',
-          fontWeight: 700,
-          fontStyle: 'italic',
-          background: 'linear-gradient(135deg, #c9a84c, #f0d080, #c9a84c)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          lineHeight: 1.05,
+          lineHeight: 1.1,
           marginBottom: '2rem',
           letterSpacing: '-0.02em',
+          whiteSpace: 'nowrap',
         }}>
-          to see it first.
-        </p>
+          <span style={{ color: '#ffffff' }}>Your customers deserve</span>
+          <br />
+          <span style={{
+            fontStyle: 'italic',
+            background: 'linear-gradient(135deg, #c9a84c, #f0d080, #c9a84c)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}>
+            to see it first.
+          </span>
+        </h2>
 
         <p className="text-sm leading-relaxed mb-10" style={{
           fontFamily: 'var(--font-inter)',

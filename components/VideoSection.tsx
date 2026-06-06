@@ -47,13 +47,13 @@ export default function VideoSection() {
           margin: 0,
           textShadow: '0 2px 40px rgba(0,0,0,0.45)',
         }}>
-          AI try-on for fabric showrooms{' '}
+          AI try-on for{' '}
           <span style={{
             background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 45%, #fcd34d 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-          }}>&amp; garment retailers.</span>
+          }}>fabric showrooms.</span>
         </h1>
         <p style={{
           fontFamily: 'var(--font-inter)',
@@ -63,7 +63,7 @@ export default function VideoSection() {
           textTransform: 'uppercase',
           margin: 0,
         }}>
-          Fabric showrooms &nbsp;·&nbsp; Garment retailers &nbsp;·&nbsp; Boutiques &nbsp;·&nbsp; No studio required
+          Fewer returns &nbsp;·&nbsp; More walk-in conversions &nbsp;·&nbsp; No studio required
         </p>
       </div>
 

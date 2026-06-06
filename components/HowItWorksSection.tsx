@@ -85,11 +85,11 @@ export default function HowItWorksSection() {
     <div id="features" className="w-full">
 
       <FlowSection index={0} aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '32%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '44%' }}>
           <StepLabel num="01" light />
           <div>
-            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(4rem, 8.5vw, 9.5rem)', fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
-              Virtual<br />Try-On.
+            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.8rem, 4.5vw, 6rem)', fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
+              Virtual Try-On.
             </h2>
             <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.4)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               Right in your store — no setup required.
@@ -108,11 +108,11 @@ export default function HowItWorksSection() {
       </FlowSection>
 
       <FlowSection index={1} aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '32%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '44%' }}>
           <StepLabel num="02" />
           <div>
-            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(4rem, 8.5vw, 9.5rem)', fontWeight: 700, color: '#ffffff', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
-              Embed<br />anywhere.
+            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.8rem, 4.5vw, 6rem)', fontWeight: 700, color: '#ffffff', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
+              Embed anywhere.
             </h2>
             <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               One line of code — Shopify, WooCommerce, any site.
@@ -131,23 +131,20 @@ export default function HowItWorksSection() {
       </FlowSection>
 
       <FlowSection index={2} aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '32%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '44%' }}>
           <StepLabel num="03" light />
           <div>
-            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(4rem, 8.5vw, 9.5rem)', fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
-              Build your<br />catalogue.
+            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(2.8rem, 4.5vw, 6rem)', fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
+              Build your catalogue.
             </h2>
             <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               No shoot. No agency. Export same day.
             </p>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)', color: 'rgba(0,0,0,0.5)', marginTop: '1rem', lineHeight: 1.65, maxWidth: 360 }}>
-              Use our AI models to generate catalogue-ready, shareable photos — straight from your fabric. No photoshoot, no model booking. Just upload the fabric and share with your clients in minutes.
-            </p>
           </div>
           <UseCaseChips light chips={[
-            { label: 'Generate from fabric directly' },
-            { label: 'Catalogue-ready photos instantly' },
-            { label: 'Share with clients via WhatsApp' },
+            { label: 'Upload fabric — AI generates the look' },
+            { label: 'Catalogue-ready photos, no shoot needed' },
+            { label: 'Share directly with clients via WhatsApp' },
           ]} />
         </div>
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>

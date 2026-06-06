@@ -122,16 +122,10 @@ export default function ProductsPageClient() {
           fontFamily: 'var(--font-playfair)',
           fontSize: 'clamp(2.4rem, 3.4vw, 3.6rem)',
           fontWeight: 700, color: '#09090b', lineHeight: 0.98,
-          letterSpacing: '-0.02em', marginBottom: '0.6rem',
+          letterSpacing: '-0.02em', marginBottom: '1.8rem',
         }}>
           Tap any style.<br />See it on the model.
         </h2>
-        <p style={{
-          fontFamily: 'var(--font-inter)', fontSize: 13, color: 'rgba(0,0,0,0.45)',
-          marginBottom: '1.8rem', lineHeight: 1.6, maxWidth: 420,
-        }}>
-          This is exactly what your customers experience — instant, photorealistic try-on across your full catalogue.
-        </p>
 
         <div style={{ height: 1, background: '#e5e5e3', marginBottom: 24 }} />
 

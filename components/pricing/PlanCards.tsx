@@ -1,7 +1,5 @@
 'use client';
 
-'use client';
-
 import { motion } from 'framer-motion';
 import { PRICING, type Currency, fmtPrice } from '@/lib/pricing';
 import type { BillingCycle } from './PricingPageClient';

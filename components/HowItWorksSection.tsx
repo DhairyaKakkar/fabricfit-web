@@ -54,11 +54,11 @@ function UseCaseChips({ chips, light = false }: { chips: { label: string }[]; li
   const dotClr  = light ? 'rgba(0,0,0,0.3)'   : 'rgba(255,255,255,0.3)';
   const textClr = light ? 'rgba(0,0,0,0.65)'  : 'rgba(255,255,255,0.7)';
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 28 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 32 }}>
       {chips.map((c) => (
         <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ width: 4, height: 4, borderRadius: '50%', background: dotClr, flexShrink: 0 }} />
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500, color: textClr, letterSpacing: '0.01em' }}>{c.label}</span>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotClr, flexShrink: 0 }} />
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 20, fontWeight: 500, color: textClr, letterSpacing: '-0.01em' }}>{c.label}</span>
         </div>
       ))}
     </div>

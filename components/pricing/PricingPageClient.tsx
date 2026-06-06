@@ -142,7 +142,7 @@ const RULES = [
 
 function FooterSection() {
   return (
-    <div style={{ padding: '64px 24px', background: '#fafafa', borderTop: '1px solid #f4f4f5' }}>
+    <div style={{ padding: '64px 24px', background: '#ffffff', borderTop: '1px solid #f4f4f5' }}>
       <div style={{ maxWidth: 760, margin: '0 auto', textAlign: 'center' }}>
         <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 20, fontWeight: 700, color: '#09090b', marginBottom: 8 }}>Good to know</h2>
         <div style={{ width: 32, height: 1, background: '#e4e4e7', margin: '0 auto 36px' }} />
@@ -226,7 +226,7 @@ export default function PricingPageClient() {
       <TopupPacksSection currency={currency} />
 
       {/* Enterprise CTA */}
-      <div style={{ padding: '64px 24px', borderTop: '1px solid #f4f4f5', background: '#fafafa', textAlign: 'center' }}>
+      <div style={{ padding: '64px 24px', borderTop: '1px solid #f4f4f5', background: '#ffffff', textAlign: 'center' }}>
         <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: '#a1a1aa', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: 10 }}>Enterprise</p>
         <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 22, fontWeight: 700, color: '#09090b', marginBottom: 10 }}>
           Want it curated for your business?

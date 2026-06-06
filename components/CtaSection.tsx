@@ -111,8 +111,8 @@ export default function CtaSection() {
             href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
             target="_blank"
             rel="noopener noreferrer"
-            color="rgba(255,255,255,0.85)"
-            bg="rgba(255,255,255,0.06)"
+            color="#ffffff"
+            bg="#25D366"
             padding="16px 36px"
           >
             <WhatsAppIcon />

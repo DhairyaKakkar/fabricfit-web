@@ -81,7 +81,7 @@ export default function VideoSection() {
             target="_blank"
             rel="noopener noreferrer"
             color="#ffffff"
-            bg="rgba(255,255,255,0.12)"
+            bg="#25D366"
             padding="16px 44px"
             fontSize={16}
           >

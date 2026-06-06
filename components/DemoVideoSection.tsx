@@ -55,7 +55,7 @@ export default function DemoVideoSection() {
       {/* Cards row */}
       <div style={{ overflowX: 'auto', paddingBottom: 8 }}>
         <div
-          style={{ display: 'flex', gap: 10, height: 'clamp(460px, 60vh, 620px)', minWidth: 640 }}
+          style={{ display: 'flex', gap: 10, height: 'clamp(540px, 70vh, 720px)', minWidth: 640 }}
           onMouseLeave={() => setHovered(null)}
         >
           {STEPS.map((step, i) => {
@@ -100,13 +100,16 @@ export default function DemoVideoSection() {
                       {step.title}
                     </h3>
                   </div>
-                  <Image
-                    src={step.img}
-                    alt={step.title}
-                    fill
-                    loading="lazy"
-                    style={{ objectFit: 'cover', objectPosition: step.imgPos }}
-                  />
+                  {/* Offset image down so card bg shows behind label */}
+                  <div style={{ position: 'absolute', top: 58, left: 0, right: 0, bottom: 0 }}>
+                    <Image
+                      src={step.img}
+                      alt={step.title}
+                      fill
+                      loading="lazy"
+                      style={{ objectFit: 'cover', objectPosition: step.imgPos }}
+                    />
+                  </div>
                 </div>
 
                 {/* Description panel — slides in on hover */}

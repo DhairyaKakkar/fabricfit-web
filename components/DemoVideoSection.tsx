@@ -99,39 +99,37 @@ export default function DemoVideoSection() {
                         width: '120%',
                         height: 'auto',
                         display: 'block',
-                        transform: isActive ? 'scale(1.03) translateY(-8px)' : isInactive ? 'scale(0.95)' : 'scale(1)',
+                        transform: isInactive ? 'scale(0.96)' : 'scale(1)',
                         transformOrigin: 'bottom center',
                         transition: 'transform 0.45s cubic-bezier(0.4,0,0.2,1)',
                       }}
                     />
                   </div>
 
-                  {/* Button pulse overlay — appears on hover at CTA button position */}
+                  {/* Button pulse overlay — aligned to CTA button when card is expanded */}
                   {isActive && (
                     <>
-                      {/* Outer ring */}
                       <div style={{
                         position: 'absolute',
-                        bottom: step.btnBottom,
+                        bottom: '22%',
                         left: '50%',
-                        width: 120,
-                        height: 36,
-                        borderRadius: 10,
+                        width: '55%',
+                        height: 40,
+                        borderRadius: 12,
                         border: `2px solid ${step.btnColor}`,
-                        animation: 'btn-ping-2 1.4s ease-out infinite',
+                        animation: 'btn-ping-2 1.5s ease-out infinite',
                         pointerEvents: 'none',
                         zIndex: 10,
                       }} />
-                      {/* Inner ring */}
                       <div style={{
                         position: 'absolute',
-                        bottom: step.btnBottom,
+                        bottom: '22%',
                         left: '50%',
-                        width: 120,
-                        height: 36,
-                        borderRadius: 10,
+                        width: '55%',
+                        height: 40,
+                        borderRadius: 12,
                         border: `2px solid ${step.btnColor}`,
-                        animation: 'btn-ping 1.4s ease-out 0.3s infinite',
+                        animation: 'btn-ping 1.5s ease-out 0.4s infinite',
                         pointerEvents: 'none',
                         zIndex: 10,
                       }} />

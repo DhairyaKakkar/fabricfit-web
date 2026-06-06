@@ -4,7 +4,6 @@ import MarqueeDivider from '@/components/MarqueeDivider';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import DemoVideoSection from '@/components/DemoVideoSection';
 import ProductsPageClient from '@/components/products/ProductsPageClient';
-import TestimonialsSection from '@/components/TestimonialsSection';
 import FAQSection from '@/components/FAQSection';
 import CtaSection from '@/components/CtaSection';
 import Footer from '@/components/Footer';
@@ -18,7 +17,6 @@ export default function Home() {
       <HowItWorksSection />
       <DemoVideoSection />
       <ProductsPageClient />
-      <TestimonialsSection />
       <FAQSection />
       <CtaSection />
       <Footer />

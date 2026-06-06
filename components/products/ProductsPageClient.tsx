@@ -120,11 +120,11 @@ export default function ProductsPageClient() {
         </p>
         <h2 style={{
           fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(2.4rem, 3.4vw, 3.6rem)',
-          fontWeight: 700, color: '#09090b', lineHeight: 0.98,
-          letterSpacing: '-0.02em', marginBottom: '1.8rem',
+          fontSize: 'clamp(1.5rem, 2.2vw, 2.4rem)',
+          fontWeight: 700, color: '#09090b', lineHeight: 1.1,
+          letterSpacing: '-0.02em', marginBottom: '1.8rem', whiteSpace: 'nowrap',
         }}>
-          Tap any style.<br />See it on the model.
+          Tap any style. See it on the model.
         </h2>
 
         <div style={{ height: 1, background: '#e5e5e3', marginBottom: 24 }} />

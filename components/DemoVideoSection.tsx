@@ -105,7 +105,7 @@ export default function DemoVideoSection() {
                     alt={step.title}
                     fill
                     loading="lazy"
-                    style={{ objectFit: 'contain', objectPosition: 'bottom center', padding: '52px 14px 10px' }}
+                    style={{ objectFit: 'contain', objectPosition: 'bottom center', padding: '56px 4px 0px' }}
                   />
                 </div>
 

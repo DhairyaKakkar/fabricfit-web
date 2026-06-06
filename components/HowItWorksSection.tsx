@@ -25,20 +25,47 @@ function FlowSection({ children, bg = '#09090b', index, 'aria-label': ariaLabel 
 }
 
 function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: boolean }) {
-  const dot    = light ? 'rgba(0,0,0,0.06)'  : 'rgba(255,255,255,0.05)';
-  const border = light ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.1)';
-  const numClr = light ? 'rgba(0,0,0,0.35)'  : 'rgba(255,255,255,0.4)';
-  const labelC = light ? 'rgba(0,0,0,0.22)'  : 'rgba(255,255,255,0.22)';
-  const stepC  = light ? 'rgba(0,0,0,0.12)'  : 'rgba(255,255,255,0.12)';
+  const bg      = light ? '#09090b'           : '#ffffff';
+  const numClr  = light ? '#ffffff'           : '#09090b';
+  const labelC  = light ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.6)';
+  const lineC   = light ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.12)';
   return (
     <div className="relative z-10 flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <div style={{ width: 34, height: 34, borderRadius: '50%', background: dot, border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: numClr }}>{num}</span>
+        <div style={{
+          width: 30, height: 30, borderRadius: '50%',
+          background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: light ? '0 2px 8px rgba(0,0,0,0.15)' : '0 2px 8px rgba(0,0,0,0.3)',
+        }}>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr }}>{num}</span>
         </div>
-        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: labelC, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Features</span>
+        <span style={{
+          fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 700,
+          color: labelC, letterSpacing: '0.22em', textTransform: 'uppercase',
+        }}>Features</span>
+        <span style={{ width: 32, height: 1, background: lineC, display: 'inline-block' }} />
+        <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 500, color: labelC, letterSpacing: '0.08em' }}>{num} / 03</span>
       </div>
-      <span style={{ fontFamily: 'var(--font-playfair)', fontSize: 12, fontStyle: 'italic', color: stepC }}>Feature {num} / 03</span>
+    </div>
+  );
+}
+
+function UseCaseChips({ chips, light = false }: { chips: { icon: string; label: string }[]; light?: boolean }) {
+  const bg      = light ? 'rgba(0,0,0,0.06)'          : 'rgba(255,255,255,0.08)';
+  const border  = light ? 'rgba(0,0,0,0.10)'          : 'rgba(255,255,255,0.10)';
+  const textClr = light ? 'rgba(0,0,0,0.6)'           : 'rgba(255,255,255,0.65)';
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 20, position: 'relative', zIndex: 2 }}>
+      {chips.map((c) => (
+        <div key={c.label} style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          background: bg, border: `1px solid ${border}`,
+          borderRadius: 6, padding: '7px 13px',
+        }}>
+          <span style={{ fontSize: 14 }}>{c.icon}</span>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 500, color: textClr, whiteSpace: 'nowrap' }}>{c.label}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -73,6 +100,11 @@ export default function HowItWorksSection() {
               Right in your store — no setup required.
             </p>
           </div>
+          <UseCaseChips light chips={[
+            { icon: '📸', label: 'Snap a photo in-store' },
+            { icon: '⚡', label: 'Result in 90 seconds' },
+            { icon: '✂️', label: 'Zero alterations guesswork' },
+          ]} />
         </div>
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
           <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
@@ -91,6 +123,11 @@ export default function HowItWorksSection() {
               One line of code — Shopify, WooCommerce, any site.
             </p>
           </div>
+          <UseCaseChips chips={[
+            { icon: '🛒', label: 'Add to Shopify in 5 min' },
+            { icon: '🌐', label: 'Any website, any platform' },
+            { icon: '📱', label: 'Mobile-ready, no app needed' },
+          ]} />
         </div>
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
           <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
@@ -109,6 +146,11 @@ export default function HowItWorksSection() {
               No shoot. No agency. Export same day.
             </p>
           </div>
+          <UseCaseChips light chips={[
+            { icon: '🗂️', label: 'Upload fabrics once, use forever' },
+            { icon: '🖼️', label: 'Export polished look-book photos' },
+            { icon: '📤', label: 'Share via WhatsApp instantly' },
+          ]} />
         </div>
         <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
           <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />

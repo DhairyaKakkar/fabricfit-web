@@ -9,7 +9,7 @@ export default function VideoSection() {
   return (
     <section
       id="hero"
-      style={{ height: '100vh', position: 'relative', backgroundColor: '#09090b', overflow: 'hidden' }}
+      style={{ height: '100dvh', position: 'relative', backgroundColor: '#09090b', overflow: 'hidden' }}
     >
       {/* Video */}
       <video
@@ -39,7 +39,7 @@ export default function VideoSection() {
       }}>
         <h1 style={{
           fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(48px, 6.5vw, 88px)',
+          fontSize: 'clamp(34px, 9vw, 88px)',
           fontWeight: 700,
           color: '#ffffff',
           lineHeight: 1.08,
@@ -63,19 +63,20 @@ export default function VideoSection() {
           textTransform: 'uppercase',
           margin: 0,
         }}>
-          Fewer returns &nbsp;·&nbsp; More walk-in conversions &nbsp;·&nbsp; No studio required
+          Fewer returns · More walk-in conversions · No studio required
         </p>
       </div>
 
       {/* CTA buttons */}
       <div style={{
-        position: 'absolute', bottom: 48, left: 0, right: 0,
+        position: 'absolute', bottom: 0, left: 0, right: 0,
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, zIndex: 4,
         padding: '0 24px',
+        paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
       }}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <LiquidButton onClick={openTrialModal} color="#09090b" bg="#ffffff" padding="16px 44px" fontSize={16}>
-            Request Access
+          <LiquidButton href="/pricing" color="#09090b" bg="#ffffff" padding="16px 44px" fontSize={16}>
+            Explore Pricing →
           </LiquidButton>
           <LiquidButton
             href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}

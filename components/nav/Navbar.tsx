@@ -99,10 +99,10 @@ export default function Navbar() {
             <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 9, textDecoration: 'none', flexShrink: 0 }}>
               <Image
                 src="/logo.png" alt="TrialRoomStudio" width={32} height={32} priority
-                style={{ height: showPill ? 28 : 34, width: 'auto', display: 'block', transition: 'height 0.35s cubic-bezier(0.4,0,0.2,1)' }}
+                style={{ height: showPill ? 32 : 38, width: 'auto', display: 'block', transition: 'height 0.35s cubic-bezier(0.4,0,0.2,1)' }}
               />
               <span style={{
-                fontFamily: 'var(--font-playfair)', fontSize: showPill ? 15 : 17, fontWeight: 700,
+                fontFamily: 'var(--font-playfair)', fontSize: showPill ? 17 : 20, fontWeight: 700,
                 color: wordmarkColor, letterSpacing: '-0.01em', lineHeight: 1,
                 transition: 'color 0.3s, font-size 0.35s',
               }}>
@@ -118,9 +118,9 @@ export default function Navbar() {
                   key={l.href} href={l.href}
                   onClick={(e) => handleAnchorClick(e, l.href)}
                   style={{
-                    fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500,
+                    fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
                     color: linkColor, textDecoration: 'none',
-                    padding: '5px 12px', borderRadius: 6,
+                    padding: '5px 14px', borderRadius: 6,
                     letterSpacing: '0.01em',
                     transition: 'color 0.15s, background 0.15s',
                   }}
@@ -143,7 +143,7 @@ export default function Navbar() {
               <a
                 href={accountLink.href}
                 style={{
-                  fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500,
+                  fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
                   color: accountColor, textDecoration: 'none', padding: '5px 10px',
                   transition: 'color 0.2s',
                 }}
@@ -156,9 +156,9 @@ export default function Navbar() {
                 <button
                   onClick={() => setTrialOpen(true)}
                   style={{
-                    fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600,
-                    color: ctaColor, background: ctaBg,
-                    border: 'none', borderRadius: 8, padding: '7px 18px',
+                    fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 800,
+                    color: '#09090b', background: '#ffffff',
+                    border: 'none', borderRadius: 8, padding: '8px 20px',
                     cursor: 'pointer', whiteSpace: 'nowrap',
                     transition: 'opacity 0.15s, transform 0.15s, background 0.3s, color 0.3s',
                   }}

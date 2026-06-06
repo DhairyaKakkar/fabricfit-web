@@ -51,18 +51,14 @@ function StepLabel({ num, light = false }: { num: '01' | '02' | '03'; light?: bo
 }
 
 function UseCaseChips({ chips, light = false }: { chips: { label: string }[]; light?: boolean }) {
-  const dotClr  = light ? 'rgba(0,0,0,0.45)'  : 'rgba(255,255,255,0.4)';
-  const textClr = light ? 'rgba(0,0,0,0.72)'  : 'rgba(255,255,255,0.75)';
-  const divClr  = light ? 'rgba(0,0,0,0.15)'  : 'rgba(255,255,255,0.15)';
+  const dotClr  = light ? 'rgba(0,0,0,0.3)'   : 'rgba(255,255,255,0.3)';
+  const textClr = light ? 'rgba(0,0,0,0.65)'  : 'rgba(255,255,255,0.7)';
   return (
-    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0, marginTop: 24, position: 'relative', zIndex: 10 }}>
-      {chips.map((c, i) => (
-        <div key={c.label} style={{ display: 'inline-flex', alignItems: 'center' }}>
-          {i > 0 && <span style={{ display: 'inline-block', width: 1, height: 12, background: divClr, margin: '0 14px' }} />}
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
-            <span style={{ width: 4, height: 4, borderRadius: '50%', background: dotClr, flexShrink: 0, display: 'inline-block' }} />
-            <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, color: textClr, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{c.label}</span>
-          </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 28 }}>
+      {chips.map((c) => (
+        <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ width: 4, height: 4, borderRadius: '50%', background: dotClr, flexShrink: 0 }} />
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500, color: textClr, letterSpacing: '0.01em' }}>{c.label}</span>
         </div>
       ))}
     </div>
@@ -89,9 +85,9 @@ export default function HowItWorksSection() {
     <div id="features" className="w-full">
 
       <FlowSection index={0} aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '32%' }}>
           <StepLabel num="01" light />
-          <div style={{ maxWidth: 640 }}>
+          <div>
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(4rem, 8.5vw, 9.5rem)', fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
               Virtual<br />Try-On.
             </h2>
@@ -99,24 +95,22 @@ export default function HowItWorksSection() {
               Right in your store — no setup required.
             </p>
           </div>
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
-        </div>
-        <div style={{ position: 'absolute', bottom: 60, right: '5vw', zIndex: 5 }}>
           <UseCaseChips light chips={[
             { label: 'Snap a photo in-store' },
             { label: 'Result in 90 seconds' },
             { label: 'Zero alteration guesswork' },
           ]} />
         </div>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+          <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+        </div>
         <StepDots active="01" light />
       </FlowSection>
 
       <FlowSection index={1} aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '32%' }}>
           <StepLabel num="02" />
-          <div style={{ maxWidth: 640 }}>
+          <div>
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(4rem, 8.5vw, 9.5rem)', fontWeight: 700, color: '#ffffff', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
               Embed<br />anywhere.
             </h2>
@@ -124,24 +118,22 @@ export default function HowItWorksSection() {
               One line of code — Shopify, WooCommerce, any site.
             </p>
           </div>
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
-        </div>
-        <div style={{ position: 'absolute', bottom: 60, right: '5vw', zIndex: 5 }}>
           <UseCaseChips chips={[
             { label: 'Add to Shopify in 5 min' },
             { label: 'Any website, any platform' },
             { label: 'Mobile-ready, no app needed' },
           ]} />
         </div>
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
+          <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+        </div>
         <StepDots active="02" />
       </FlowSection>
 
       <FlowSection index={2} aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative', zIndex: 2, maxWidth: '32%' }}>
           <StepLabel num="03" light />
-          <div style={{ maxWidth: 640 }}>
+          <div>
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(4rem, 8.5vw, 9.5rem)', fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '1.2rem' }}>
               Build your<br />catalogue.
             </h2>
@@ -149,11 +141,6 @@ export default function HowItWorksSection() {
               No shoot. No agency. Export same day.
             </p>
           </div>
-        </div>
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' }}>
-          <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
-        </div>
-        <div style={{ position: 'absolute', bottom: 60, right: '5vw', zIndex: 5 }}>
           <UseCaseChips light chips={[
             { label: 'Upload fabrics once, use forever' },
             { label: 'Export polished look-book photos' },

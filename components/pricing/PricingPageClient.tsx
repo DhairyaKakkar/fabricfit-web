@@ -222,8 +222,8 @@ export default function PricingPageClient() {
         <ExternalPlanCards billing={yearly ? 'annual' : 'monthly'} currency={currency} />
       </div>
 
-      {/* Top-Up Packs */}
-      <TopupPacksSection currency={currency} />
+      {/* Top-Up Packs — temporarily hidden */}
+      {/* <TopupPacksSection currency={currency} /> */}
 
       {/* Enterprise CTA */}
       <div style={{ padding: '64px 24px', borderTop: '1px solid #f4f4f5', background: '#ffffff', textAlign: 'center' }}>

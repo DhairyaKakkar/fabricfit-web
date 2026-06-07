@@ -23,10 +23,10 @@ const LINKS = {
 export default function Footer() {
   return (
     <footer style={{ background: '#09090b', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-      <div className="max-w-6xl mx-auto px-6 md:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
+      <div className="max-w-6xl mx-auto px-6 md:px-8 py-10 md:py-16">
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-8 md:gap-10 mb-8 md:mb-12">
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
+          <div className="col-span-3 md:col-span-1">
             <a href="/" className="inline-flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity">
               <Image src="/logo.png" alt="TrialRoomStudio" width={36} height={36} className="h-9 w-auto" />
               <span style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 600, color: '#ffffff', letterSpacing: '-0.01em' }}>
@@ -53,10 +53,10 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(LINKS).map(([section, items]) => (
             <div key={section}>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 16 }}>
+              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
                 {section}
               </p>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-2.5">
                 {items.map((item) => (
                   <li key={item.label}>
                     <a
@@ -76,7 +76,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-zinc-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="border-t border-zinc-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
           <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: 'rgba(255,255,255,0.25)' }}>
             © {new Date().getFullYear()} TrialRoomStudio. All rights reserved.
           </p>

@@ -49,9 +49,8 @@ export default function DemoVideoSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Mobile scroll-driven accordion. Active card derives from how far the list
-  // has scrolled through the viewport (stable against height animations),
-  // with hysteresis so it never flip-flops at band boundaries.
+  // Mobile: pinned storytelling. The section sticks on screen while the
+  // wrapper provides ~80vh of scroll per step — slow, deliberate, no jumpiness.
   useEffect(() => {
     if (!isMobile) return;
     let raf = 0;
@@ -59,19 +58,19 @@ export default function DemoVideoSection() {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        const list = listRef.current;
-        if (!list) return;
+        const wrap = listRef.current;
+        if (!wrap) return;
         const vh = window.innerHeight;
-        const r = list.getBoundingClientRect();
-        const total = Math.max(1, r.height - vh * 0.45);
-        const scrolled = Math.min(Math.max(vh * 0.6 - r.top, 0), total);
+        const r = wrap.getBoundingClientRect();
+        const total = Math.max(1, r.height - vh);
+        const scrolled = Math.min(Math.max(-r.top, 0), total);
         const pos = (scrolled / total) * STEPS.length; // 0..5 float
         setActiveIdx((prev) => {
           const t = Math.min(STEPS.length - 1, Math.max(0, Math.floor(pos)));
           if (t === prev) return prev;
-          // require 35% into the new band before switching (hysteresis)
-          if (t > prev) return (pos - t >= 0.35 || t - prev >= 2) ? t : prev;
-          return ((t + 1 - pos) >= 0.35 || prev - t >= 2) ? t : prev;
+          // gentle hysteresis — 15% into the new band before switching
+          if (t > prev) return (pos - t >= 0.15 || t - prev >= 2) ? t : prev;
+          return ((t + 1 - pos) >= 0.15 || prev - t >= 2) ? t : prev;
         });
       });
     };
@@ -83,88 +82,87 @@ export default function DemoVideoSection() {
     };
   }, [isMobile]);
 
-  // ── Mobile: slim bars that expand as they scroll into view ────────────────
+  // ── Mobile: sticky stack — active card grows, others stay slim bars ───────
   if (isMobile) {
     return (
-      <section style={{ background: '#09090b', padding: '56px 20px 48px', overflow: 'hidden' }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 12 }}>
-            How it works
-          </p>
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.9rem', fontWeight: 700, color: '#ffffff', lineHeight: 1.08, letterSpacing: '-0.02em', margin: 0 }}>
-            Five steps.<br />Under two minutes.
-          </h2>
-        </div>
+      <div ref={listRef} style={{ position: 'relative', height: `${STEPS.length * 80 + 100}svh`, background: '#09090b' }}>
+        <section style={{
+          position: 'sticky', top: 0, height: '100svh',
+          display: 'flex', flexDirection: 'column',
+          padding: '52px 16px 16px', overflow: 'hidden',
+        }}>
+          <div style={{ textAlign: 'center', marginBottom: 16, flexShrink: 0 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 8 }}>
+              How it works
+            </p>
+            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', lineHeight: 1.08, letterSpacing: '-0.02em', margin: 0 }}>
+              Five steps. Under two minutes.
+            </h2>
+          </div>
 
-        <div ref={listRef} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {STEPS.map((step, i) => {
-            const isActive  = activeIdx === i;
-            const titleClr  = step.textDark ? '#09090b'           : '#ffffff';
-            const numClr    = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.45)';
-            const textClr   = step.textDark ? 'rgba(0,0,0,0.7)'   : 'rgba(255,255,255,0.75)';
-            const bulletClr = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.4)';
-            const divClr    = step.textDark ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.12)';
-            return (
-              <div
-                key={step.num}
-                data-step-card
-                onClick={() => setActiveIdx(i)}
-                style={{
-                  background: step.bg,
-                  borderRadius: 18,
-                  overflow: 'hidden',
-                  boxShadow: isActive ? '0 18px 50px rgba(0,0,0,0.45)' : 'none',
-                  transition: 'box-shadow 0.4s ease',
-                }}
-              >
-                {/* Slim header — always visible */}
-                <div style={{ padding: isActive ? '20px 20px 0' : '16px 20px', display: 'flex', alignItems: 'center', gap: 12, transition: 'padding 0.4s ease' }}>
-                  <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr, letterSpacing: '0.14em' }}>
-                    {step.num}
-                  </span>
-                  <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: isActive ? '1.35rem' : '1.05rem', fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: 0, transition: 'font-size 0.4s ease' }}>
-                    {step.title}
-                  </h3>
-                </div>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, minHeight: 0 }}>
+            {STEPS.map((step, i) => {
+              const isActive  = activeIdx === i;
+              const titleClr  = step.textDark ? '#09090b'           : '#ffffff';
+              const numClr    = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.45)';
+              const textClr   = step.textDark ? 'rgba(0,0,0,0.7)'   : 'rgba(255,255,255,0.75)';
+              const divClr    = step.textDark ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.12)';
+              return (
+                <div
+                  key={step.num}
+                  onClick={() => setActiveIdx(i)}
+                  style={{
+                    flex: isActive ? '1 1 auto' : '0 0 48px',
+                    minHeight: 0,
+                    background: step.bg,
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'flex 0.6s cubic-bezier(0.4,0,0.2,1)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {/* Header bar — always visible */}
+                  <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+                    <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr, letterSpacing: '0.14em' }}>
+                      {step.num}
+                    </span>
+                    <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: isActive ? '1.2rem' : '1rem', fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', transition: 'font-size 0.4s ease' }}>
+                      {step.title}
+                    </h3>
+                  </div>
 
-                {/* Expanding body — opens when card is centred in viewport */}
-                <div style={{
-                  maxHeight: isActive ? 720 : 0,
-                  opacity: isActive ? 1 : 0,
-                  overflow: 'hidden',
-                  // identical open/close timing keeps total list height steady —
-                  // no layout wiggle while one card opens and another closes
-                  transition: 'max-height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease',
-                }}>
-                  <div style={{ padding: '12px 20px 0' }}>
-                    <div style={{ width: 28, height: 1, background: divClr, marginBottom: 10 }} />
-                    <p style={{ fontFamily: 'var(--font-inter)', fontSize: '0.82rem', color: textClr, lineHeight: 1.65, margin: '0 0 12px' }}>
-                      {step.desc}
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      {step.bullets.map((b) => (
-                        <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: bulletClr, flexShrink: 0 }} />
-                          <span style={{ fontFamily: 'var(--font-inter)', fontSize: '0.75rem', color: textClr, lineHeight: 1.4 }}>{b}</span>
-                        </div>
-                      ))}
+                  {/* Body — fades in as the card grows */}
+                  <div style={{
+                    flex: 1, minHeight: 0,
+                    display: 'flex', flexDirection: 'column',
+                    opacity: isActive ? 1 : 0,
+                    transition: isActive ? 'opacity 0.45s ease 0.2s' : 'opacity 0.15s ease',
+                    pointerEvents: 'none',
+                  }}>
+                    <div style={{ padding: '10px 18px 0', flexShrink: 0 }}>
+                      <div style={{ width: 26, height: 1, background: divClr, marginBottom: 8 }} />
+                      <p style={{ fontFamily: 'var(--font-inter)', fontSize: '0.78rem', color: textClr, lineHeight: 1.55, margin: 0 }}>
+                        {step.desc}
+                      </p>
+                    </div>
+                    <div style={{ flex: 1, position: 'relative', minHeight: 0, marginTop: 8 }}>
+                      <Image
+                        src={step.img}
+                        alt={step.title}
+                        fill
+                        loading="lazy"
+                        style={{ objectFit: 'contain', objectPosition: 'bottom center' }}
+                      />
                     </div>
                   </div>
-                  <div style={{ position: 'relative', height: 290, marginTop: 8 }}>
-                    <Image
-                      src={step.img}
-                      alt={step.title}
-                      fill
-                      loading="lazy"
-                      style={{ objectFit: 'contain', objectPosition: 'bottom center' }}
-                    />
-                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+              );
+            })}
+          </div>
+        </section>
+      </div>
     );
   }
 

@@ -7,10 +7,23 @@ interface FlowSectionProps {
   children: React.ReactNode;
   bg?: string;
   index: number;
+  isMobile?: boolean;
   'aria-label'?: string;
 }
 
-function FlowSection({ children, bg = '#09090b', index, 'aria-label': ariaLabel }: FlowSectionProps) {
+function FlowSection({ children, bg = '#09090b', index, isMobile = false, 'aria-label': ariaLabel }: FlowSectionProps) {
+  // Mobile: normal flow, auto height — no sticky stacking, no 100dvh void.
+  if (isMobile) {
+    return (
+      <section
+        aria-label={ariaLabel}
+        className="relative w-full flex flex-col"
+        style={{ background: bg, padding: '36px 20px 0', overflow: 'hidden' }}
+      >
+        {children}
+      </section>
+    );
+  }
   return (
     <div style={{ position: 'sticky', top: 0, zIndex: index + 1, height: '100dvh', overflow: 'hidden' }}>
       <section
@@ -99,13 +112,13 @@ export default function HowItWorksSection() {
 
   const headingSize = isMobile ? '2rem' : 'clamp(2.8rem, 4.5vw, 6rem)';
   const imageStyle: React.CSSProperties = isMobile
-    ? { position: 'absolute', bottom: 0, left: 0, right: 0, width: '100%', zIndex: 1, pointerEvents: 'none' }
+    ? { position: 'relative', width: '100%', marginTop: 20, zIndex: 1, pointerEvents: 'none' }
     : { position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' };
 
   return (
     <div id="features" className="w-full">
 
-      <FlowSection index={0} aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0">
+      <FlowSection index={0} isMobile={isMobile} aria-label="Feature 1: Virtual Try-On for stores" bg="#F6F5F0">
         <div style={textStyle}>
           <StepLabel num="01" light />
           <div>
@@ -125,10 +138,10 @@ export default function HowItWorksSection() {
         <div style={imageStyle}>
           <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
-        <StepDots active="01" light />
+        {!isMobile && <StepDots active="01" light />}
       </FlowSection>
 
-      <FlowSection index={1} aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314">
+      <FlowSection index={1} isMobile={isMobile} aria-label="Feature 2: Web embed for Shopify and WooCommerce" bg="#111314">
         <div style={textStyle}>
           <StepLabel num="02" />
           <div>
@@ -148,10 +161,10 @@ export default function HowItWorksSection() {
         <div style={imageStyle}>
           <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
-        <StepDots active="02" />
+        {!isMobile && <StepDots active="02" />}
       </FlowSection>
 
-      <FlowSection index={2} aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0">
+      <FlowSection index={2} isMobile={isMobile} aria-label="Feature 3: Create a high-polished catalogue" bg="#F6F5F0">
         <div style={textStyle}>
           <StepLabel num="03" light />
           <div>
@@ -171,7 +184,7 @@ export default function HowItWorksSection() {
         <div style={imageStyle}>
           <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
         </div>
-        <StepDots active="03" light />
+        {!isMobile && <StepDots active="03" light />}
       </FlowSection>
 
     </div>

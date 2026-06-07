@@ -35,11 +35,28 @@ const M_POS = [
   { top: '78%', left: '20%', w: 80, rot: 11,  delay: '0.5s' },
 ];
 
+// Mobile garment positions — pinned to the side edges so the centred model stays clear
+const POS_M = [
+  { top: '2%',  left: '2%',  w: 60, rot: -8,  delay: '0s'   },
+  { top: '4%',  left: '78%', w: 60, rot: 10,  delay: '1.1s' },
+  { top: '34%', left: '0%',  w: 56, rot: 6,   delay: '0.5s' },
+  { top: '36%', left: '80%', w: 56, rot: -9,  delay: '1.7s' },
+  { top: '66%', left: '2%',  w: 58, rot: 8,   delay: '0.3s' },
+];
+
 export default function ProductsPageClient() {
   const [femaleId, setFemaleId] = useState(FEMALE[0].id);
   const [maleId,   setMaleId]   = useState(MALE[0].id);
   const [dragOver, setDragOver] = useState<'female' | 'male' | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     [...FEMALE, ...MALE].forEach(g => {
@@ -70,6 +87,76 @@ export default function ProductsPageClient() {
 
   const fg = FEMALE.find(g => g.id === femaleId)!;
   const mg = MALE  .find(g => g.id === maleId)!;
+
+  // ── Mobile: stacked zones, tap a garment to apply it ───────────────────────
+  if (isMobile) {
+    const MobileZone = ({ list, current, gender, label }: { list: typeof FEMALE; current: string; gender: 'female' | 'male'; label: string }) => {
+      const sel = list.find(g => g.id === current)!;
+      return (
+        <div style={{ position: 'relative', height: 460, marginTop: 8 }}>
+          <p style={{
+            position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 5,
+            fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: '#a1a1aa',
+            letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0,
+          }}>{label}</p>
+          <div style={{ position: 'absolute', inset: '24px 60px 0' }}>
+            <Image key={sel.out} src={sel.out} alt={`${label} model`} fill
+              style={{ objectFit: 'contain', objectPosition: 'center bottom' }} />
+          </div>
+          {list.map((g, i) => {
+            const pos = POS_M[i];
+            const active = g.id === current;
+            return (
+              <div key={g.id} style={{ position: 'absolute', top: pos.top, left: pos.left, width: pos.w, zIndex: 4, transform: `rotate(${pos.rot}deg)` }}>
+                <div
+                  className="garment-float"
+                  onClick={() => apply(g.id, gender)}
+                  style={{
+                    cursor: 'pointer',
+                    animationDelay: pos.delay,
+                    filter: active ? 'drop-shadow(0 0 12px rgba(217,160,70,0.9))' : 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))',
+                    transition: 'filter 0.3s',
+                    borderRadius: 6,
+                    outline: active ? '2px solid rgba(217,160,70,0.7)' : 'none',
+                  }}
+                >
+                  <Image src={g.src} alt={g.label} width={pos.w} height={Math.round(pos.w * 1.4)}
+                    style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }} />
+                </div>
+                <p style={{ textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 7, fontWeight: 600, color: active ? '#D9A046' : '#c4c4c4', letterSpacing: '0.06em', textTransform: 'uppercase', margin: '2px 0 0' }}>{g.label}</p>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
+
+    return (
+      <section style={{ background: '#ffffff', padding: '48px 16px 40px', overflow: 'hidden' }}>
+        {/* CTA header */}
+        <div style={{ textAlign: 'center', marginBottom: 8 }}>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 700, color: '#a1a1aa', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 14 }}>
+            Live Demo
+          </p>
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.8rem', fontWeight: 700, color: '#09090b', lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: 10 }}>
+            Your customers deserve<br />to see it first.
+          </h2>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: '#a1a1aa', marginBottom: 18, lineHeight: 1.6 }}>
+            Tap any garment to try it on the model.
+          </p>
+          <button
+            onClick={openTrialModal}
+            style={{ fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 700, color: '#ffffff', background: '#09090b', border: 'none', borderRadius: 10, padding: '13px 28px', cursor: 'pointer' }}
+          >
+            Request Access →
+          </button>
+        </div>
+
+        <MobileZone list={FEMALE} current={femaleId} gender="female" label="Women" />
+        <MobileZone list={MALE}   current={maleId}   gender="male"   label="Men" />
+      </section>
+    );
+  }
 
   const GarmentCard = ({ g, pos, gender, active }: { g: typeof FEMALE[0]; pos: typeof F_POS[0]; gender: 'female' | 'male'; active: boolean }) => (
     <div style={{ position: 'absolute', top: pos.top, left: pos.left, width: pos.w, zIndex: 4, transform: `rotate(${pos.rot}deg)` }}>

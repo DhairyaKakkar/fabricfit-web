@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 const STEPS = [
@@ -38,6 +38,75 @@ const STEPS = [
 
 export default function DemoVideoSection() {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check, { passive: true });
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // ── Mobile: vertical stack, image + text always visible (no hover) ────────
+  if (isMobile) {
+    return (
+      <section style={{ background: '#09090b', padding: '56px 20px 48px', overflow: 'hidden' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 12 }}>
+            How it works
+          </p>
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.9rem', fontWeight: 700, color: '#ffffff', lineHeight: 1.08, letterSpacing: '-0.02em', margin: 0 }}>
+            Five steps.<br />Under two minutes.
+          </h2>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {STEPS.map((step) => {
+            const titleClr  = step.textDark ? '#09090b'           : '#ffffff';
+            const numClr    = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.45)';
+            const textClr   = step.textDark ? 'rgba(0,0,0,0.7)'   : 'rgba(255,255,255,0.75)';
+            const bulletClr = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.4)';
+            const divClr    = step.textDark ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.12)';
+            return (
+              <div key={step.num} style={{ background: step.bg, borderRadius: 18, overflow: 'hidden' }}>
+                {/* Text */}
+                <div style={{ padding: '22px 20px 4px' }}>
+                  <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>
+                    {step.num}
+                  </span>
+                  <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.35rem', fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: '0 0 10px' }}>
+                    {step.title}
+                  </h3>
+                  <div style={{ width: 28, height: 1, background: divClr, marginBottom: 10 }} />
+                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: '0.82rem', color: textClr, lineHeight: 1.65, margin: '0 0 12px' }}>
+                    {step.desc}
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {step.bullets.map((b) => (
+                      <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: bulletClr, flexShrink: 0 }} />
+                        <span style={{ fontFamily: 'var(--font-inter)', fontSize: '0.75rem', color: textClr, lineHeight: 1.4 }}>{b}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Image */}
+                <div style={{ position: 'relative', height: 300, marginTop: 8 }}>
+                  <Image
+                    src={step.img}
+                    alt={step.title}
+                    fill
+                    loading="lazy"
+                    style={{ objectFit: 'contain', objectPosition: 'bottom center' }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section style={{ background: '#09090b', padding: 'clamp(4rem, 7vw, 6rem) clamp(1.5rem, 4vw, 4rem)', overflow: 'hidden' }}>

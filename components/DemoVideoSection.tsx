@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const STEPS = [
@@ -39,6 +39,8 @@ const STEPS = [
 export default function DemoVideoSection() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -47,7 +49,38 @@ export default function DemoVideoSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // ── Mobile: vertical stack, image + text always visible (no hover) ────────
+  // Mobile scroll-driven accordion: the card nearest the viewport centre opens,
+  // closes again as it scrolls past.
+  useEffect(() => {
+    if (!isMobile) return;
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const cards = listRef.current?.querySelectorAll<HTMLElement>('[data-step-card]');
+        if (!cards || cards.length === 0) return;
+        const mid = window.innerHeight / 2;
+        let best = 0;
+        let bestDist = Infinity;
+        cards.forEach((el, i) => {
+          const r = el.getBoundingClientRect();
+          const center = r.top + r.height / 2;
+          const d = Math.abs(center - mid);
+          if (d < bestDist) { bestDist = d; best = i; }
+        });
+        setActiveIdx((prev) => (prev === best ? prev : best));
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [isMobile]);
+
+  // ── Mobile: slim bars that expand as they scroll into view ────────────────
   if (isMobile) {
     return (
       <section style={{ background: '#09090b', padding: '56px 20px 48px', overflow: 'hidden' }}>
@@ -60,45 +93,69 @@ export default function DemoVideoSection() {
           </h2>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {STEPS.map((step) => {
+        <div ref={listRef} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {STEPS.map((step, i) => {
+            const isActive  = activeIdx === i;
             const titleClr  = step.textDark ? '#09090b'           : '#ffffff';
             const numClr    = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.45)';
             const textClr   = step.textDark ? 'rgba(0,0,0,0.7)'   : 'rgba(255,255,255,0.75)';
             const bulletClr = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.4)';
             const divClr    = step.textDark ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.12)';
             return (
-              <div key={step.num} style={{ background: step.bg, borderRadius: 18, overflow: 'hidden' }}>
-                {/* Text */}
-                <div style={{ padding: '22px 20px 4px' }}>
-                  <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr, letterSpacing: '0.16em', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>
+              <div
+                key={step.num}
+                data-step-card
+                onClick={() => setActiveIdx(i)}
+                style={{
+                  background: step.bg,
+                  borderRadius: 18,
+                  overflow: 'hidden',
+                  boxShadow: isActive ? '0 18px 50px rgba(0,0,0,0.45)' : 'none',
+                  transition: 'box-shadow 0.4s ease',
+                }}
+              >
+                {/* Slim header — always visible */}
+                <div style={{ padding: isActive ? '20px 20px 0' : '16px 20px', display: 'flex', alignItems: 'center', gap: 12, transition: 'padding 0.4s ease' }}>
+                  <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr, letterSpacing: '0.14em' }}>
                     {step.num}
                   </span>
-                  <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.35rem', fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: '0 0 10px' }}>
+                  <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: isActive ? '1.35rem' : '1.05rem', fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: 0, transition: 'font-size 0.4s ease' }}>
                     {step.title}
                   </h3>
-                  <div style={{ width: 28, height: 1, background: divClr, marginBottom: 10 }} />
-                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: '0.82rem', color: textClr, lineHeight: 1.65, margin: '0 0 12px' }}>
-                    {step.desc}
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {step.bullets.map((b) => (
-                      <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: bulletClr, flexShrink: 0 }} />
-                        <span style={{ fontFamily: 'var(--font-inter)', fontSize: '0.75rem', color: textClr, lineHeight: 1.4 }}>{b}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-                {/* Image */}
-                <div style={{ position: 'relative', height: 300, marginTop: 8 }}>
-                  <Image
-                    src={step.img}
-                    alt={step.title}
-                    fill
-                    loading="lazy"
-                    style={{ objectFit: 'contain', objectPosition: 'bottom center' }}
-                  />
+
+                {/* Expanding body — opens when card is centred in viewport */}
+                <div style={{
+                  maxHeight: isActive ? 720 : 0,
+                  opacity: isActive ? 1 : 0,
+                  overflow: 'hidden',
+                  transition: isActive
+                    ? 'max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease 0.15s'
+                    : 'max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease',
+                }}>
+                  <div style={{ padding: '12px 20px 0' }}>
+                    <div style={{ width: 28, height: 1, background: divClr, marginBottom: 10 }} />
+                    <p style={{ fontFamily: 'var(--font-inter)', fontSize: '0.82rem', color: textClr, lineHeight: 1.65, margin: '0 0 12px' }}>
+                      {step.desc}
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {step.bullets.map((b) => (
+                        <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: bulletClr, flexShrink: 0 }} />
+                          <span style={{ fontFamily: 'var(--font-inter)', fontSize: '0.75rem', color: textClr, lineHeight: 1.4 }}>{b}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ position: 'relative', height: 290, marginTop: 8 }}>
+                    <Image
+                      src={step.img}
+                      alt={step.title}
+                      fill
+                      loading="lazy"
+                      style={{ objectFit: 'contain', objectPosition: 'bottom center' }}
+                    />
+                  </div>
                 </div>
               </div>
             );

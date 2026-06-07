@@ -1,241 +1,157 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { GARMENTS, Gender, GarmentId } from '@/lib/garments';
+import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { openTrialModal } from '@/lib/openTrialModal';
+
+const FEMALE = [
+  { id: 'casual-dress', label: 'Casual Dress', src: '/garments/casual-dress.webp', out: '/models/female-casual-dress.webp' },
+  { id: 'jumpsuit',     label: 'Jumpsuit',     src: '/garments/jumpsuit.webp',     out: '/models/female-jumpsuit.webp' },
+  { id: 'anarkali',     label: 'Anarkali',     src: '/garments/anarkali.webp',     out: '/models/female-anarkali.webp' },
+  { id: 'saree',        label: 'Saree',        src: '/garments/saree.webp',        out: '/models/female-saree.webp' },
+  { id: 'lehenga',      label: 'Lehenga',      src: '/garments/lehenga.webp',      out: '/models/female-lehenga.webp' },
+];
+
+const MALE = [
+  { id: 'shirt',      label: 'Shirt',      src: '/garments/shirt.webp',      out: '/models/male-shirt.webp' },
+  { id: 'kurta',      label: 'Kurta',      src: '/garments/kurta.webp',      out: '/models/male-kurta.webp' },
+  { id: 'sherwani',   label: 'Sherwani',   src: '/garments/sherwani.webp',   out: '/models/male-sherwani.webp' },
+  { id: 'nehru-coat', label: 'Nehru Coat', src: '/garments/nehru-coat.webp', out: '/models/male-nehru-coat.webp' },
+  { id: 'blazer',     label: 'Blazer',     src: '/garments/blazer.webp',     out: '/models/male-blazer.webp' },
+];
+
+const F_POS = [
+  { top: '6%',  left: '67%', w: 86, rot: -8,  delay: '0s'   },
+  { top: '24%', left: '-9%', w: 76, rot: 12,  delay: '1.1s' },
+  { top: '47%', left: '73%', w: 82, rot: -6,  delay: '0.5s' },
+  { top: '63%', left: '-7%', w: 78, rot: 9,   delay: '1.7s' },
+  { top: '78%', left: '65%', w: 80, rot: -11, delay: '0.3s' },
+];
+const M_POS = [
+  { top: '6%',  left: '22%', w: 86, rot: 8,   delay: '0.2s' },
+  { top: '24%', left: '80%', w: 76, rot: -12, delay: '1.3s' },
+  { top: '47%', left: '14%', w: 82, rot: 5,   delay: '0.7s' },
+  { top: '63%', left: '76%', w: 78, rot: -9,  delay: '1.9s' },
+  { top: '78%', left: '20%', w: 80, rot: 11,  delay: '0.5s' },
+];
 
 export default function ProductsPageClient() {
-  const [gender, setGender] = useState<Gender>('female');
-  const [selectedId, setSelectedId] = useState<GarmentId>('casual-dress');
-  const [isMobile, setIsMobile] = useState(false);
+  const [femaleId, setFemaleId] = useState(FEMALE[0].id);
+  const [maleId,   setMaleId]   = useState(MALE[0].id);
+  const [dragOver, setDragOver] = useState<'female' | 'male' | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener('resize', check, { passive: true });
-    return () => window.removeEventListener('resize', check);
+    [...FEMALE, ...MALE].forEach(g => {
+      const a = new window.Image(); a.src = g.src;
+      const b = new window.Image(); b.src = g.out;
+    });
   }, []);
 
-  const garments = GARMENTS.filter(g => g.gender === gender);
-  const selected = garments.find(g => g.id === selectedId) ?? garments[0];
-
-  const switchGender = (g: Gender) => {
-    setGender(g);
-    const first = GARMENTS.find(item => item.gender === g);
-    if (first) setSelectedId(first.id);
+  const resetTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setFemaleId(id => FEMALE[(FEMALE.findIndex(g => g.id === id) + 1) % FEMALE.length].id);
+      setMaleId(id =>   MALE  [(MALE  .findIndex(g => g.id === id) + 1) % MALE  .length].id);
+    }, 5000);
   };
 
-  if (isMobile) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#F6F5F0', paddingTop: 64, overflow: 'hidden' }}>
+  useEffect(() => {
+    resetTimer();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-        {/* Compact header */}
-        <div style={{ padding: '14px 20px 0', flexShrink: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <div>
-              <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', margin: 0, marginBottom: 4 }}>
-                Browse the collection
-              </p>
-              <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.35rem', fontWeight: 700, color: '#09090b', lineHeight: 1.1, letterSpacing: '-0.02em', margin: 0 }}>
-                Tap any style.
-              </h2>
-            </div>
-            {/* Gender toggle */}
-            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderRadius: 999, padding: 3, border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', flexShrink: 0 }}>
-              {(['female', 'male'] as Gender[]).map((g) => (
-                <button
-                  key={g}
-                  onClick={() => switchGender(g)}
-                  style={{ padding: '5px 12px', border: 'none', borderRadius: 999, background: gender === g ? '#09090b' : 'transparent', color: gender === g ? '#ffffff' : '#71717a', fontSize: 10, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-inter)', letterSpacing: '0.04em', textTransform: 'uppercase', transition: 'all 0.2s' }}
-                >
-                  {g === 'male' ? 'Men' : 'Women'}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div style={{ height: 1, background: '#e5e5e3', marginTop: 12 }} />
-        </div>
-
-        {/* Model viewer — middle, flex: 1 */}
-        <div style={{ flex: 1, position: 'relative', minHeight: 0, background: 'radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #F1EFE9 55%, #E8E5DC 100%)', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none', boxShadow: 'inset 0 0 60px rgba(0,0,0,0.04)' }} />
-          {garments.map((g) => (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              key={g.id}
-              src={g.compositeSrc}
-              alt={g.label}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', zIndex: 1, opacity: g.id === selected.id ? 1 : 0, transition: 'opacity 0.45s ease' }}
-            />
-          ))}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(to top, rgba(232,229,220,0.55) 0%, transparent 100%)', pointerEvents: 'none', zIndex: 2 }} />
-          <div style={{ position: 'absolute', bottom: 16, left: 20, zIndex: 10 }}>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.3)', margin: 0, marginBottom: 2 }}>Live Preview</p>
-            <p style={{ fontFamily: 'var(--font-playfair)', fontSize: 20, fontWeight: 700, color: '#09090b', margin: 0, lineHeight: 1 }}>{selected.label}</p>
-          </div>
-        </div>
-
-        {/* Outfit grid — bottom */}
-        <div style={{ flexShrink: 0, padding: '10px 14px', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-            {garments.map((garment) => {
-              const isActive = garment.id === selectedId;
-              return (
-                <div
-                  key={garment.id}
-                  onClick={() => setSelectedId(garment.id)}
-                  style={{ borderRadius: 10, background: isActive ? '#09090b' : '#efefed', border: `1.5px solid ${isActive ? '#09090b' : 'transparent'}`, cursor: 'pointer', overflow: 'hidden', aspectRatio: '4/5', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', transition: 'background 0.22s, border-color 0.22s', boxShadow: isActive ? '0 4px 14px rgba(0,0,0,0.18)' : 'none' }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={garment.floatSrc} alt={garment.label} style={{ width: '72%', height: '70%', objectFit: 'contain', position: 'relative', zIndex: 1 }} />
-                  <span style={{ position: 'absolute', bottom: 6, fontFamily: 'var(--font-inter)', fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: isActive ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)', zIndex: 1 }}>{garment.label}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    );
+  function apply(id: string, gender: 'female' | 'male') {
+    if (gender === 'female') setFemaleId(id);
+    else setMaleId(id);
+    resetTimer();
   }
 
-  return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#F6F5F0', paddingTop: 56, overflow: 'hidden' }}>
+  const fg = FEMALE.find(g => g.id === femaleId)!;
+  const mg = MALE  .find(g => g.id === maleId)!;
 
-      {/* Left: model viewer */}
-      <div style={{
-        width: '42%', flexShrink: 0, position: 'relative',
-        background: 'radial-gradient(120% 90% at 50% 0%, #ffffff 0%, #F1EFE9 55%, #E8E5DC 100%)',
-        overflow: 'hidden',
-      }}>
-        {/* Soft vignette frame */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none',
-          boxShadow: 'inset 0 0 120px rgba(0,0,0,0.06)',
-        }} />
-
-        {/* Model image — crossfade by key */}
-        {garments.map((g) => (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            key={g.id}
-            src={g.compositeSrc}
-            alt={g.label}
-            style={{
-              position: 'absolute', inset: 0, width: '100%', height: '100%',
-              objectFit: 'cover', objectPosition: 'top center', zIndex: 1,
-              opacity: g.id === selected.id ? 1 : 0,
-              transition: 'opacity 0.45s ease',
-            }}
-          />
-        ))}
-
-        {/* Gentle bottom fade */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, height: 120,
-          background: 'linear-gradient(to top, rgba(232,229,220,0.55) 0%, transparent 100%)',
-          pointerEvents: 'none', zIndex: 2,
-        }} />
-
-        {/* Eyebrow + garment name, bottom-left */}
-        <div style={{ position: 'absolute', bottom: 28, left: 28, zIndex: 10 }}>
-          <p style={{
-            fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700,
-            letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.3)',
-            margin: 0, marginBottom: 4,
-          }}>
-            Live Preview
-          </p>
-          <p style={{
-            fontFamily: 'var(--font-playfair)', fontSize: 26, fontWeight: 700,
-            color: '#09090b', margin: 0, lineHeight: 1,
-          }}>
-            {selected.label}
-          </p>
-        </div>
-
-        {/* Gender toggle — top-right pill */}
-        <div style={{
-          position: 'absolute', top: 24, right: 24, zIndex: 10,
-          display: 'flex',
-          background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(20px)',
-          borderRadius: 999, padding: 4, border: '1px solid rgba(0,0,0,0.06)',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-        }}>
-          {(['female', 'male'] as Gender[]).map((g) => (
-            <button
-              key={g}
-              onClick={() => switchGender(g)}
-              style={{
-                padding: '6px 16px', border: 'none', borderRadius: 999,
-                background: gender === g ? '#09090b' : 'transparent',
-                color: gender === g ? '#ffffff' : '#71717a',
-                fontSize: 11, fontWeight: 600,
-                cursor: 'pointer', fontFamily: 'var(--font-inter)',
-                letterSpacing: '0.04em', textTransform: 'uppercase',
-                transition: 'all 0.2s',
-              }}
-            >
-              {g === 'male' ? 'Men' : 'Women'}
-            </button>
-          ))}
-        </div>
+  const GarmentCard = ({ g, pos, gender, active }: { g: typeof FEMALE[0]; pos: typeof F_POS[0]; gender: 'female' | 'male'; active: boolean }) => (
+    <div style={{ position: 'absolute', top: pos.top, left: pos.left, width: pos.w, zIndex: 4, transform: `rotate(${pos.rot}deg)` }}>
+      <div
+        className="garment-float"
+        draggable
+        onClick={() => apply(g.id, gender)}
+        onDragStart={e => { e.dataTransfer.setData('garment', g.id); e.dataTransfer.effectAllowed = 'move'; }}
+        style={{
+          cursor: 'grab',
+          animationDelay: pos.delay,
+          filter: active ? 'drop-shadow(0 0 14px rgba(217,160,70,0.9))' : 'drop-shadow(0 3px 10px rgba(0,0,0,0.2))',
+          transition: 'filter 0.3s',
+          borderRadius: 6,
+          outline: active ? '2px solid rgba(217,160,70,0.7)' : 'none',
+        }}
+      >
+        <Image src={g.src} alt={g.label} width={pos.w} height={Math.round(pos.w * 1.4)}
+          style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }} />
       </div>
-
-      {/* Right: catalogue */}
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', padding: '44px 48px 40px' }}>
-        <p style={{
-          fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600,
-          letterSpacing: '0.16em', textTransform: 'uppercase',
-          color: 'rgba(0,0,0,0.35)', margin: 0, marginBottom: 12,
-        }}>
-          Browse the collection
-        </p>
-        <h2 style={{
-          fontFamily: 'var(--font-playfair)',
-          fontSize: 'clamp(1.5rem, 2.2vw, 2.4rem)',
-          fontWeight: 700, color: '#09090b', lineHeight: 1.1,
-          letterSpacing: '-0.02em', marginBottom: '1.8rem', whiteSpace: 'nowrap',
-        }}>
-          Tap any style. See it on the model.
-        </h2>
-
-        <div style={{ height: 1, background: '#e5e5e3', marginBottom: 24 }} />
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-          {garments.map((garment) => {
-            const isActive = garment.id === selectedId;
-            return (
-              <div
-                key={garment.id}
-                onClick={() => setSelectedId(garment.id)}
-                style={{
-                  borderRadius: 14,
-                  background: isActive ? '#09090b' : '#efefed',
-                  border: `1.5px solid ${isActive ? '#09090b' : 'transparent'}`,
-                  cursor: 'pointer', overflow: 'hidden', aspectRatio: '4/5',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center',
-                  justifyContent: 'center', position: 'relative',
-                  transition: 'background 0.22s, border-color 0.22s, transform 0.15s',
-                  boxShadow: isActive ? '0 6px 20px rgba(0,0,0,0.18)' : 'none',
-                }}
-                onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.transform = 'translateY(-3px)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={garment.floatSrc} alt={garment.label} style={{ width: '76%', height: '74%', objectFit: 'contain', position: 'relative', zIndex: 1 }} />
-                <span style={{
-                  position: 'absolute', bottom: 12,
-                  fontFamily: 'var(--font-inter)', fontSize: 9, fontWeight: 700,
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
-                  color: isActive ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.3)',
-                  transition: 'color 0.22s', zIndex: 1,
-                }}>
-                  {garment.label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <p style={{ textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 8, fontWeight: 600, color: active ? '#D9A046' : '#c4c4c4', letterSpacing: '0.08em', textTransform: 'uppercase', margin: '3px 0 0' }}>{g.label}</p>
     </div>
+  );
+
+  return (
+    <section style={{ background: '#ffffff', minHeight: '100vh', display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+
+      {/* Female zone */}
+      <div
+        style={{ width: '42%', flexShrink: 0, position: 'relative' }}
+        onDragOver={e => { e.preventDefault(); setDragOver('female'); }}
+        onDragLeave={() => setDragOver(null)}
+        onDrop={e => { e.preventDefault(); const id = e.dataTransfer.getData('garment'); if (FEMALE.find(g => g.id === id)) apply(id, 'female'); setDragOver(null); }}
+      >
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <Image key={fg.out} src={fg.out} alt="Female model" fill priority
+            style={{ objectFit: 'contain', objectPosition: 'center bottom' }} />
+        </div>
+        {dragOver === 'female' && (
+          <div style={{ position: 'absolute', top: '8%', left: '20%', right: '20%', bottom: '2%', borderRadius: '50% 50% 30% 30%', border: '3px dashed #D9A046', background: 'rgba(217,160,70,0.07)', pointerEvents: 'none', zIndex: 6 }} />
+        )}
+        {FEMALE.map((g, i) => <GarmentCard key={g.id} g={g} pos={F_POS[i]} gender="female" active={g.id === femaleId} />)}
+      </div>
+
+      {/* Center CTA */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 16px', textAlign: 'center', zIndex: 10 }}>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 700, color: '#a1a1aa', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 18 }}>
+          Live Demo
+        </p>
+        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.4rem, 2.6vw, 2.4rem)', fontWeight: 700, color: '#09090b', lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: 14 }}>
+          Your customers<br />deserve to see<br />it first.
+        </h2>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#a1a1aa', marginBottom: 28, lineHeight: 1.7 }}>
+          Drag any garment onto<br />the model to try it on.
+        </p>
+        <button
+          onClick={openTrialModal}
+          style={{ fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 700, color: '#ffffff', background: '#09090b', border: 'none', borderRadius: 10, padding: '13px 28px', cursor: 'pointer', marginBottom: 10, whiteSpace: 'nowrap' }}
+          onMouseEnter={e => (e.currentTarget.style.background = '#27272a')}
+          onMouseLeave={e => (e.currentTarget.style.background = '#09090b')}
+        >
+          Request Access →
+        </button>
+        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: '#d4d4d8', letterSpacing: '0.04em' }}>← drag onto model →</p>
+      </div>
+
+      {/* Male zone */}
+      <div
+        style={{ width: '42%', flexShrink: 0, position: 'relative' }}
+        onDragOver={e => { e.preventDefault(); setDragOver('male'); }}
+        onDragLeave={() => setDragOver(null)}
+        onDrop={e => { e.preventDefault(); const id = e.dataTransfer.getData('garment'); if (MALE.find(g => g.id === id)) apply(id, 'male'); setDragOver(null); }}
+      >
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <Image key={mg.out} src={mg.out} alt="Male model" fill priority
+            style={{ objectFit: 'contain', objectPosition: 'center bottom' }} />
+        </div>
+        {dragOver === 'male' && (
+          <div style={{ position: 'absolute', top: '8%', left: '20%', right: '20%', bottom: '2%', borderRadius: '50% 50% 30% 30%', border: '3px dashed #D9A046', background: 'rgba(217,160,70,0.07)', pointerEvents: 'none', zIndex: 6 }} />
+        )}
+        {MALE.map((g, i) => <GarmentCard key={g.id} g={g} pos={M_POS[i]} gender="male" active={g.id === maleId} />)}
+      </div>
+    </section>
   );
 }

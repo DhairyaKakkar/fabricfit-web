@@ -12,13 +12,13 @@ interface FlowSectionProps {
 }
 
 function FlowSection({ children, bg = '#09090b', index, isMobile = false, 'aria-label': ariaLabel }: FlowSectionProps) {
-  // Mobile: normal flow, auto height — no sticky stacking, no 100dvh void.
+  // Mobile: one full screen per feature — text on top, image fills the rest.
   if (isMobile) {
     return (
       <section
         aria-label={ariaLabel}
         className="relative w-full flex flex-col"
-        style={{ background: bg, padding: '36px 20px 0', overflow: 'hidden' }}
+        style={{ background: bg, padding: '88px 20px 0', minHeight: '100svh', overflow: 'hidden' }}
       >
         {children}
       </section>
@@ -71,7 +71,7 @@ function UseCaseChips({ chips, light = false, isMobile = false }: { chips: { lab
       {chips.map((c) => (
         <div key={c.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ width: 5, height: 5, borderRadius: '50%', background: dotClr, flexShrink: 0 }} />
-          <span style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? 13 : 20, fontWeight: 500, color: textClr, letterSpacing: '-0.01em' }}>{c.label}</span>
+          <span style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? 15 : 20, fontWeight: 500, color: textClr, letterSpacing: '-0.01em' }}>{c.label}</span>
         </div>
       ))}
     </div>
@@ -110,10 +110,18 @@ export default function HowItWorksSection() {
     maxWidth: isMobile ? '100%' : '44%',
   };
 
-  const headingSize = isMobile ? '2rem' : 'clamp(2.8rem, 4.5vw, 6rem)';
+  const headingSize = isMobile ? '2.4rem' : 'clamp(2.8rem, 4.5vw, 6rem)';
+  // Mobile: image bleeds edge-to-edge and grows to fill the rest of the screen
   const imageStyle: React.CSSProperties = isMobile
-    ? { position: 'relative', width: '100%', marginTop: 20, zIndex: 1, pointerEvents: 'none' }
+    ? { position: 'relative', flex: 1, minHeight: 320, margin: '24px -20px 0', zIndex: 1, pointerEvents: 'none' }
     : { position: 'absolute', bottom: 0, right: 0, width: '68%', zIndex: 1, pointerEvents: 'none' };
+
+  const FeatureImg = ({ src, alt }: { src: string; alt: string }) =>
+    isMobile ? (
+      <Image src={src} alt={alt} fill loading="lazy" style={{ objectFit: 'cover', objectPosition: 'center bottom' }} />
+    ) : (
+      <Image src={src} alt={alt} width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+    );
 
   return (
     <div id="features" className="w-full">
@@ -125,7 +133,7 @@ export default function HowItWorksSection() {
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Virtual Try-On.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.72rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.4)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.4)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               Right in your store — no setup required.
             </p>
           </div>
@@ -136,7 +144,7 @@ export default function HowItWorksSection() {
           ]} />
         </div>
         <div style={imageStyle}>
-          <Image src="/features1.png" alt="Virtual try-on in store" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+          <FeatureImg src="/features1.png" alt="Virtual try-on in store" />
         </div>
         {!isMobile && <StepDots active="01" light />}
       </FlowSection>
@@ -148,7 +156,7 @@ export default function HowItWorksSection() {
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#ffffff', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Embed anywhere.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.72rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               One line of code — Shopify, WooCommerce, any site.
             </p>
           </div>
@@ -159,7 +167,7 @@ export default function HowItWorksSection() {
           ]} />
         </div>
         <div style={imageStyle}>
-          <Image src="/features2.png" alt="Web embed virtual try-on" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+          <FeatureImg src="/features2.png" alt="Web embed virtual try-on" />
         </div>
         {!isMobile && <StepDots active="02" />}
       </FlowSection>
@@ -171,7 +179,7 @@ export default function HowItWorksSection() {
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Build your catalogue.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.72rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               No shoot. No agency. Export same day.
             </p>
           </div>
@@ -182,7 +190,7 @@ export default function HowItWorksSection() {
           ]} />
         </div>
         <div style={imageStyle}>
-          <Image src="/features3.png" alt="Catalogue builder" width={1400} height={1400} loading="lazy" className="w-full h-auto" style={{ display: 'block', objectFit: 'contain', objectPosition: 'bottom right' }} />
+          <FeatureImg src="/features3.png" alt="Catalogue builder" />
         </div>
         {!isMobile && <StepDots active="03" light />}
       </FlowSection>

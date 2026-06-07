@@ -49,8 +49,9 @@ export default function DemoVideoSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Mobile scroll-driven accordion: the card nearest the viewport centre opens,
-  // closes again as it scrolls past.
+  // Mobile scroll-driven accordion. Active card derives from how far the list
+  // has scrolled through the viewport (stable against height animations),
+  // with hysteresis so it never flip-flops at band boundaries.
   useEffect(() => {
     if (!isMobile) return;
     let raf = 0;
@@ -58,18 +59,20 @@ export default function DemoVideoSection() {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        const cards = listRef.current?.querySelectorAll<HTMLElement>('[data-step-card]');
-        if (!cards || cards.length === 0) return;
-        const mid = window.innerHeight / 2;
-        let best = 0;
-        let bestDist = Infinity;
-        cards.forEach((el, i) => {
-          const r = el.getBoundingClientRect();
-          const center = r.top + r.height / 2;
-          const d = Math.abs(center - mid);
-          if (d < bestDist) { bestDist = d; best = i; }
+        const list = listRef.current;
+        if (!list) return;
+        const vh = window.innerHeight;
+        const r = list.getBoundingClientRect();
+        const total = Math.max(1, r.height - vh * 0.45);
+        const scrolled = Math.min(Math.max(vh * 0.6 - r.top, 0), total);
+        const pos = (scrolled / total) * STEPS.length; // 0..5 float
+        setActiveIdx((prev) => {
+          const t = Math.min(STEPS.length - 1, Math.max(0, Math.floor(pos)));
+          if (t === prev) return prev;
+          // require 35% into the new band before switching (hysteresis)
+          if (t > prev) return (pos - t >= 0.35 || t - prev >= 2) ? t : prev;
+          return ((t + 1 - pos) >= 0.35 || prev - t >= 2) ? t : prev;
         });
-        setActiveIdx((prev) => (prev === best ? prev : best));
       });
     };
     onScroll();
@@ -129,9 +132,9 @@ export default function DemoVideoSection() {
                   maxHeight: isActive ? 720 : 0,
                   opacity: isActive ? 1 : 0,
                   overflow: 'hidden',
-                  transition: isActive
-                    ? 'max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease 0.15s'
-                    : 'max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease',
+                  // identical open/close timing keeps total list height steady —
+                  // no layout wiggle while one card opens and another closes
+                  transition: 'max-height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease',
                 }}>
                   <div style={{ padding: '12px 20px 0' }}>
                     <div style={{ width: 28, height: 1, background: divClr, marginBottom: 10 }} />

@@ -117,21 +117,21 @@ export default function ProductsPageClient() {
     return (
       <section style={{ background: '#ffffff', minHeight: '100svh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
-        {/* Model — fills most of screen */}
-        <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+        {/* Heading — in normal flow, model starts below it */}
+        <div style={{ padding: '84px 16px 4px', textAlign: 'center' }}>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: '#a1a1aa', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>Live Demo</p>
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.3rem, 5.5vw, 1.8rem)', fontWeight: 700, color: '#09090b', lineHeight: 1.15, letterSpacing: '-0.02em', margin: 0 }}>
+            Your customers deserve<br />to see it first.
+          </h2>
+        </div>
+
+        {/* Model — fills remaining screen */}
+        <div style={{ flex: 1, position: 'relative', minHeight: 320, marginTop: 8 }}>
           <div key={mobileGender === 'female' ? fReveal : mReveal} className="model-reveal" style={{ position: 'absolute', inset: 0 }}>
             <Image src={activeGarment.out} alt={`${mobileGender} model`} fill priority
               style={{ objectFit: 'contain', objectPosition: 'center bottom' }} />
           </div>
           <div key={`mob-scan-${mobileGender === 'female' ? fReveal : mReveal}`} className="model-scan-line" style={{ position: 'absolute', left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, transparent, rgba(9,9,11,0.55), transparent)', boxShadow: '0 0 22px 6px rgba(9,9,11,0.12)', zIndex: 5, pointerEvents: 'none' }} />
-
-          {/* CTA text overlay at top */}
-          <div style={{ position: 'absolute', top: 20, left: 0, right: 0, textAlign: 'center', zIndex: 2 }}>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: '#a1a1aa', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>Live Demo</p>
-            <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.3rem, 5.5vw, 1.8rem)', fontWeight: 700, color: '#09090b', lineHeight: 1.15, letterSpacing: '-0.02em', margin: 0 }}>
-              Your customers deserve<br />to see it first.
-            </h2>
-          </div>
         </div>
 
         {/* Gender toggle */}

@@ -37,26 +37,52 @@ export async function signup(
   formData: FormData
 ) {
   const supabase = await createClient();
-  const businessName = formData.get('company_name') as string;
+  const admin = createAdminClient();
+  const businessName = (formData.get('company_name') as string)?.trim();
+  const email = (formData.get('email') as string)?.trim();
+  const password = formData.get('password') as string;
   const planId = (formData.get('plan_id') as string | null)?.trim() || null;
 
-  const { data, error } = await supabase.auth.signUp({
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-    options: { data: { company_name: businessName } },
+  if (!email || !password || !businessName) {
+    return { error: 'Please fill in all fields.' };
+  }
+  if (password.length < 8) {
+    return { error: 'Password must be at least 8 characters.' };
+  }
+
+  // Create the user pre-confirmed so they get instant access (no email step).
+  const { data: created, error: createErr } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { company_name: businessName },
   });
 
-  if (error) return { error: error.message };
+  if (createErr) {
+    const msg = createErr.message?.toLowerCase() ?? '';
+    if (msg.includes('already') || msg.includes('registered') || msg.includes('exists')) {
+      return { error: 'An account with this email already exists. Please sign in instead.' };
+    }
+    return { error: createErr.message || 'Could not create account. Please try again.' };
+  }
 
-  // Create outlet row (mirrors phone app structure)
-  if (data.user) {
-    await supabase.from('outlets').insert({
-      user_id: data.user.id,
+  const userId = created.user?.id;
+
+  // Create outlet row via admin (bypasses RLS, mirrors phone app structure)
+  if (userId) {
+    await admin.from('outlets').insert({
+      user_id: userId,
       business_name: businessName,
       is_trial: true,
       preview_limit: 100,
       access_code: generateAccessCode(),
     });
+  }
+
+  // Sign the user in to set session cookies
+  const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+  if (signInErr) {
+    return { error: 'Account created, but sign-in failed. Please sign in manually.' };
   }
 
   // If a paid plan was selected, go straight to checkout

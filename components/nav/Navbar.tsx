@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { slowScrollTo } from '@/lib/scrollTo';
 import { createClient } from '@/lib/supabase/client';
 import TrialRequestModal from '@/components/TrialRequestModal';
+import { PLAY_STORE_URL } from '@/lib/appLinks';
 
 const NAV_LINKS = [{ anchor: 'features', label: 'Features' }] as const;
 const PRICING_LINK = { href: '/pricing', label: 'Pricing' };
@@ -168,6 +169,20 @@ export default function Navbar() {
             {!isMobile && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
                 <a
+                  href={PLAY_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
+                    color: accountColor, textDecoration: 'none', padding: '5px 10px',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = accountHover}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = accountColor}
+                >
+                  Download the App
+                </a>
+                <a
                   href={accountLink.href}
                   style={{
                     fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
@@ -284,20 +299,22 @@ export default function Navbar() {
                 >
                   {accountLink.label}
                 </a>
-                {!loggedIn && (
-                  <button
-                    onClick={() => { setMenuOpen(false); setTrialOpen(true); }}
-                    style={{
-                      marginTop: 8,
-                      fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 800,
-                      color: '#ffffff', background: '#09090b',
-                      border: 'none', borderRadius: 10, padding: '14px 20px',
-                      cursor: 'pointer', width: '100%', textAlign: 'center',
-                    }}
-                  >
-                    Request Access →
-                  </button>
-                )}
+                <a
+                  href={PLAY_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    marginTop: 8,
+                    fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 800,
+                    color: '#ffffff', background: '#09090b',
+                    border: 'none', borderRadius: 10, padding: '14px 20px',
+                    cursor: 'pointer', width: '100%', textAlign: 'center',
+                    textDecoration: 'none', display: 'block',
+                  }}
+                >
+                  Download the App ↓
+                </a>
               </div>
             </div>
           )}

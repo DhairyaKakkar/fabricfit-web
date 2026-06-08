@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import { PLAY_STORE_URL } from '@/lib/appLinks';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -80,14 +81,17 @@ export default async function DashboardPage() {
         {/* Get the app CTA */}
         <div className="bg-zinc-900 rounded-2xl p-6 text-white">
           <p className="font-semibold text-sm mb-1">Generate try-ons</p>
-          <p className="text-xs text-zinc-400 mb-4">Try-on generation happens on the TrialRoomStudio mobile app</p>
+          <p className="text-xs text-zinc-400 mb-4">Try-on generation happens on the TrialRoomStudio Android app</p>
           <a
-            href={process.env.NEXT_PUBLIC_PHONE_APP_URL ?? '#'}
+            href={PLAY_STORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block text-xs font-semibold bg-white text-zinc-900 px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold bg-white text-zinc-900 px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
           >
-            Open the app →
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M3.6 1.8a1 1 0 0 0-.5.87v18.66a1 1 0 0 0 .5.87l10.3-10.2zm11.7 8.4 2.9-2.87-9.9-5.6a1 1 0 0 0-.5-.13zm0 3.6L8 21.5a1 1 0 0 0 .5-.13l9.9-5.6zm1.4-1.4 3-1.7c.8-.45.8-1.6 0-2.05l-3-1.7-3.06 3.07z"/>
+            </svg>
+            Download on Google Play
           </a>
         </div>
       </div>

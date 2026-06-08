@@ -1,67 +1,77 @@
 'use client';
 
-import { useState } from 'react';
+import { PLAY_STORE_URL } from '@/lib/appLinks';
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919884744296';
-
-function ShowroomsSpan({ hovered, onEnter, onLeave }: { hovered: boolean; onEnter: () => void; onLeave: () => void }) {
+function ShowroomsSpan() {
+  const text = 'fabric showrooms.';
   return (
-    <span
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
-      style={{
-        display: 'inline-block',
-        position: 'relative',
-        pointerEvents: 'auto',
-        cursor: 'default',
-      }}
-    >
-      {/* Fabric mosaic highlight box */}
-      <span style={{
-        position: 'absolute',
-        top: '-0.08em', bottom: '-0.1em',
-        left: '-0.18em', right: '-0.18em',
-        borderRadius: '0.12em',
-        opacity: hovered ? 1 : 0,
-        transition: 'opacity 0.2s ease-out',
-        zIndex: 0,
-        overflow: 'hidden',
-        display: 'flex',
-        pointerEvents: 'none',
-      }}>
-        {[
-          { src: '/fabrics/fabric1.jpg', pos: 'center center' },
-          { src: '/fabrics/fabric2.jpg', pos: 'center center' },
-          { src: '/fabrics/fabric3.jpg', pos: 'center center' },
-          { src: '/fabrics/fabric4.jpg', pos: 'center center' },
-          { src: '/fabrics/fabric2.jpg', pos: 'center 40%' },
-        ].map(({ src, pos }) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <span key={src} style={{ flex: 1, overflow: 'hidden', position: 'relative', display: 'block' }}>
-            <img src={src} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: pos }} />
-          </span>
-        ))}
-        {/* Dark scrim so white text stays legible */}
-        <span style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)' }} />
-      </span>
-      {/* Text — always white, readable on both video and fabric bg */}
-      <span style={{
-        position: 'relative',
-        zIndex: 1,
-        color: '#ffffff',
-        WebkitTextFillColor: '#ffffff',
-        textShadow: hovered ? 'none' : '0 2px 20px rgba(0,0,0,0.4)',
-        transition: 'text-shadow 0.2s ease-out',
-      }}>fabric showrooms.</span>
+    <span className="showrooms">
+      {/* Base white text — defines layout, shown when not hovered */}
+      <span className="showrooms__base">{text}</span>
+      {/* Single gradient-filled copy that flows through playful fabric hues on
+          hover — continuous, so the glyphs never fade (no pulsing) */}
+      <span aria-hidden className="showrooms__fill">{text}</span>
+
+      <style jsx>{`
+        .showrooms {
+          position: relative;
+          display: inline-block;
+          pointer-events: auto;
+          cursor: default;
+          white-space: nowrap;
+        }
+        .showrooms__base {
+          color: #ffffff;
+          -webkit-text-fill-color: #ffffff;
+          text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+          transition: opacity 0.3s ease-out;
+        }
+        .showrooms:hover .showrooms__base {
+          opacity: 0;
+        }
+        .showrooms__fill {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          /* soft, playful palette — pinks, gold, sky, lilac */
+          background-image: linear-gradient(
+            90deg,
+            #ff6fb5,
+            #ffb86b,
+            #5ec8e0,
+            #b78bff,
+            #ff6fb5
+          );
+          background-size: 300% 100%;
+          background-position: 0% 50%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: transparent;
+          /* faint dark halo keeps the colourful glyphs legible over video */
+          text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+          opacity: 0;
+          transition: opacity 0.3s ease-out;
+        }
+        .showrooms:hover .showrooms__fill {
+          opacity: 1;
+          animation: showroomsFlow 7s linear infinite;
+        }
+        @keyframes showroomsFlow {
+          0% { background-position: 0% 50%; }
+          100% { background-position: 300% 50%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .showrooms:hover .showrooms__fill {
+            animation: none;
+          }
+        }
+      `}</style>
     </span>
   );
 }
 
 export default function VideoSection() {
-  const [showroomsHovered, setShowroomsHovered] = useState(false);
-
-  const waUrl = `https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`;
-
   return (
     <section
       id="hero"
@@ -106,11 +116,7 @@ export default function VideoSection() {
           textShadow: '0 2px 40px rgba(0,0,0,0.45)',
         }}>
           AI try-on for{' '}
-          <ShowroomsSpan
-            hovered={showroomsHovered}
-            onEnter={() => setShowroomsHovered(true)}
-            onLeave={() => setShowroomsHovered(false)}
-          />
+          <ShowroomsSpan />
         </h1>
       </div>
 
@@ -150,7 +156,7 @@ export default function VideoSection() {
           </a>
 
           <a
-            href={waUrl}
+            href={PLAY_STORE_URL}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -175,7 +181,7 @@ export default function VideoSection() {
               el.style.transform = 'translateY(0)';
             }}
           >
-            Book a Demo
+            Download the App
           </a>
         </div>
       </div>

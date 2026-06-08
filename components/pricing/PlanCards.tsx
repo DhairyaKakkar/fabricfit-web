@@ -295,8 +295,8 @@ function PlanCard({ plan, billing, currency }: CardProps) {
       <a
         href={
           plan.payg
-            ? `/checkout?plan=payg&billing=monthly`
-            : `/checkout?plan=${plan.id}&billing=${billing}`
+            ? `/checkout?plan=payg&billing=monthly&currency=${currency}`
+            : `/checkout?plan=${plan.id}&billing=${billing}&currency=${currency}`
         }
         className="block w-full text-center py-2.5 rounded-xl text-sm font-semibold"
         style={{

@@ -7,6 +7,7 @@ import CheckoutClient from './CheckoutClient';
 interface SearchParams {
   plan?: string;
   billing?: string;
+  currency?: string;
 }
 
 export default async function CheckoutPage({
@@ -17,11 +18,14 @@ export default async function CheckoutPage({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { plan = 'starter', billing = 'monthly' } = await searchParams;
+  const { plan = 'starter', billing = 'monthly', currency } = await searchParams;
 
-  if (!user) redirect(`/login?next=${encodeURIComponent(`/checkout?plan=${plan}&billing=${billing}`)}`);
-  const headersList = await headers();
-  const gateway = getGateway(headersList);
+  if (!user) redirect(`/login?next=${encodeURIComponent(`/checkout?plan=${plan}&billing=${billing}${currency ? `&currency=${currency}` : ''}`)}`);
+
+  // Explicit currency overrides geo-detection: INR → Razorpay, everything else → Stripe
+  const gateway = currency
+    ? (currency === 'INR' ? 'razorpay' : 'stripe') as 'razorpay' | 'stripe'
+    : getGateway(await headers());
 
   return (
     <CheckoutClient

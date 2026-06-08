@@ -130,18 +130,20 @@ export default function VideoSection() {
               color: '#09090b', background: '#ffffff', textDecoration: 'none',
               borderRadius: 8, padding: '14px 36px', border: 'none',
               letterSpacing: '0.01em', whiteSpace: 'nowrap',
-              transition: 'transform 0.18s ease, box-shadow 0.18s ease',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+              transition: 'background 0.18s, color 0.18s, box-shadow 0.18s',
+              boxShadow: 'none',
             }}
             onMouseEnter={e => {
               const el = e.currentTarget as HTMLAnchorElement;
-              el.style.transform = 'translateY(-2px)';
-              el.style.boxShadow = '0 8px 24px rgba(0,0,0,0.22)';
+              el.style.background = '#09090b';
+              el.style.color = '#ffffff';
+              el.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)';
             }}
             onMouseLeave={e => {
               const el = e.currentTarget as HTMLAnchorElement;
-              el.style.transform = 'translateY(0)';
-              el.style.boxShadow = '0 2px 12px rgba(0,0,0,0.12)';
+              el.style.background = '#ffffff';
+              el.style.color = '#09090b';
+              el.style.boxShadow = 'none';
             }}
           >
             Explore Pricing →

@@ -129,7 +129,9 @@ export default function VideoSection() {
       }}>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
           <a
-            href="/pricing"
+            href={PLAY_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
               fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 700,
@@ -152,13 +154,11 @@ export default function VideoSection() {
               el.style.boxShadow = 'none';
             }}
           >
-            Explore Pricing →
+            Download the App
           </a>
 
           <a
-            href={PLAY_STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/pricing"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
               fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 600,
@@ -181,7 +181,7 @@ export default function VideoSection() {
               el.style.transform = 'translateY(0)';
             }}
           >
-            Download the App
+            Explore Pricing →
           </a>
         </div>
       </div>

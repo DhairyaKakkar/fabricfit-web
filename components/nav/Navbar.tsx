@@ -169,20 +169,6 @@ export default function Navbar() {
             {!isMobile && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
                 <a
-                  href={PLAY_STORE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
-                    color: accountColor, textDecoration: 'none', padding: '5px 10px',
-                    transition: 'color 0.2s',
-                  }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = accountHover}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = accountColor}
-                >
-                  Download the App
-                </a>
-                <a
                   href={accountLink.href}
                   style={{
                     fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 500,
@@ -196,7 +182,9 @@ export default function Navbar() {
                 </a>
                 {!loggedIn && (
                   <a
-                    href="/pricing"
+                    href={PLAY_STORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
                       fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 800,
                       color: '#09090b', background: '#ffffff',
@@ -218,7 +206,7 @@ export default function Navbar() {
                       el.style.boxShadow = 'none';
                     }}
                   >
-                    Explore Pricing →
+                    Download the App
                   </a>
                 )}
               </div>

@@ -39,7 +39,7 @@ const STEPS = [
 export default function DemoVideoSection() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [openIdx, setOpenIdx] = useState<number | null>(0); // first card open by default
+  const [openIdx, setOpenIdx] = useState<number | null>(null); // all closed; tap to reveal
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -48,28 +48,40 @@ export default function DemoVideoSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // ── Mobile: vertical card list, tap a card to open/close it ───────────────
+  // ── Mobile: horizontal scroll-snap carousel, tap a card to reveal detail ──
   if (isMobile) {
     return (
-      <section style={{ background: '#09090b', padding: '56px 20px 48px', overflow: 'hidden' }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+      <section style={{ background: '#09090b', padding: '56px 0 48px', overflow: 'hidden' }}>
+        <div style={{ textAlign: 'center', marginBottom: 28, padding: '0 20px' }}>
           <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 12 }}>
             How it works
           </p>
           <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.9rem', fontWeight: 700, color: '#ffffff', lineHeight: 1.08, letterSpacing: '-0.02em', margin: 0 }}>
             Five steps.<br />Under two minutes.
           </h2>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 14 }}>
+            Swipe through · tap a card for details
+          </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* Horizontal scroll-snap carousel */}
+        <div
+          style={{
+            display: 'flex', gap: 14,
+            overflowX: 'auto', scrollSnapType: 'x mandatory',
+            padding: '4px 20px 20px',
+            WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
+          }}
+          className="hide-scrollbar"
+        >
           {STEPS.map((step, i) => {
             const isOpen    = openIdx === i;
             const titleClr  = step.textDark ? '#09090b'           : '#ffffff';
-            const numClr    = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.45)';
-            const textClr   = step.textDark ? 'rgba(0,0,0,0.7)'   : 'rgba(255,255,255,0.75)';
-            const bulletClr = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.4)';
-            const divClr    = step.textDark ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.12)';
-            const chevClr   = step.textDark ? 'rgba(0,0,0,0.5)'   : 'rgba(255,255,255,0.55)';
+            const numClr    = step.textDark ? 'rgba(0,0,0,0.45)'  : 'rgba(255,255,255,0.5)';
+            const textClr   = step.textDark ? 'rgba(0,0,0,0.72)'  : 'rgba(255,255,255,0.8)';
+            const bulletClr = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.45)';
+            const scrimTop  = step.textDark ? 'rgba(246,245,240,0)' : 'rgba(0,0,0,0)';
+            const scrimBot  = step.textDark ? 'rgba(246,245,240,0.96)' : 'rgba(0,0,0,0.82)';
             return (
               <div
                 key={step.num}
@@ -77,59 +89,67 @@ export default function DemoVideoSection() {
                 aria-expanded={isOpen}
                 onClick={() => setOpenIdx(isOpen ? null : i)}
                 style={{
+                  flex: '0 0 auto',
+                  width: '78vw', maxWidth: 320, height: 480,
+                  scrollSnapAlign: 'center',
                   background: step.bg,
-                  borderRadius: 18,
+                  borderRadius: 22,
                   overflow: 'hidden',
+                  position: 'relative',
                   cursor: 'pointer',
-                  boxShadow: isOpen ? '0 18px 50px rgba(0,0,0,0.45)' : 'none',
-                  transition: 'box-shadow 0.3s ease',
+                  boxShadow: '0 14px 40px rgba(0,0,0,0.4)',
                 }}
               >
-                {/* Header — always visible, tap target */}
-                <div style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr, letterSpacing: '0.14em' }}>
-                    {step.num}
+                {/* Step number + title — top */}
+                <div style={{ position: 'absolute', top: 20, left: 20, right: 20, zIndex: 3 }}>
+                  <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr, letterSpacing: '0.16em', display: 'block', marginBottom: 6 }}>
+                    {step.num} / 0{STEPS.length}
                   </span>
-                  <h3 style={{ flex: 1, fontFamily: 'var(--font-playfair)', fontSize: '1.2rem', fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: 0 }}>
+                  <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: '1.5rem', fontWeight: 700, color: titleClr, lineHeight: 1.05, margin: 0 }}>
                     {step.title}
                   </h3>
-                  {/* Chevron */}
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={chevClr} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
-                    style={{ flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
                 </div>
 
-                {/* Body — expands on tap */}
+                {/* App screenshot — fills card */}
+                <div style={{ position: 'absolute', top: 70, left: 0, right: 0, bottom: 0, zIndex: 1 }}>
+                  <Image src={step.img} alt={step.title} fill loading="lazy"
+                    style={{ objectFit: 'contain', objectPosition: 'bottom center' }} />
+                </div>
+
+                {/* Detail panel — slides up from bottom on tap */}
                 <div style={{
-                  maxHeight: isOpen ? 760 : 0,
-                  opacity: isOpen ? 1 : 0,
-                  overflow: 'hidden',
-                  transition: 'max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease',
+                  position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 2,
+                  padding: '60px 20px 20px',
+                  background: `linear-gradient(to top, ${scrimBot} 55%, ${scrimTop})`,
+                  transform: isOpen ? 'translateY(0)' : 'translateY(101%)',
+                  transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1)',
                 }}>
-                  <div style={{ padding: '0 20px' }}>
-                    <div style={{ width: 28, height: 1, background: divClr, marginBottom: 12 }} />
-                    <p style={{ fontFamily: 'var(--font-inter)', fontSize: '0.82rem', color: textClr, lineHeight: 1.65, margin: '0 0 12px' }}>
-                      {step.desc}
-                    </p>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                      {step.bullets.map((b) => (
-                        <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: bulletClr, flexShrink: 0 }} />
-                          <span style={{ fontFamily: 'var(--font-inter)', fontSize: '0.75rem', color: textClr, lineHeight: 1.4 }}>{b}</span>
-                        </div>
-                      ))}
-                    </div>
+                  <p style={{ fontFamily: 'var(--font-inter)', fontSize: '0.8rem', color: textClr, lineHeight: 1.6, margin: '0 0 12px' }}>
+                    {step.desc}
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {step.bullets.map((b) => (
+                      <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: bulletClr, flexShrink: 0 }} />
+                        <span style={{ fontFamily: 'var(--font-inter)', fontSize: '0.74rem', color: textClr, lineHeight: 1.4 }}>{b}</span>
+                      </div>
+                    ))}
                   </div>
-                  <div style={{ position: 'relative', height: 290, marginTop: 12 }}>
-                    <Image
-                      src={step.img}
-                      alt={step.title}
-                      fill
-                      loading="lazy"
-                      style={{ objectFit: 'contain', objectPosition: 'bottom center' }}
-                    />
-                  </div>
+                </div>
+
+                {/* "Tap for details" hint — shows when closed */}
+                <div style={{
+                  position: 'absolute', bottom: 16, left: 0, right: 0, zIndex: 2,
+                  textAlign: 'center',
+                  opacity: isOpen ? 0 : 1, transition: 'opacity 0.25s ease', pointerEvents: 'none',
+                }}>
+                  <span style={{
+                    fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 600,
+                    color: titleClr, background: step.textDark ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.14)',
+                    padding: '6px 14px', borderRadius: 999, backdropFilter: 'blur(6px)',
+                  }}>
+                    Tap for details
+                  </span>
                 </div>
               </div>
             );

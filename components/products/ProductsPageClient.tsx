@@ -6,6 +6,9 @@ import { openTrialModal } from '@/lib/openTrialModal';
 
 type Gender = 'female' | 'male';
 
+// One marquee row's worth of the repeating text wall behind the center CTA.
+const REPEAT_PHRASE = '20 free try-ons · '.repeat(8);
+
 const FEMALE = [
   { id: 'casual-dress', label: 'Casual Dress', src: '/garments/casual-dress.webp', out: '/models/female-casual-dress.webp' },
   { id: 'jumpsuit',     label: 'Jumpsuit',     src: '/garments/jumpsuit.webp',     out: '/models/female-jumpsuit.webp' },
@@ -182,9 +185,12 @@ export default function ProductsPageClient() {
 
         <div style={{ padding: '84px 16px 4px', textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: '#a1a1aa', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>Live Demo</p>
-          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.3rem, 5.5vw, 1.8rem)', fontWeight: 700, color: '#09090b', lineHeight: 1.15, letterSpacing: '-0.02em', margin: 0 }}>
-            Your customers deserve<br />to see it first.
+          <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.9rem, 8vw, 2.6rem)', fontWeight: 800, color: '#09090b', lineHeight: 1.05, letterSpacing: '-0.03em', margin: 0 }}>
+            20 free try-ons.
           </h2>
+          <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500, color: '#52525b', marginTop: 8 }}>
+            Tap the button below to claim yours.
+          </p>
         </div>
 
         <div style={{ flex: 1, position: 'relative', minHeight: 320, marginTop: 8 }}>
@@ -246,9 +252,9 @@ export default function ProductsPageClient() {
         <div style={{ padding: '12px 24px 24px', background: 'rgba(255,255,255,0.85)' }}>
           <button
             onClick={openTrialModal}
-            style={{ width: '100%', fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 700, color: '#ffffff', background: '#09090b', border: 'none', borderRadius: 10, padding: '14px', cursor: 'pointer' }}
+            style={{ width: '100%', fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 700, color: '#ffffff', background: '#09090b', border: 'none', borderRadius: 12, padding: '16px', cursor: 'pointer' }}
           >
-            Request Access →
+            Get My Free Try-ons →
           </button>
         </div>
       </section>
@@ -257,11 +263,22 @@ export default function ProductsPageClient() {
 
   // ── Desktop layout ──────────────────────────────────────────────────────────
   return (
-    <section style={{ background: '#f8f7f5', minHeight: '100vh', display: 'flex', alignItems: 'stretch', overflow: 'hidden', position: 'relative' }}>
+    <section className="demo-stage">
+      {/* Full-page background: repeating text wall + vignette + glow */}
+      <div aria-hidden className="cta-wall">
+        {Array.from({ length: 26 }).map((_, i) => (
+          <div key={i} className={`cta-row${i % 2 ? ' cta-row--rev' : ''}`}>
+            <span>{REPEAT_PHRASE}</span>
+            <span>{REPEAT_PHRASE}</span>
+          </div>
+        ))}
+      </div>
+      <div aria-hidden className="cta-vignette" />
+      <div aria-hidden className="cta-glow" />
 
       {/* Female zone */}
       <div
-        style={{ width: '42%', flexShrink: 0, position: 'relative' }}
+        className="model-zone"
         onDragOver={e => { e.preventDefault(); setDragOver('female'); }}
         onDragLeave={() => setDragOver(null)}
         onDrop={e => {
@@ -276,36 +293,22 @@ export default function ProductsPageClient() {
             style={{ objectFit: 'contain', objectPosition: 'center bottom' }} />
         </div>
         {dragOver === 'female' && (
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(9,9,11,0.03)', pointerEvents: 'none', zIndex: 4 }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.05)', pointerEvents: 'none', zIndex: 4 }} />
         )}
         <GarmentPanel garments={FEMALE} activeId={femaleId} gender="female" side="left" onApply={apply} />
       </div>
 
-      {/* Center CTA */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 16px', textAlign: 'center', zIndex: 10 }}>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 700, color: '#a1a1aa', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: 18 }}>
-          Live Demo
-        </p>
-        <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.4rem, 2.6vw, 2.4rem)', fontWeight: 700, color: '#09090b', lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: 14 }}>
-          Your customers<br />deserve to see<br />it first.
-        </h2>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 12, color: '#a1a1aa', marginBottom: 28, lineHeight: 1.7 }}>
-          Drag any garment onto<br />the model to try it on.
-        </p>
-        <button
-          onClick={openTrialModal}
-          style={{ fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 700, color: '#ffffff', background: '#09090b', border: 'none', borderRadius: 10, padding: '13px 28px', cursor: 'pointer', marginBottom: 10, whiteSpace: 'nowrap' }}
-          onMouseEnter={e => (e.currentTarget.style.background = '#27272a')}
-          onMouseLeave={e => (e.currentTarget.style.background = '#09090b')}
-        >
-          Request Access →
+      {/* Center focal content */}
+      <div className="cta-focus">
+        <button onClick={openTrialModal} className="cta-button">
+          Get My Free Try-ons →
         </button>
-        <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, color: '#d4d4d8', letterSpacing: '0.04em' }}>← drag onto model →</p>
+        <p className="cta-caption">20 free try-ons · no card needed</p>
       </div>
 
       {/* Male zone */}
       <div
-        style={{ width: '42%', flexShrink: 0, position: 'relative' }}
+        className="model-zone"
         onDragOver={e => { e.preventDefault(); setDragOver('male'); }}
         onDragLeave={() => setDragOver(null)}
         onDrop={e => {
@@ -320,10 +323,131 @@ export default function ProductsPageClient() {
             style={{ objectFit: 'contain', objectPosition: 'center bottom' }} />
         </div>
         {dragOver === 'male' && (
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(9,9,11,0.03)', pointerEvents: 'none', zIndex: 4 }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.05)', pointerEvents: 'none', zIndex: 4 }} />
         )}
         <GarmentPanel garments={MALE} activeId={maleId} gender="male" side="right" onApply={apply} />
       </div>
+
+      <style jsx>{`
+        .demo-stage {
+          position: relative;
+          min-height: 100vh;
+          display: flex;
+          align-items: stretch;
+          overflow: hidden;
+          background: #09090b;
+        }
+        .model-zone {
+          width: 38%;
+          flex-shrink: 0;
+          position: relative;
+          z-index: 1;
+        }
+        .cta-wall {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 0.18em;
+          pointer-events: none;
+          user-select: none;
+        }
+        .cta-row {
+          display: flex;
+          white-space: nowrap;
+          font-family: var(--font-playfair), serif;
+          font-weight: 700;
+          font-size: clamp(1.8rem, 2.4vw, 2.6rem);
+          line-height: 1;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.05);
+          animation: ctaMarquee 44s linear infinite;
+        }
+        .cta-row--rev {
+          animation-direction: reverse;
+          color: rgba(255, 255, 255, 0.04);
+        }
+        .cta-row span {
+          flex-shrink: 0;
+          padding-right: 0.35em;
+        }
+        .cta-vignette {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+          background: radial-gradient(
+            circle at 50% 50%,
+            #09090b 0%,
+            #09090b 11%,
+            rgba(9, 9, 11, 0.55) 26%,
+            rgba(9, 9, 11, 0) 55%
+          );
+        }
+        .cta-glow {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 420px;
+          height: 420px;
+          transform: translate(-50%, -50%);
+          z-index: 1;
+          pointer-events: none;
+          background: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.12) 0%,
+            rgba(255, 255, 255, 0) 68%
+          );
+        }
+        .cta-focus {
+          flex: 1;
+          position: relative;
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          padding: 0 12px;
+          text-align: center;
+        }
+        .cta-button {
+          font-family: var(--font-inter), sans-serif;
+          font-size: clamp(14px, 1.1vw, 16px);
+          font-weight: 700;
+          color: #09090b;
+          background: #ffffff;
+          border: none;
+          border-radius: 999px;
+          padding: 16px 30px;
+          cursor: pointer;
+          white-space: nowrap;
+          box-shadow: 0 0 50px rgba(255, 255, 255, 0.18);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .cta-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 0 70px rgba(255, 255, 255, 0.32);
+        }
+        .cta-caption {
+          margin: 0;
+          font-family: var(--font-inter), sans-serif;
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.04em;
+          color: rgba(255, 255, 255, 0.4);
+        }
+        @keyframes ctaMarquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cta-row { animation: none; }
+        }
+      `}</style>
     </section>
   );
 }

@@ -8,8 +8,8 @@ function ShowroomsSpan() {
     <span className="showrooms">
       {/* Base white text — defines layout, shown when not hovered */}
       <span className="showrooms__base">{text}</span>
-      {/* Single gradient-filled copy that flows through playful fabric hues on
-          hover — continuous, so the glyphs never fade (no pulsing) */}
+      {/* Single copy with a pearlescent "silk sheen" that sweeps across on
+          hover — mostly white (legible) with a soft iridescent highlight band */}
       <span aria-hidden className="showrooms__fill">{text}</span>
 
       <style jsx>{`
@@ -33,33 +33,34 @@ function ShowroomsSpan() {
           position: absolute;
           inset: 0;
           pointer-events: none;
-          /* soft, playful palette — pinks, gold, sky, lilac */
+          /* warm handloom-dye palette — plum → terracotta → saffron — analogous
+             tones that read as dyed fabric, rich and designy, not a rainbow */
           background-image: linear-gradient(
-            90deg,
-            #ff6fb5,
-            #ffb86b,
-            #5ec8e0,
-            #b78bff,
-            #ff6fb5
+            100deg,
+            #a8336e 0%,
+            #d4663a 25%,
+            #e7af44 50%,
+            #d4663a 75%,
+            #a8336e 100%
           );
-          background-size: 300% 100%;
+          background-size: 200% 100%;
           background-position: 0% 50%;
           -webkit-background-clip: text;
           background-clip: text;
           -webkit-text-fill-color: transparent;
           color: transparent;
-          /* faint dark halo keeps the colourful glyphs legible over video */
-          text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+          /* faint dark halo keeps the glyphs legible over video */
+          text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
           opacity: 0;
           transition: opacity 0.3s ease-out;
         }
         .showrooms:hover .showrooms__fill {
           opacity: 1;
-          animation: showroomsFlow 7s linear infinite;
+          animation: showroomsSheen 6s linear infinite;
         }
-        @keyframes showroomsFlow {
+        @keyframes showroomsSheen {
           0% { background-position: 0% 50%; }
-          100% { background-position: 300% 50%; }
+          100% { background-position: 200% 50%; }
         }
         @media (prefers-reduced-motion: reduce) {
           .showrooms:hover .showrooms__fill {

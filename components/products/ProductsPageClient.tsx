@@ -263,22 +263,38 @@ export default function ProductsPageClient() {
 
   // ── Desktop layout ──────────────────────────────────────────────────────────
   return (
-    <section className="demo-stage">
-      {/* Full-page background: repeating text wall + vignette + glow */}
-      <div aria-hidden className="cta-wall">
+    <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'stretch', overflow: 'hidden', background: '#09090b' }}>
+      {/* Full-page background: repeating text wall */}
+      <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '0.18em', pointerEvents: 'none', userSelect: 'none' }}>
         {Array.from({ length: 26 }).map((_, i) => (
-          <div key={i} className={`cta-row${i % 2 ? ' cta-row--rev' : ''}`}>
-            <span>{REPEAT_PHRASE}</span>
-            <span>{REPEAT_PHRASE}</span>
+          <div
+            key={i}
+            style={{
+              display: 'flex',
+              whiteSpace: 'nowrap',
+              fontFamily: 'var(--font-playfair)',
+              fontWeight: 700,
+              fontSize: 'clamp(1.8rem, 2.4vw, 2.6rem)',
+              lineHeight: 1,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              color: i % 2 ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.05)',
+              animation: `${i % 2 ? 'cta-marquee-rev' : 'cta-marquee'} 44s linear infinite`,
+            }}
+          >
+            <span style={{ flexShrink: 0, paddingRight: '0.35em' }}>{REPEAT_PHRASE}</span>
+            <span style={{ flexShrink: 0, paddingRight: '0.35em' }}>{REPEAT_PHRASE}</span>
           </div>
         ))}
       </div>
-      <div aria-hidden className="cta-vignette" />
-      <div aria-hidden className="cta-glow" />
+      {/* Radial vignette — fades the wall into a clean dark focal circle */}
+      <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', background: 'radial-gradient(circle at 50% 50%, #09090b 0%, #09090b 11%, rgba(9,9,11,0.55) 26%, rgba(9,9,11,0) 55%)' }} />
+      {/* Soft glow behind the button */}
+      <div aria-hidden style={{ position: 'absolute', left: '50%', top: '50%', width: 420, height: 420, transform: 'translate(-50%,-50%)', zIndex: 1, pointerEvents: 'none', background: 'radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 68%)' }} />
 
       {/* Female zone */}
       <div
-        className="model-zone"
+        style={{ width: '38%', flexShrink: 0, position: 'relative', zIndex: 2 }}
         onDragOver={e => { e.preventDefault(); setDragOver('female'); }}
         onDragLeave={() => setDragOver(null)}
         onDrop={e => {
@@ -299,16 +315,23 @@ export default function ProductsPageClient() {
       </div>
 
       {/* Center focal content */}
-      <div className="cta-focus">
-        <button onClick={openTrialModal} className="cta-button">
+      <div style={{ flex: 1, position: 'relative', zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: '0 12px', textAlign: 'center' }}>
+        <button
+          onClick={openTrialModal}
+          style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(14px, 1.1vw, 16px)', fontWeight: 700, color: '#09090b', background: '#ffffff', border: 'none', borderRadius: 999, padding: '16px 30px', cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 0 50px rgba(255,255,255,0.18)', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
+          onMouseEnter={e => { const el = e.currentTarget; el.style.transform = 'translateY(-2px)'; el.style.boxShadow = '0 0 70px rgba(255,255,255,0.32)'; }}
+          onMouseLeave={e => { const el = e.currentTarget; el.style.transform = 'translateY(0)'; el.style.boxShadow = '0 0 50px rgba(255,255,255,0.18)'; }}
+        >
           Get My Free Try-ons →
         </button>
-        <p className="cta-caption">20 free try-ons · no card needed</p>
+        <p style={{ margin: 0, fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 500, letterSpacing: '0.04em', color: 'rgba(255,255,255,0.4)' }}>
+          20 free try-ons · no card needed
+        </p>
       </div>
 
       {/* Male zone */}
       <div
-        className="model-zone"
+        style={{ width: '38%', flexShrink: 0, position: 'relative', zIndex: 2 }}
         onDragOver={e => { e.preventDefault(); setDragOver('male'); }}
         onDragLeave={() => setDragOver(null)}
         onDrop={e => {
@@ -327,127 +350,6 @@ export default function ProductsPageClient() {
         )}
         <GarmentPanel garments={MALE} activeId={maleId} gender="male" side="right" onApply={apply} />
       </div>
-
-      <style jsx>{`
-        .demo-stage {
-          position: relative;
-          min-height: 100vh;
-          display: flex;
-          align-items: stretch;
-          overflow: hidden;
-          background: #09090b;
-        }
-        .model-zone {
-          width: 38%;
-          flex-shrink: 0;
-          position: relative;
-          z-index: 1;
-        }
-        .cta-wall {
-          position: absolute;
-          inset: 0;
-          z-index: 0;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          gap: 0.18em;
-          pointer-events: none;
-          user-select: none;
-        }
-        .cta-row {
-          display: flex;
-          white-space: nowrap;
-          font-family: var(--font-playfair), serif;
-          font-weight: 700;
-          font-size: clamp(1.8rem, 2.4vw, 2.6rem);
-          line-height: 1;
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.05);
-          animation: ctaMarquee 44s linear infinite;
-        }
-        .cta-row--rev {
-          animation-direction: reverse;
-          color: rgba(255, 255, 255, 0.04);
-        }
-        .cta-row span {
-          flex-shrink: 0;
-          padding-right: 0.35em;
-        }
-        .cta-vignette {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          pointer-events: none;
-          background: radial-gradient(
-            circle at 50% 50%,
-            #09090b 0%,
-            #09090b 11%,
-            rgba(9, 9, 11, 0.55) 26%,
-            rgba(9, 9, 11, 0) 55%
-          );
-        }
-        .cta-glow {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          width: 420px;
-          height: 420px;
-          transform: translate(-50%, -50%);
-          z-index: 1;
-          pointer-events: none;
-          background: radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.12) 0%,
-            rgba(255, 255, 255, 0) 68%
-          );
-        }
-        .cta-focus {
-          flex: 1;
-          position: relative;
-          z-index: 2;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 16px;
-          padding: 0 12px;
-          text-align: center;
-        }
-        .cta-button {
-          font-family: var(--font-inter), sans-serif;
-          font-size: clamp(14px, 1.1vw, 16px);
-          font-weight: 700;
-          color: #09090b;
-          background: #ffffff;
-          border: none;
-          border-radius: 999px;
-          padding: 16px 30px;
-          cursor: pointer;
-          white-space: nowrap;
-          box-shadow: 0 0 50px rgba(255, 255, 255, 0.18);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .cta-button:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 0 70px rgba(255, 255, 255, 0.32);
-        }
-        .cta-caption {
-          margin: 0;
-          font-family: var(--font-inter), sans-serif;
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 0.04em;
-          color: rgba(255, 255, 255, 0.4);
-        }
-        @keyframes ctaMarquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .cta-row { animation: none; }
-        }
-      `}</style>
     </section>
   );
 }

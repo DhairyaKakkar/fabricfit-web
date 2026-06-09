@@ -1,73 +1,49 @@
 'use client';
 
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { PLAY_STORE_URL } from '@/lib/appLinks';
 
-function ShowroomsSpan() {
-  const text = 'fabric showrooms.';
-  return (
-    <span className="showrooms">
-      {/* Base white text — defines layout, shown when not hovered */}
-      <span className="showrooms__base">{text}</span>
-      {/* Single copy with a pearlescent "silk sheen" that sweeps across on
-          hover — mostly white (legible) with a soft iridescent highlight band */}
-      <span aria-hidden className="showrooms__fill">{text}</span>
+// Red gingham (checks) fabric pattern for the hover highlight box — a red base
+// with two sets of darker-red stripes; overlaps read deepest. Kept red-dominant
+// (no near-white cells) so the white text stays legible everywhere.
+const FABRIC_BOX: CSSProperties = {
+  backgroundColor: '#c4252b',
+  backgroundImage: [
+    'repeating-linear-gradient(90deg, rgba(0,0,0,0.22) 0 9px, transparent 9px 18px)',
+    'repeating-linear-gradient(0deg,  rgba(0,0,0,0.22) 0 9px, transparent 9px 18px)',
+  ].join(', '),
+};
 
-      <style jsx>{`
-        .showrooms {
-          position: relative;
-          display: inline-block;
-          pointer-events: auto;
-          cursor: default;
-          white-space: nowrap;
-        }
-        .showrooms__base {
-          color: #ffffff;
-          -webkit-text-fill-color: #ffffff;
-          text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
-          transition: opacity 0.3s ease-out;
-        }
-        .showrooms:hover .showrooms__base {
-          opacity: 0;
-        }
-        .showrooms__fill {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          /* warm handloom-dye palette — plum → terracotta → saffron — analogous
-             tones that read as dyed fabric, rich and designy, not a rainbow */
-          background-image: linear-gradient(
-            100deg,
-            #a8336e 0%,
-            #d4663a 25%,
-            #e7af44 50%,
-            #d4663a 75%,
-            #a8336e 100%
-          );
-          background-size: 200% 100%;
-          background-position: 0% 50%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          color: transparent;
-          /* faint dark halo keeps the glyphs legible over video */
-          text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
-          opacity: 0;
-          transition: opacity 0.3s ease-out;
-        }
-        .showrooms:hover .showrooms__fill {
-          opacity: 1;
-          animation: showroomsSheen 6s linear infinite;
-        }
-        @keyframes showroomsSheen {
-          0% { background-position: 0% 50%; }
-          100% { background-position: 200% 50%; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .showrooms:hover .showrooms__fill {
-            animation: none;
-          }
-        }
-      `}</style>
+// Text stays white; on hover a fabric highlight rectangle fades in behind it.
+function ShowroomsSpan() {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <span
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ position: 'relative', display: 'inline-block', whiteSpace: 'nowrap', cursor: 'default', pointerEvents: 'auto' }}
+    >
+      {/* Fabric highlight box */}
+      <span
+        aria-hidden
+        style={{
+          ...FABRIC_BOX,
+          position: 'absolute',
+          top: '-0.04em', bottom: '-0.12em',
+          left: '-0.16em', right: '-0.16em',
+          borderRadius: '0.1em',
+          zIndex: 0,
+          opacity: hovered ? 1 : 0,
+          transition: 'opacity 0.22s ease-out',
+          boxShadow: hovered ? '0 8px 28px rgba(0,0,0,0.25)' : 'none',
+          pointerEvents: 'none',
+        }}
+      />
+      {/* Text — always white */}
+      <span style={{ position: 'relative', zIndex: 1, color: '#ffffff', WebkitTextFillColor: '#ffffff', textShadow: '0 2px 16px rgba(0,0,0,0.35)' }}>
+        fabric showrooms.
+      </span>
     </span>
   );
 }

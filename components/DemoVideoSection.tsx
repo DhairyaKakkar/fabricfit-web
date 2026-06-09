@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 const STEPS = [
@@ -39,8 +39,7 @@ const STEPS = [
 export default function DemoVideoSection() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [activeIdx, setActiveIdx] = useState(0);
-  const listRef = useRef<HTMLDivElement>(null);
+  const [openIdx, setOpenIdx] = useState<number | null>(0); // first card open by default
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -49,41 +48,7 @@ export default function DemoVideoSection() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Mobile scroll-driven accordion. Active card derives from how far the list
-  // has scrolled through the viewport (stable against height animations),
-  // with hysteresis so it never flip-flops at band boundaries.
-  useEffect(() => {
-    if (!isMobile) return;
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const list = listRef.current;
-        if (!list) return;
-        const vh = window.innerHeight;
-        const r = list.getBoundingClientRect();
-        const total = Math.max(1, r.height - vh * 0.45);
-        const scrolled = Math.min(Math.max(vh * 0.6 - r.top, 0), total);
-        const pos = (scrolled / total) * STEPS.length; // 0..5 float
-        setActiveIdx((prev) => {
-          const t = Math.min(STEPS.length - 1, Math.max(0, Math.floor(pos)));
-          if (t === prev) return prev;
-          // require 35% into the new band before switching (hysteresis)
-          if (t > prev) return (pos - t >= 0.35 || t - prev >= 2) ? t : prev;
-          return ((t + 1 - pos) >= 0.35 || prev - t >= 2) ? t : prev;
-        });
-      });
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [isMobile]);
-
-  // ── Mobile: slim bars that expand as they scroll into view ────────────────
+  // ── Mobile: vertical card list, tap a card to open/close it ───────────────
   if (isMobile) {
     return (
       <section style={{ background: '#09090b', padding: '56px 20px 48px', overflow: 'hidden' }}>
@@ -96,48 +61,54 @@ export default function DemoVideoSection() {
           </h2>
         </div>
 
-        <div ref={listRef} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {STEPS.map((step, i) => {
-            const isActive  = activeIdx === i;
+            const isOpen    = openIdx === i;
             const titleClr  = step.textDark ? '#09090b'           : '#ffffff';
             const numClr    = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.45)';
             const textClr   = step.textDark ? 'rgba(0,0,0,0.7)'   : 'rgba(255,255,255,0.75)';
             const bulletClr = step.textDark ? 'rgba(0,0,0,0.4)'   : 'rgba(255,255,255,0.4)';
             const divClr    = step.textDark ? 'rgba(0,0,0,0.1)'   : 'rgba(255,255,255,0.12)';
+            const chevClr   = step.textDark ? 'rgba(0,0,0,0.5)'   : 'rgba(255,255,255,0.55)';
             return (
               <div
                 key={step.num}
-                data-step-card
-                onClick={() => setActiveIdx(i)}
+                role="button"
+                aria-expanded={isOpen}
+                onClick={() => setOpenIdx(isOpen ? null : i)}
                 style={{
                   background: step.bg,
                   borderRadius: 18,
                   overflow: 'hidden',
-                  boxShadow: isActive ? '0 18px 50px rgba(0,0,0,0.45)' : 'none',
-                  transition: 'box-shadow 0.4s ease',
+                  cursor: 'pointer',
+                  boxShadow: isOpen ? '0 18px 50px rgba(0,0,0,0.45)' : 'none',
+                  transition: 'box-shadow 0.3s ease',
                 }}
               >
-                {/* Slim header — always visible */}
-                <div style={{ padding: isActive ? '20px 20px 0' : '16px 20px', display: 'flex', alignItems: 'center', gap: 12, transition: 'padding 0.4s ease' }}>
+                {/* Header — always visible, tap target */}
+                <div style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <span style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 800, color: numClr, letterSpacing: '0.14em' }}>
                     {step.num}
                   </span>
-                  <h3 style={{ fontFamily: 'var(--font-playfair)', fontSize: isActive ? '1.35rem' : '1.05rem', fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: 0, transition: 'font-size 0.4s ease' }}>
+                  <h3 style={{ flex: 1, fontFamily: 'var(--font-playfair)', fontSize: '1.2rem', fontWeight: 700, color: titleClr, lineHeight: 1.1, margin: 0 }}>
                     {step.title}
                   </h3>
+                  {/* Chevron */}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={chevClr} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                    style={{ flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
                 </div>
 
-                {/* Expanding body — opens when card is centred in viewport */}
+                {/* Body — expands on tap */}
                 <div style={{
-                  maxHeight: isActive ? 720 : 0,
-                  opacity: isActive ? 1 : 0,
+                  maxHeight: isOpen ? 760 : 0,
+                  opacity: isOpen ? 1 : 0,
                   overflow: 'hidden',
-                  // identical open/close timing keeps total list height steady —
-                  // no layout wiggle while one card opens and another closes
-                  transition: 'max-height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease',
+                  transition: 'max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease',
                 }}>
-                  <div style={{ padding: '12px 20px 0' }}>
-                    <div style={{ width: 28, height: 1, background: divClr, marginBottom: 10 }} />
+                  <div style={{ padding: '0 20px' }}>
+                    <div style={{ width: 28, height: 1, background: divClr, marginBottom: 12 }} />
                     <p style={{ fontFamily: 'var(--font-inter)', fontSize: '0.82rem', color: textClr, lineHeight: 1.65, margin: '0 0 12px' }}>
                       {step.desc}
                     </p>
@@ -150,7 +121,7 @@ export default function DemoVideoSection() {
                       ))}
                     </div>
                   </div>
-                  <div style={{ position: 'relative', height: 290, marginTop: 8 }}>
+                  <div style={{ position: 'relative', height: 290, marginTop: 12 }}>
                     <Image
                       src={step.img}
                       alt={step.title}

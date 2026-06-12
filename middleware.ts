@@ -31,9 +31,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Redirect logged-in users away from auth pages
+  // Redirect logged-in users away from auth pages — honoring ?next= so a
+  // signed-in user clicking "sign in" from /demo lands back on /demo.
   if ((pathname === '/login' || pathname === '/signup') && user) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    const next = request.nextUrl.searchParams.get('next');
+    const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
+    return NextResponse.redirect(new URL(safeNext, request.url));
   }
 
   return response;

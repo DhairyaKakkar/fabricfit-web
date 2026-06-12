@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { PLAY_STORE_URL } from '@/lib/appLinks';
+import { track } from '@/lib/track';
 
 // Red gingham (checks) fabric pattern for the hover highlight box — a red base
 // with two sets of darker-red stripes; overlaps read deepest. Kept red-dominant
@@ -95,6 +96,20 @@ export default function VideoSection() {
           AI try-on for{' '}
           <ShowroomsSpan />
         </h1>
+        <p style={{
+          fontFamily: 'var(--font-inter)',
+          fontSize: 'clamp(13px, 1.6vw, 16px)',
+          fontWeight: 500,
+          color: 'rgba(255,255,255,0.78)',
+          lineHeight: 1.65,
+          maxWidth: 560,
+          margin: 0,
+          textShadow: '0 1px 12px rgba(0,0,0,0.4)',
+        }}>
+          Your customer picks a fabric — 15 seconds later they see it stitched
+          and draped on a model. In your store, on WhatsApp, or on your website.
+          No photoshoot. No guesswork.
+        </p>
       </div>
 
       {/* CTA buttons */}
@@ -106,9 +121,8 @@ export default function VideoSection() {
       }}>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
           <a
-            href={PLAY_STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/demo"
+            onClick={() => track('cta_click', { cta: 'hero_try_demo', location: 'hero' })}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
               fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 700,
@@ -131,11 +145,14 @@ export default function VideoSection() {
               el.style.boxShadow = 'none';
             }}
           >
-            Download the App
+            Try It Out
           </a>
 
           <a
-            href="/pricing"
+            href={PLAY_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track('cta_click', { cta: 'hero_download_app', location: 'hero' })}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 6,
               fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 600,
@@ -158,9 +175,16 @@ export default function VideoSection() {
               el.style.transform = 'translateY(0)';
             }}
           >
-            Explore Pricing →
+            Download the App
           </a>
         </div>
+        <p style={{
+          fontFamily: 'var(--font-inter)', fontSize: 12, fontWeight: 500,
+          color: 'rgba(255,255,255,0.55)', margin: 0, letterSpacing: '0.03em',
+          textShadow: '0 1px 8px rgba(0,0,0,0.4)',
+        }}>
+          Free demo try-on · No credit card
+        </p>
       </div>
     </section>
   );

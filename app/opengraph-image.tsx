@@ -45,6 +45,8 @@ export default function OgImage() {
         </div>
         <div
           style={{
+            display: 'flex',
+            flexDirection: 'column',
             fontSize: 96,
             fontWeight: 800,
             color: '#1C1206',
@@ -53,9 +55,8 @@ export default function OgImage() {
             maxWidth: 900,
           }}
         >
-          See it before
-          <br />
-          you stitch it.
+          <div>See it before</div>
+          <div>you stitch it.</div>
         </div>
         <div
           style={{

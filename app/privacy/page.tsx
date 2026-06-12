@@ -3,7 +3,7 @@ import Navbar from '@/components/nav/Navbar';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — TrialRoomStudio',
+  title: 'Privacy Policy',
   description: 'How TrialRoomStudio collects, uses, and protects your personal data.',
 };
 

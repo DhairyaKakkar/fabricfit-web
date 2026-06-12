@@ -133,7 +133,7 @@ export default function HowItWorksSection() {
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Virtual Try-On.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.4)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.56)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               Right in your store — no setup required.
             </p>
           </div>
@@ -156,7 +156,7 @@ export default function HowItWorksSection() {
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#ffffff', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Embed anywhere.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               One line of code — Shopify, WooCommerce, any site.
             </p>
           </div>
@@ -179,7 +179,7 @@ export default function HowItWorksSection() {
             <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: headingSize, fontWeight: 700, color: '#09090b', lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: isMobile ? '0.5rem' : '1.2rem' }}>
               Build your catalogue.
             </h2>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.35)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: isMobile ? '0.8rem' : 'clamp(0.85rem, 1.2vw, 1rem)', color: 'rgba(0,0,0,0.56)', letterSpacing: '0.04em', textTransform: 'uppercase', fontWeight: 500 }}>
               No shoot. No agency. Export same day.
             </p>
           </div>

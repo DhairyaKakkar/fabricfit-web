@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { escapeHtml } from '@/lib/escapeHtml';
 
 export async function sendWelcomeEmail({
   to,
@@ -20,7 +21,7 @@ export async function sendWelcomeEmail({
     subject: `Welcome to TrialRoomStudio ${planLabel} — your access is ready`,
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#09090b;">
-        <h1 style="font-size:22px;font-weight:700;margin-bottom:4px;">Welcome, ${companyName}!</h1>
+        <h1 style="font-size:22px;font-weight:700;margin-bottom:4px;">Welcome, ${escapeHtml(companyName)}!</h1>
         <p style="color:#71717a;font-size:14px;margin-top:0;">Your <strong>${planLabel}</strong> subscription is now active.</p>
 
         <div style="background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;margin:24px 0;">

@@ -1,11 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { escapeHtml } from '@/lib/escapeHtml';
+import { rateLimit, clientIp } from '@/lib/rateLimit';
+
+const MAX_FIELD = 200;
+const MAX_MESSAGE = 5000;
 
 export async function POST(req: NextRequest) {
+  if (!rateLimit(`contact:${clientIp(req)}`, { limit: 5, windowMs: 60_000 })) {
+    return NextResponse.json({ error: 'Too many requests — please try again in a minute.' }, { status: 429 });
+  }
+
   const { name, email, company, message } = await req.json();
 
   if (!name || !email || !message) {
     return NextResponse.json({ error: 'Please fill in name, email and message.' }, { status: 400 });
+  }
+  if (
+    typeof name !== 'string' || typeof email !== 'string' || typeof message !== 'string' ||
+    name.length > MAX_FIELD || email.length > MAX_FIELD || message.length > MAX_MESSAGE ||
+    (company && (typeof company !== 'string' || company.length > MAX_FIELD))
+  ) {
+    return NextResponse.json({ error: 'One of the fields is too long.' }, { status: 400 });
   }
 
   // Store the message (graceful if the table doesn't exist yet)
@@ -35,11 +51,11 @@ export async function POST(req: NextRequest) {
         html: `
           <div style="font-family:sans-serif;max-width:520px;color:#1c1206;">
             <h2 style="margin:0 0 12px;">New contact message</h2>
-            <p style="margin:4px 0;"><strong>Name:</strong> ${name}</p>
-            <p style="margin:4px 0;"><strong>Email:</strong> ${email}</p>
-            ${company ? `<p style="margin:4px 0;"><strong>Company:</strong> ${company}</p>` : ''}
+            <p style="margin:4px 0;"><strong>Name:</strong> ${escapeHtml(name)}</p>
+            <p style="margin:4px 0;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+            ${company ? `<p style="margin:4px 0;"><strong>Company:</strong> ${escapeHtml(company)}</p>` : ''}
             <p style="margin:16px 0 4px;"><strong>Message:</strong></p>
-            <p style="white-space:pre-wrap;background:#fafafa;border:1px solid #eee;border-radius:8px;padding:12px;">${message}</p>
+            <p style="white-space:pre-wrap;background:#fafafa;border:1px solid #eee;border-radius:8px;padding:12px;">${escapeHtml(message)}</p>
           </div>`,
       });
     }

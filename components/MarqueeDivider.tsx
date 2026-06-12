@@ -25,7 +25,7 @@ export default function MarqueeDivider() {
               fontSize: 11,
               fontWeight: 500,
               letterSpacing: '0.18em',
-              color: '#a1a1aa',
+              color: '#71717a',
               paddingRight: '2em',
             }}
           >

@@ -15,8 +15,8 @@ const RULES = [
   },
   {
     icon: '★',
-    title: '14-day free trial',
-    body: '40 credits, ~20 fast try-ons, no card required. Converts to PAYG or a paid plan at the end.',
+    title: 'Free demo try-on',
+    body: 'Every new account includes one free try-on, no card required. Need more to evaluate? Request trial credits and we’ll set you up.',
   },
 ];
 

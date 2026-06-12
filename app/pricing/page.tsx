@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import PricingPageClient from '@/components/pricing/PricingPageClient';
 
 export const metadata: Metadata = {
-  title: 'Pricing — TrialRoomStudio',
+  title: 'Pricing — Virtual Try-On from ₹25 per Look',
   description:
     'Simple, transparent pricing for AI-powered virtual try-on. Choose from PAYG, Starter, Pro, or Business plans built for Indian fabric showrooms.',
 };

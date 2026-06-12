@@ -9,7 +9,11 @@ import TrialRequestModal from '@/components/TrialRequestModal';
 import { PLAY_STORE_URL } from '@/lib/appLinks';
 
 const NAV_LINKS = [{ anchor: 'features', label: 'Features' }] as const;
-const PRICING_LINK = { href: '/pricing', label: 'Pricing' };
+const PAGE_LINKS = [
+  { href: '/demo', label: 'Try It Out' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/blog', label: 'Blog' },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -27,7 +31,7 @@ export default function Navbar() {
 
   const links = [
     ...NAV_LINKS.map(l => ({ href: isHome ? `#${l.anchor}` : `/#${l.anchor}`, label: l.label })),
-    PRICING_LINK,
+    ...PAGE_LINKS,
   ];
 
   useEffect(() => {
@@ -76,9 +80,11 @@ export default function Navbar() {
     if (href.startsWith('#')) { e.preventDefault(); slowScrollTo(href.slice(1)); }
   };
 
+  // From the demo page, auth links return the user to the demo after signing in.
+  const authSuffix = pathname === '/demo' ? '?next=/demo' : '';
   const accountLink = loggedIn
     ? { href: '/dashboard', label: 'Dashboard' }
-    : { href: '/signup', label: 'Sign up' };
+    : { href: `/signup${authSuffix}`, label: 'Sign up' };
 
   const linkColor     = onDark ? 'rgba(255,255,255,0.85)' : 'rgba(9,9,11,0.55)';
   const linkHover     = onDark ? '#ffffff' : '#09090b';
@@ -251,7 +257,7 @@ export default function Navbar() {
           {/* Mobile dropdown */}
           {isMobile && (
             <div style={{
-              maxHeight: menuOpen ? 320 : 0,
+              maxHeight: menuOpen ? 440 : 0,
               overflow: 'hidden',
               transition: 'max-height 0.3s cubic-bezier(0.4,0,0.2,1)',
             }}>

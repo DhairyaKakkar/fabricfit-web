@@ -202,7 +202,7 @@ export default function PricingPageClient() {
       {/* Free Trial Banner */}
       <div style={{ background: '#09090b', padding: '14px 24px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
         <p style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: 'rgba(255,255,255,0.8)', margin: 0 }}>
-          Not sure yet? Start with <strong style={{ color: '#ffffff' }}>40 free credits</strong> — no payment needed.
+          Not sure yet? Start with <strong style={{ color: '#ffffff' }}>a free demo try-on</strong> — no payment needed.
         </p>
         <button
           onClick={openTrialModal}

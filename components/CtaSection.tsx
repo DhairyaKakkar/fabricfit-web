@@ -1,7 +1,7 @@
 'use client';
 
 import LiquidButton from '@/components/ui/LiquidButton';
-import { openTrialModal } from '@/lib/openTrialModal';
+import { track } from '@/lib/track';
 
 const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919884744296';
 
@@ -59,7 +59,7 @@ export default function CtaSection() {
           border: '1px solid rgba(201,168,76,0.2)',
           padding: '4px 16px', borderRadius: 999,
         }}>
-          Request Access
+          Try It Out
         </span>
 
         <h2 style={{
@@ -95,17 +95,19 @@ export default function CtaSection() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <LiquidButton
-            onClick={openTrialModal}
+            href="/demo"
+            onClick={() => track('cta_click', { cta: 'try_it_out', location: 'cta_section' })}
             color="#09090b"
             bg="rgba(255,255,255,0.95)"
             padding="16px 36px"
           >
-            Request Access →
+            Try It Out →
           </LiquidButton>
           <LiquidButton
             href={`https://wa.me/${WA_NUMBER}?text=Hi%2C%20I%27d%20like%20to%20book%20a%20demo%20of%20TrialRoomStudio`}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => track('cta_click', { cta: 'whatsapp_demo', location: 'cta_section' })}
             color="#ffffff"
             bg="#25D366"
             padding="16px 36px"

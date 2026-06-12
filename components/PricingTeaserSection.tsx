@@ -66,7 +66,7 @@ export default function PricingTeaserSection() {
             color: 'rgba(255,255,255,0.35)',
             margin: 0,
           }}>
-            40 free credits included. No credit card required.
+            Free demo try-on included. No credit card required.
           </p>
         </div>
 

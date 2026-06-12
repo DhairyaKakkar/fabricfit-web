@@ -55,6 +55,7 @@ function SignupForm() {
   const [state, action, pending] = useActionState(signup, undefined);
   const params = useSearchParams();
   const planId = params.get('plan') ?? null;
+  const next = params.get('next') ?? '';
   const planLabel = planId ? PLAN_LABELS[planId] : null;
 
   return (
@@ -75,7 +76,7 @@ function SignupForm() {
               {planLabel ? (
                 <>Get started with the <span className="text-zinc-700 font-medium">{planLabel}</span> plan</>
               ) : (
-                <>40 free credits · no card required</>
+                <>Free demo try-on · no card required</>
               )}
             </p>
           </div>
@@ -83,6 +84,7 @@ function SignupForm() {
           <div className="bg-white rounded-2xl border border-zinc-200 p-8" style={{ boxShadow: '0 8px 24px rgba(28,18,6,0.06)' }}>
             <form action={action} className="flex flex-col gap-4">
               {planId && <input type="hidden" name="plan_id" value={planId} />}
+              {next && <input type="hidden" name="next" value={next} />}
 
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="company_name" className={labelCls} style={{ fontFamily: 'var(--font-inter)' }}>Company name</label>
@@ -127,7 +129,7 @@ function SignupForm() {
 
           <p className="text-center text-sm text-zinc-500 mt-5" style={{ fontFamily: 'var(--font-inter)' }}>
             Already have an account?{' '}
-            <Link href={planId ? `/login?next=/checkout?plan=${planId}%26billing=monthly` : '/login'} className="font-semibold text-zinc-900 hover:underline">
+            <Link href={planId ? `/login?next=/checkout?plan=${planId}%26billing=monthly` : next ? `/login?next=${encodeURIComponent(next)}` : '/login'} className="font-semibold text-zinc-900 hover:underline">
               Sign in
             </Link>
           </p>

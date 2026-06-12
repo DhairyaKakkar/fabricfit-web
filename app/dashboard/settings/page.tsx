@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useActionState, useState } from 'react';
+import { redeemCoupon } from '@/app/actions/subscriptions';
 
 interface Outlet {
   business_name: string;
@@ -8,7 +9,6 @@ interface Outlet {
   city: string | null;
   is_trial: boolean;
   preview_limit: number;
-  access_code: string | null;
 }
 
 export default function SettingsPage() {
@@ -16,7 +16,8 @@ export default function SettingsPage() {
   const [form, setForm] = useState({ business_name: '', owner_name: '', city: '' });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [codeCopied, setCodeCopied] = useState(false);
+
+  const [couponState, couponAction, couponPending] = useActionState(redeemCoupon, undefined);
 
   useEffect(() => {
     fetch('/api/outlet').then(r => r.json()).then(data => {
@@ -89,28 +90,34 @@ export default function SettingsPage() {
           </form>
         </div>
 
-        {/* App access code */}
-        {outlet?.access_code && (
-          <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-            <h3 className="font-semibold text-zinc-900 text-sm mb-1">App Access Code</h3>
-            <p className="text-xs text-zinc-400 mb-4">Use this code to log in to the TrialRoomStudio mobile app</p>
-            <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3">
-              <span className="flex-1 font-mono text-lg font-bold text-zinc-900 tracking-widest">
-                {outlet.access_code}
-              </span>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(outlet.access_code!);
-                  setCodeCopied(true);
-                  setTimeout(() => setCodeCopied(false), 2000);
-                }}
-                className="shrink-0 text-xs font-semibold text-zinc-900 bg-white border border-zinc-200 px-3 py-1.5 rounded-lg hover:bg-zinc-50 transition-colors"
-              >
-                {codeCopied ? 'Copied!' : 'Copy'}
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Redeem coupon */}
+        <div className="bg-white rounded-2xl border border-zinc-200 p-6">
+          <h3 className="font-semibold text-zinc-900 text-sm mb-1">Redeem Coupon</h3>
+          <p className="text-xs text-zinc-400 mb-4">Have a coupon code? Enter it below to add credits to your account.</p>
+          <form action={couponAction} className="flex flex-col gap-3">
+            <input
+              name="coupon_code"
+              type="text"
+              placeholder="e.g. WELCOME50"
+              autoCapitalize="characters"
+              autoComplete="off"
+              className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm font-mono uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-zinc-900 transition"
+            />
+            {couponState?.error && (
+              <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{couponState.error}</p>
+            )}
+            {couponState?.success && (
+              <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">{couponState.success}</p>
+            )}
+            <button
+              type="submit"
+              disabled={couponPending}
+              className="w-full bg-zinc-900 text-white rounded-xl py-2.5 text-sm font-semibold hover:bg-zinc-800 disabled:opacity-50 transition-colors"
+            >
+              {couponPending ? 'Redeeming…' : 'Redeem'}
+            </button>
+          </form>
+        </div>
 
         {/* Account info */}
         {outlet && (

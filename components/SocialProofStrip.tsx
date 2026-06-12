@@ -27,7 +27,7 @@ export default function SocialProofStrip() {
             <p style={{
               fontFamily: 'var(--font-inter)',
               fontSize: 11,
-              color: 'rgba(0,0,0,0.38)',
+              color: 'rgba(0,0,0,0.55)',
               margin: '7px 0 0',
               letterSpacing: '0.07em',
               textTransform: 'uppercase',

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { track } from '@/lib/track';
 
 interface Props {
   open: boolean;
@@ -46,6 +47,7 @@ export default function TrialRequestModal({ open, onClose }: Props) {
         body: JSON.stringify({ name, company, phone, email }),
       });
       if (!res.ok) throw new Error('Request failed');
+      track('trial_request_submitted');
       setDone(true);
     } catch {
       setError('Something went wrong. Please try WhatsApp instead.');

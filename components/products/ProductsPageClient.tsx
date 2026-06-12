@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { openTrialModal } from '@/lib/openTrialModal';
+import { track } from '@/lib/track';
 
 type Gender = 'female' | 'male';
 
 // One marquee row's worth of the repeating text wall behind the center CTA.
-const REPEAT_PHRASE = '20 free try-ons · '.repeat(8);
+const REPEAT_PHRASE = 'Try it out free · '.repeat(8);
 
 const FEMALE = [
   { id: 'casual-dress', label: 'Casual Dress', src: '/garments/casual-dress.webp', out: '/models/female-casual-dress.webp' },
@@ -169,6 +169,7 @@ export default function ProductsPageClient() {
   function apply(id: string, gender: Gender) {
     if (gender === 'female') { setFemaleId(id); setFReveal(r => r + 1); }
     else { setMaleId(id); setMReveal(r => r + 1); }
+    track('demo_garment_applied', { garment: id, gender });
     resetTimer();
   }
 
@@ -186,10 +187,10 @@ export default function ProductsPageClient() {
         <div style={{ padding: '84px 16px 4px', textAlign: 'center' }}>
           <p style={{ fontFamily: 'var(--font-inter)', fontSize: 10, fontWeight: 700, color: '#a1a1aa', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>Live Demo</p>
           <h2 style={{ fontFamily: 'var(--font-playfair)', fontSize: 'clamp(1.9rem, 8vw, 2.6rem)', fontWeight: 800, color: '#09090b', lineHeight: 1.05, letterSpacing: '-0.03em', margin: 0 }}>
-            20 free try-ons.
+            Try it with your fabric.
           </h2>
           <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, fontWeight: 500, color: '#52525b', marginTop: 8 }}>
-            Tap the button below to claim yours.
+            Your first try-on is free — tap below to run one.
           </p>
         </div>
 
@@ -250,12 +251,13 @@ export default function ProductsPageClient() {
         </div>
 
         <div style={{ padding: '12px 24px 24px', background: 'rgba(255,255,255,0.85)' }}>
-          <button
-            onClick={openTrialModal}
-            style={{ width: '100%', fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 700, color: '#ffffff', background: '#09090b', border: 'none', borderRadius: 12, padding: '16px', cursor: 'pointer' }}
+          <a
+            href="/demo"
+            onClick={() => track('cta_click', { cta: 'try_it_out', location: 'demo_mobile' })}
+            style={{ width: '100%', fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 700, color: '#ffffff', background: '#09090b', border: 'none', borderRadius: 12, padding: '16px', cursor: 'pointer', textDecoration: 'none', display: 'block', textAlign: 'center', boxSizing: 'border-box' }}
           >
-            Get My Free Try-ons →
-          </button>
+            Try It Out →
+          </a>
         </div>
       </section>
     );
@@ -316,16 +318,17 @@ export default function ProductsPageClient() {
 
       {/* Center focal content */}
       <div style={{ flex: 1, position: 'relative', zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, padding: '0 12px', textAlign: 'center' }}>
-        <button
-          onClick={openTrialModal}
-          style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(14px, 1.1vw, 16px)', fontWeight: 700, color: '#09090b', background: '#ffffff', border: 'none', borderRadius: 999, padding: '16px 30px', cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 0 50px rgba(255,255,255,0.18)', transition: 'transform 0.2s ease, box-shadow 0.2s ease' }}
+        <a
+          href="/demo"
+          onClick={() => track('cta_click', { cta: 'try_it_out', location: 'demo_desktop' })}
+          style={{ fontFamily: 'var(--font-inter)', fontSize: 'clamp(14px, 1.1vw, 16px)', fontWeight: 700, color: '#09090b', background: '#ffffff', border: 'none', borderRadius: 999, padding: '16px 30px', cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 0 50px rgba(255,255,255,0.18)', transition: 'transform 0.2s ease, box-shadow 0.2s ease', textDecoration: 'none', display: 'inline-block' }}
           onMouseEnter={e => { const el = e.currentTarget; el.style.transform = 'translateY(-2px)'; el.style.boxShadow = '0 0 70px rgba(255,255,255,0.32)'; }}
           onMouseLeave={e => { const el = e.currentTarget; el.style.transform = 'translateY(0)'; el.style.boxShadow = '0 0 50px rgba(255,255,255,0.18)'; }}
         >
-          Get My Free Try-ons →
-        </button>
+          Try It Out →
+        </a>
         <p style={{ margin: 0, fontFamily: 'var(--font-inter)', fontSize: 11, fontWeight: 500, letterSpacing: '0.04em', color: 'rgba(255,255,255,0.4)' }}>
-          20 free try-ons · no card needed
+          Free demo try-on · no card needed
         </p>
       </div>
 

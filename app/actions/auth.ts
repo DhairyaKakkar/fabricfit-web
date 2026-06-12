@@ -4,16 +4,6 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
-function generateAccessCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 8; i++) {
-    if (i === 4) code += '-';
-    code += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return code;
-}
-
 export async function login(
   _prevState: { error: string } | undefined,
   formData: FormData
@@ -42,6 +32,7 @@ export async function signup(
   const email = (formData.get('email') as string)?.trim();
   const password = formData.get('password') as string;
   const planId = (formData.get('plan_id') as string | null)?.trim() || null;
+  const next = (formData.get('next') as string | null)?.trim();
 
   if (!email || !password || !businessName) {
     return { error: 'Please fill in all fields.' };
@@ -75,8 +66,19 @@ export async function signup(
       business_name: businessName,
       is_trial: true,
       preview_limit: 100,
-      access_code: generateAccessCode(),
     });
+
+    // Grant exactly one free website try-on (2 credits at 'low' quality).
+    // All further credits are request-only / paid. The on_auth_user_created
+    // trigger seeds the row with balance 0; bump it only while untouched so a
+    // re-run can never inflate a balance.
+    const WEB_DEMO_TRIAL_CREDITS = 2;
+    await admin
+      .from('credits')
+      .update({ balance: WEB_DEMO_TRIAL_CREDITS, total_allocated: WEB_DEMO_TRIAL_CREDITS })
+      .eq('user_id', userId)
+      .eq('balance', 0)
+      .eq('total_allocated', 0);
   }
 
   // Sign the user in to set session cookies
@@ -90,7 +92,7 @@ export async function signup(
     redirect(`/checkout?plan=${planId}&billing=monthly`);
   }
 
-  redirect('/dashboard');
+  redirect(next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard');
 }
 
 export async function logout() {
@@ -99,74 +101,3 @@ export async function logout() {
   redirect('/login');
 }
 
-export async function loginWithAccessCode(
-  _prevState: { error: string } | undefined,
-  formData: FormData
-) {
-  const code = (formData.get('access_code') as string)?.trim().toUpperCase();
-  if (!code) return { error: 'Please enter your access code' };
-
-  const adminClient = createAdminClient();
-  const supabase = await createClient();
-
-  // Look up by outlets.access_code first, then fall back to trial_codes
-  let userId: string | null = null;
-
-  const { data: outletByCode } = await adminClient
-    .from('outlets')
-    .select('user_id')
-    .eq('access_code', code)
-    .maybeSingle();
-
-  if (outletByCode) {
-    userId = outletByCode.user_id;
-  } else {
-    const { data: trialCode } = await adminClient
-      .from('trial_codes')
-      .select('outlet_id')
-      .eq('code', code)
-      .maybeSingle();
-
-    if (trialCode) {
-      const { data: outlet } = await adminClient
-        .from('outlets')
-        .select('user_id')
-        .eq('id', trialCode.outlet_id)
-        .maybeSingle();
-      if (outlet) userId = outlet.user_id;
-    }
-  }
-
-  if (!userId) {
-    return { error: 'Invalid access code. Please check and try again.' };
-  }
-
-  // Get user email via admin API
-  const { data: { user }, error: userError } = await adminClient.auth.admin.getUserById(userId);
-
-  if (userError || !user?.email) {
-    return { error: 'Account not found. Please contact support.' };
-  }
-
-  // Generate a one-time magic link token
-  const { data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
-    type: 'magiclink',
-    email: user.email,
-  });
-
-  if (linkError || !linkData.properties?.hashed_token) {
-    return { error: 'Login failed. Please try again.' };
-  }
-
-  // Verify the token server-side to set session cookies
-  const { error: verifyError } = await supabase.auth.verifyOtp({
-    token_hash: linkData.properties.hashed_token,
-    type: 'email',
-  });
-
-  if (verifyError) {
-    return { error: 'Login failed. Please try again.' };
-  }
-
-  redirect('/dashboard');
-}

@@ -5,7 +5,9 @@ const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919884744296';
 const LINKS = {
   Product: [
     { label: 'Features', href: '/#features' },
+    { label: 'Live Demo', href: '/demo' },
     { label: 'Pricing', href: '/pricing' },
+    { label: 'Blog', href: '/blog' },
   ],
   Company: [
     { label: 'Contact Us', href: '/contact' },

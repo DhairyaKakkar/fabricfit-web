@@ -3,7 +3,7 @@ import Navbar from '@/components/nav/Navbar';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions — TrialRoomStudio',
+  title: 'Terms & Conditions',
   description: 'Terms and Conditions governing use of the TrialRoomStudio virtual try-on platform.',
 };
 
@@ -70,7 +70,7 @@ export default function TermsPage() {
 
             <Section title="3. Free Trial">
               <ul>
-                <li>New accounts receive a 14-day free trial with 40 credits (approximately 20 fast try-ons) at no charge.</li>
+                <li>New accounts receive one complimentary demo try-on (2 credits) at no charge. Additional trial credits may be granted on request, at TrialRoomStudio&apos;s discretion.</li>
                 <li>No payment card is required to start a free trial.</li>
                 <li>At the end of the free trial, your account automatically converts to Pay As You Go (PAYG) status unless you select a paid plan.</li>
                 <li>Free trial credits that are unused at the end of the trial period expire and cannot be carried over.</li>

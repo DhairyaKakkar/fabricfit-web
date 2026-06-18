@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { logout } from '@/app/actions/auth';
 
 const NAV_LINKS = [
@@ -92,15 +93,70 @@ interface Props {
 
 export default function DashboardNav({ businessName, isTrial }: Props) {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+
+  // Lock body scroll while the mobile drawer is open.
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [open]);
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-zinc-200 flex flex-col z-40" style={{ fontFamily: 'var(--font-inter)' }}>
+    <>
+      {/* Mobile top bar — only below lg */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white border-b border-zinc-200 flex items-center justify-between px-4 z-30" style={{ fontFamily: 'var(--font-inter)' }}>
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <Image src="/logo.png" alt="TrialRoomStudio" width={28} height={28} className="h-7 w-auto" />
+          <span className="text-sm font-semibold text-zinc-900">TrialRoomStudio</span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Open menu"
+          className="p-2 -mr-2 text-zinc-700 hover:text-zinc-900"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </button>
+      </header>
+
+      {/* Backdrop for the mobile drawer */}
+      {open && (
+        <div
+          className="lg:hidden fixed inset-0 bg-zinc-900/40 z-40"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed left-0 top-0 bottom-0 w-64 lg:w-56 bg-white border-r border-zinc-200 flex flex-col z-50 transform transition-transform duration-200 ease-out lg:translate-x-0 ${
+          open ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{ fontFamily: 'var(--font-inter)' }}
+      >
       {/* Logo */}
-      <div className="h-14 flex items-center px-4 border-b border-zinc-100 shrink-0">
-        <Link href="/dashboard" className="flex items-center gap-2.5">
+      <div className="h-14 flex items-center justify-between px-4 border-b border-zinc-100 shrink-0">
+        <Link href="/dashboard" onClick={close} className="flex items-center gap-2.5">
           <Image src="/logo.png" alt="TrialRoomStudio" width={32} height={32} className="h-8 w-auto" />
           <span className="text-sm font-semibold text-zinc-900 leading-tight">TrialRoom<br/>Studio</span>
         </Link>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          aria-label="Close menu"
+          className="lg:hidden p-2 -mr-2 text-zinc-500 hover:text-zinc-900"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </button>
       </div>
 
       {/* Nav links */}
@@ -112,6 +168,7 @@ export default function DashboardNav({ businessName, isTrial }: Props) {
               key={href}
               href={href}
               prefetch={true}
+              onClick={close}
               className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors ${
                 active
                   ? 'bg-zinc-100 text-zinc-900 font-medium'
@@ -130,6 +187,7 @@ export default function DashboardNav({ businessName, isTrial }: Props) {
         {isTrial && (
           <Link
             href="/pricing"
+            onClick={close}
             className="flex items-center justify-center w-full text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg hover:bg-amber-100 transition-colors"
           >
             ✦ Upgrade from Free Trial
@@ -147,6 +205,7 @@ export default function DashboardNav({ businessName, isTrial }: Props) {
           </form>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

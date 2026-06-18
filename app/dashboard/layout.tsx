@@ -21,8 +21,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         isTrial={outlet?.is_trial ?? true}
         outletId={outlet?.id ?? null}
       />
-      <main className="pl-56 min-h-screen">
-        <div className="max-w-5xl mx-auto px-8 py-8">
+      <main className="lg:pl-56 min-h-screen pt-14 lg:pt-0">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
           {children}
         </div>
       </main>

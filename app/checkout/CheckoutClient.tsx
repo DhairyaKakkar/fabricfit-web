@@ -105,13 +105,22 @@ export default function CheckoutClient({ planId, billingCycle, gateway, userEmai
                 }),
               });
               if (!verify.ok) {
-                setError('Payment verification failed. Please contact support.');
+                const data = await verify.json().catch(() => ({}));
+                console.error('[checkout] verify failed', verify.status, data);
+                // The payment was charged by Razorpay even if our verification
+                // call hiccuped — reassure the user instead of alarming them.
+                setError(
+                  'Your payment went through, but we hit a snag finalizing your account. Your credits will appear shortly — if they don’t within a few minutes, contact support.',
+                );
                 setLoading(false);
                 return;
               }
               router.push('/dashboard?payment=success');
-            } catch {
-              setError('Payment verification failed. Please contact support.');
+            } catch (err) {
+              console.error('[checkout] verify request error', err);
+              setError(
+                'Your payment went through, but we hit a snag finalizing your account. Your credits will appear shortly — if they don’t within a few minutes, contact support.',
+              );
               setLoading(false);
             }
           },

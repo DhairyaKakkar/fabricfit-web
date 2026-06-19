@@ -31,12 +31,17 @@ const FEMALE_GARMENTS: { id: GarmentType; label: string }[] = [
   { id: 'jumpsuit',      label: 'Jumpsuit' },
 ];
 
-interface ModelPose {
+export interface ModelPose {
   id: string;
   name: string;
   gender: 'male' | 'female' | 'neutral';
   image_path: string;
   display_order: number;
+}
+
+function firstPoseFor(list: ModelPose[], g: 'male' | 'female'): string | null {
+  const f = list.filter((p) => p.gender === g || p.gender === 'neutral');
+  return f[0]?.id ?? null;
 }
 
 const CREDIT_COST = 2; // 'low' quality try-on
@@ -111,14 +116,16 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 
 // ── Component ───────────────────────────────────────────────────────────────
 
-type Stage = 'checking' | 'gate' | 'ready' | 'generating' | 'done';
+type Stage = 'checking' | 'ready' | 'generating' | 'done';
 
-export default function DemoClient() {
+export default function DemoClient({ initialPoses }: { initialPoses: ModelPose[] }) {
   const supabase = useRef(createClient()).current;
   const router = useRouter();
 
   const [stage, setStage] = useState<Stage>('checking');
   const [isMobile, setIsMobile] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [outletId, setOutletId] = useState<string | null>(null);
   const [credits, setCredits] = useState<number | null>(null);
 
@@ -126,8 +133,11 @@ export default function DemoClient() {
   const [fabricPreview, setFabricPreview] = useState<string | null>(null);
   const [gender, setGender] = useState<'female' | 'male'>('female');
   const [garment, setGarment] = useState<GarmentType>('saree');
-  const [poses, setPoses] = useState<ModelPose[]>([]);
-  const [poseId, setPoseId] = useState<string | null>(null);
+  const [poseId, setPoseId] = useState<string | null>(() => firstPoseFor(initialPoses, 'female'));
+
+  // Poses for the selected gender — derived from the server-provided list so
+  // signed-out visitors get the picker without a DB round-trip.
+  const poses = initialPoses.filter((p) => p.gender === gender || p.gender === 'neutral');
 
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -140,16 +150,18 @@ export default function DemoClient() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Session + account data. Users whose trial credits are already spent go
-  // straight to the dashboard — the demo is a one-shot trial surface.
+  // Session + account data. Signed-out visitors can still use the whole
+  // workspace — they only hit the auth wall when they press Generate. Signed-in
+  // users whose trial credits are already spent go straight to the dashboard.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (cancelled) return;
       if (!user) {
-        setStage('gate');
-        track('demo_gate_view');
+        setIsAuthed(false);
+        setStage('ready');
+        track('demo_anon_view');
         return;
       }
       const [{ data: outlet }, { data: credit }] = await Promise.all([
@@ -163,6 +175,7 @@ export default function DemoClient() {
         router.replace('/dashboard');
         return;
       }
+      setIsAuthed(true);
       setOutletId(outlet?.id ?? null);
       setCredits(balance);
       setStage('ready');
@@ -170,26 +183,6 @@ export default function DemoClient() {
     })();
     return () => { cancelled = true; };
   }, [supabase, router]);
-
-  // Model poses for the selected gender
-  useEffect(() => {
-    if (stage !== 'ready' && stage !== 'done') return;
-    let cancelled = false;
-    (async () => {
-      const { data } = await supabase
-        .from('model_poses')
-        .select('id, name, gender, image_path, display_order')
-        .eq('is_active', true)
-        .in('gender', [gender, 'neutral'])
-        .order('display_order', { ascending: true });
-      if (cancelled) return;
-      const list = (data ?? []) as ModelPose[];
-      setPoses(list);
-      setPoseId((prev) => (list.some((p) => p.id === prev) ? prev : list[0]?.id ?? null));
-    })();
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gender, stage === 'ready']);
 
   const poseUrl = useCallback(
     (path: string) => supabase.storage.from('model_poses').getPublicUrl(path).data.publicUrl,
@@ -204,7 +197,15 @@ export default function DemoClient() {
   }
 
   async function generate() {
-    if (!fabricFile || !poseId || !outletId) return;
+    if (!fabricFile || !poseId) return;
+    // Signed-out: let them get all the way to the "aha" moment, then ask them
+    // to sign in / sign up to actually run it.
+    if (!isAuthed) {
+      track('demo_generate_gate', { garment, gender });
+      setShowAuthModal(true);
+      return;
+    }
+    if (!outletId) return;
     if ((credits ?? 0) < CREDIT_COST) {
       router.push('/dashboard');
       return;
@@ -304,7 +305,9 @@ export default function DemoClient() {
         ? `Draping your fabric… ${elapsed}s`
         : !fabricFile
           ? 'Upload a fabric photo to start'
-          : `Generate try-on (${CREDIT_COST} credits)`}
+          : isAuthed
+            ? `Generate try-on (${CREDIT_COST} credits)`
+            : 'Generate try-on →'}
     </button>
   );
 
@@ -341,57 +344,12 @@ export default function DemoClient() {
               In 15 seconds.
             </span>
           </h1>
-          {stage !== 'gate' && stage !== 'checking' && credits !== null && !isMobile && (
+          {stage !== 'checking' && credits !== null && !isMobile && (
             <p style={{ fontFamily: 'var(--font-inter)', fontSize: 13, color: 'rgba(255,255,255,0.45)', margin: '1rem 0 0' }}>
               Credits available: <strong style={{ color: '#f0d080' }}>{credits}</strong> · this try-on uses {CREDIT_COST}
             </p>
           )}
         </div>
-
-        {/* ── Auth gate ── */}
-        {stage === 'gate' && (
-          <div style={{
-            maxWidth: 460, margin: '0 auto', textAlign: 'center',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
-            borderRadius: 20, padding: isMobile ? '1.75rem 1.25rem' : 'clamp(2rem, 5vw, 3rem)',
-          }}>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 14.5, color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, margin: '0 0 1.75rem' }}>
-              This demo runs a <strong style={{ color: '#fff' }}>real try-on</strong> with your own fabric
-              photo on our production AI. Create a free account — your first
-              try-on is on us, no credit card needed.
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <Link
-                href="/signup?next=/demo"
-                onClick={() => track('cta_click', { cta: 'demo_gate_signup', location: 'demo_page' })}
-                style={{
-                  fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 700,
-                  color: '#09090b', background: '#ffffff', textDecoration: 'none',
-                  borderRadius: 10, padding: '15px 32px', minHeight: 48,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                Create free account →
-              </Link>
-              <Link
-                href="/login?next=/demo"
-                onClick={() => track('cta_click', { cta: 'demo_gate_login', location: 'demo_page' })}
-                style={{
-                  fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 600,
-                  color: 'rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.07)',
-                  border: '1px solid rgba(255,255,255,0.2)', textDecoration: 'none',
-                  borderRadius: 10, padding: '14px 32px', minHeight: 48,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                I already have an account
-              </Link>
-            </div>
-            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11.5, color: 'rgba(255,255,255,0.35)', margin: '1.25rem 0 0', letterSpacing: '0.03em' }}>
-              Free demo try-on · No credit card · 2-minute setup
-            </p>
-          </div>
-        )}
 
         {stage === 'checking' && (
           <p style={{ textAlign: 'center', fontFamily: 'var(--font-inter)', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
@@ -448,8 +406,8 @@ export default function DemoClient() {
             <div>
               <StepHeading num="2" title="Garment" />
               <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                <Chip active={gender === 'female'} onClick={() => { setGender('female'); setGarment('saree'); }}>Womenswear</Chip>
-                <Chip active={gender === 'male'} onClick={() => { setGender('male'); setGarment('kurta'); }}>Menswear</Chip>
+                <Chip active={gender === 'female'} onClick={() => { setGender('female'); setGarment('saree'); setPoseId(firstPoseFor(initialPoses, 'female')); }}>Womenswear</Chip>
+                <Chip active={gender === 'male'} onClick={() => { setGender('male'); setGarment('kurta'); setPoseId(firstPoseFor(initialPoses, 'male')); }}>Menswear</Chip>
               </div>
               <div style={{
                 display: 'flex', gap: 8,
@@ -594,6 +552,85 @@ export default function DemoClient() {
             </p>
           )}
           {generateButton}
+        </div>
+      )}
+
+      {/* Auth modal — shown when a signed-out visitor presses Generate */}
+      {showAuthModal && (
+        <div
+          onClick={() => setShowAuthModal(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 60,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 18, background: 'rgba(9,9,11,0.72)', backdropFilter: 'blur(6px)',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            style={{
+              position: 'relative', width: '100%', maxWidth: 440, textAlign: 'center',
+              background: '#101012', border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 20, padding: isMobile ? '2rem 1.5rem' : '2.5rem 2.25rem',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.6)',
+            }}
+          >
+            <button
+              onClick={() => setShowAuthModal(false)}
+              aria-label="Close"
+              style={{
+                position: 'absolute', top: 14, right: 14, width: 32, height: 32,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'rgba(255,255,255,0.06)', border: 'none', borderRadius: 8,
+                color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 18, lineHeight: 1,
+              }}
+            >
+              ×
+            </button>
+
+            <h2 style={{
+              fontFamily: 'var(--font-playfair)', fontSize: isMobile ? '1.5rem' : '1.75rem',
+              fontWeight: 700, color: '#fff', margin: '0 0 0.6rem', letterSpacing: '-0.01em',
+            }}>
+              Your look is ready to generate
+            </h2>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, margin: '0 0 1.75rem' }}>
+              Create a free account to run this try-on — your first one is on us,
+              no credit card needed. We&apos;ll bring you right back here.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <Link
+                href="/signup?next=/demo"
+                onClick={() => track('cta_click', { cta: 'demo_modal_signup', location: 'demo_page' })}
+                style={{
+                  fontFamily: 'var(--font-inter)', fontSize: 15, fontWeight: 700,
+                  color: '#09090b', background: '#ffffff', textDecoration: 'none',
+                  borderRadius: 10, padding: '15px 32px', minHeight: 48,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                Create free account →
+              </Link>
+              <Link
+                href="/login?next=/demo"
+                onClick={() => track('cta_click', { cta: 'demo_modal_login', location: 'demo_page' })}
+                style={{
+                  fontFamily: 'var(--font-inter)', fontSize: 14, fontWeight: 600,
+                  color: 'rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.07)',
+                  border: '1px solid rgba(255,255,255,0.2)', textDecoration: 'none',
+                  borderRadius: 10, padding: '14px 32px', minHeight: 48,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                I already have an account
+              </Link>
+            </div>
+            <p style={{ fontFamily: 'var(--font-inter)', fontSize: 11.5, color: 'rgba(255,255,255,0.35)', margin: '1.25rem 0 0', letterSpacing: '0.03em' }}>
+              Free demo try-on · No credit card · 2-minute setup
+            </p>
+          </div>
         </div>
       )}
     </main>
